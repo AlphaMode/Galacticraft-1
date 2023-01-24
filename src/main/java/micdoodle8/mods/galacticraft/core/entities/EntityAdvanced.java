@@ -10,6 +10,7 @@ import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -237,7 +238,7 @@ public abstract class EntityAdvanced extends Entity implements IPacketReceiver
     }
 
     @Override
-    public void decodePacketdata(ByteBuf buffer)
+    public void decodePacketdata(PacketBuffer buffer)
     {
         if (this.fieldCacheClient == null || this.fieldCacheServer == null)
         {

@@ -17,6 +17,7 @@ import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.TransformerHooks;
+import micdoodle8.mods.galacticraft.core.client.SkyProviderOverworld;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import micdoodle8.mods.galacticraft.core.entities.EntityLanderBase;
 import micdoodle8.mods.galacticraft.core.entities.EntityMeteor;
@@ -31,6 +32,7 @@ import micdoodle8.mods.galacticraft.core.tick.TickHandlerServer;
 import micdoodle8.mods.galacticraft.core.util.*;
 import micdoodle8.mods.galacticraft.core.wrappers.PlayerGearData;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
+import micdoodle8.mods.galacticraft.planets.mars.network.PacketSimpleMars;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -865,15 +867,15 @@ public class EventHandlerGC
 
         if (c != null)
         {
-            EventWakePlayer event0 = new EventWakePlayer(player, c, true, true, false, true);
+            EventWakePlayer event0 = new EventWakePlayer(player, c, true, true, true);
             MinecraftForge.EVENT_BUS.post(event0);
-//            player.wakeUpPlayer(true, true, false);
+            player.stopSleepInBed(true, true);
             player.wakeUp();
 
-//            if (player.world.isRemote && GalacticraftCore.isPlanetsLoaded)
-//            {
-//                GalacticraftCore.packetPipeline.sendToServer(new PacketSimpleMars(PacketSimpleMars.EnumSimplePacketMars.S_WAKE_PLAYER, GCCoreUtil.getDimensionID(player.world), new Object[] {}));
-//            } TODO Cryo chamber
+            if (player.world.isRemote && GalacticraftCore.isPlanetsLoaded)
+            {
+                GalacticraftCore.packetPipeline.sendToServer(new PacketSimpleMars(PacketSimpleMars.EnumSimplePacketMars.S_WAKE_PLAYER, GCCoreUtil.getDimensionType(player.world), new Object[] {}));
+            }
         }
     }
 
@@ -911,13 +913,13 @@ public class EventHandlerGC
                 event.setGreen((float) vec.y);
                 event.setBlue((float) vec.z);
             }
-//            else if (worldclient.dimension.getSkyRenderer() instanceof SkyProviderOverworld && entity.getPosY() > Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT)
-//            {
-//                Vec3d vec = TransformerHooks.getFogColorHook(entity.world);
-//                event.setRed((float) vec.x);
-//                event.setGreen((float) vec.y);
-//                event.setBlue((float) vec.z);
-//            } TODO Sky rendering
+            else if (worldclient.dimension.getSkyRenderer() instanceof SkyProviderOverworld && entity.getPosY() > Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT)
+            {
+                Vec3d vec = TransformerHooks.getFogColorHook((ClientWorld) entity.world, (float) event.getRenderPartialTicks());
+                event.setRed((float) vec.x);
+                event.setGreen((float) vec.y);
+                event.setBlue((float) vec.z);
+            }
         }
     }
 

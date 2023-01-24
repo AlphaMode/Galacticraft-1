@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -38,7 +39,7 @@ import java.util.UUID;
 
 public class NetworkUtil
 {
-    public static void encodeData(ByteBuf buffer, Collection<Object> sendData) throws IOException
+    public static void encodeData(PacketBuffer buffer, Collection<Object> sendData) throws IOException
     {
         for (Object dataValue : sendData)
         {
@@ -64,7 +65,7 @@ public class NetworkUtil
             }
             else if (dataValue instanceof String)
             {
-                writeUTF8String(buffer, (String) dataValue);
+                buffer.writeString((String) dataValue);
             }
             else if (dataValue instanceof Short)
             {
@@ -76,7 +77,7 @@ public class NetworkUtil
             }
             else if (dataValue instanceof DimensionType)
             {
-                writeUTF8String(buffer, ((DimensionType) dataValue).getRegistryName().toString());
+                buffer.writeResourceLocation(((DimensionType) dataValue).getRegistryName());
             }
             else if (dataValue instanceof EnergyStorage)
             {
@@ -88,7 +89,7 @@ public class NetworkUtil
             }
             else if (dataValue instanceof CompoundNBT)
             {
-                NetworkUtil.writeNBTTagCompound((CompoundNBT) dataValue, buffer);
+                buffer.writeCompoundTag((CompoundNBT) dataValue);
             }
             else if (dataValue instanceof FluidTankGC)
             {
@@ -121,12 +122,7 @@ public class NetworkUtil
             }
             else if (dataValue instanceof byte[])
             {
-                int size = ((byte[]) dataValue).length;
-                buffer.writeInt(size);
-                int pos = buffer.writerIndex();
-                buffer.capacity(pos + size);
-                buffer.setBytes(pos, (byte[]) dataValue);
-                buffer.writerIndex(pos + size);
+                buffer.writeByteArray((byte[]) dataValue);
             }
             else if (dataValue instanceof UUID)
             {
@@ -170,7 +166,7 @@ public class NetworkUtil
 
                 for (int i = 0; i < array.length; i++)
                 {
-                    writeUTF8String(buffer, array[i]);
+                    buffer.writeString(array[i]);
                 }
             }
             else if (dataValue instanceof Footprint[])
@@ -187,7 +183,7 @@ public class NetworkUtil
                     buffer.writeFloat(array[i].rotation);
                     buffer.writeShort(array[i].age);
 
-                    writeUTF8String(buffer, array[i].owner);
+                    buffer.writeString(array[i].owner);
                 }
             }
             else if (dataValue instanceof Direction)
@@ -216,7 +212,7 @@ public class NetworkUtil
         }
     }
 
-    public static ArrayList<Object> decodeData(Class<?>[] types, ByteBuf buffer)
+    public static ArrayList<Object> decodeData(Class<?>[] types, PacketBuffer buffer)
     {
         ArrayList<Object> objList = new ArrayList<Object>();
 
@@ -244,7 +240,7 @@ public class NetworkUtil
             }
             else if (clazz.equals(String.class))
             {
-                objList.add(readUTF8String(buffer));
+                objList.add(buffer.readString());
             }
             else if (clazz.equals(Short.class))
             {
@@ -256,14 +252,11 @@ public class NetworkUtil
             }
             else if (clazz.equals(DimensionType.class))
             {
-                objList.add(DimensionType.byName(new ResourceLocation(readUTF8String(buffer))));
+                objList.add(DimensionType.byName(buffer.readResourceLocation()));
             }
             else if (clazz.equals(byte[].class))
             {
-                int size = buffer.readInt();
-                byte[] bytes = new byte[size];
-                buffer.readBytes(bytes, 0, size);
-                objList.add(bytes);
+                objList.add(buffer.readByteArray());
             }
             else if (clazz.equals(EnergyStorage.class))
             {
@@ -273,14 +266,7 @@ public class NetworkUtil
             }
             else if (clazz.equals(CompoundNBT.class))
             {
-                try
-                {
-                    objList.add(NetworkUtil.readNBTTagCompound(buffer));
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
+                objList.add(buffer.readCompoundTag());
             }
             else if (clazz.equals(BlockVec3.class))
             {
@@ -288,7 +274,7 @@ public class NetworkUtil
             }
             else if (clazz.equals(UUID.class))
             {
-                objList.add(new UUID(buffer.readLong(), buffer.readLong()));
+                objList.add(buffer.readUniqueId());
             }
             else if (clazz.equals(Vector3.class))
             {
@@ -329,7 +315,7 @@ public class NetworkUtil
 
                 for (int i = 0; i < size; i++)
                 {
-                    objList.add(readUTF8String(buffer));
+                    objList.add(buffer.readString());
                 }
             }
             else if (clazz.equals(Footprint[].class))
@@ -338,7 +324,7 @@ public class NetworkUtil
 
                 for (int i = 0; i < size; i++)
                 {
-                    objList.add(new Footprint(DimensionType.getById(buffer.readInt()), new Vector3(buffer.readFloat(), buffer.readFloat(), buffer.readFloat()), buffer.readFloat(), buffer.readShort(), readUTF8String(buffer), -1));
+                    objList.add(new Footprint(DimensionType.getById(buffer.readInt()), new Vector3(buffer.readFloat(), buffer.readFloat(), buffer.readFloat()), buffer.readFloat(), buffer.readShort(), buffer.readString(), -1));
                 }
             }
             else if (clazz.equals(Direction.class))
@@ -358,7 +344,7 @@ public class NetworkUtil
         return objList;
     }
 
-    public static Object getFieldValueFromStream(Field field, ByteBuf buffer, World world) throws IOException
+    public static Object getFieldValueFromStream(Field field, PacketBuffer buffer, World world) throws IOException
     {
         Class<?> dataValue = field.getType();
 
@@ -384,7 +370,7 @@ public class NetworkUtil
         }
         else if (dataValue.equals(String.class))
         {
-            return readUTF8String(buffer);
+            return buffer.readString();
         }
         else if (dataValue.equals(short.class))
         {
@@ -396,11 +382,11 @@ public class NetworkUtil
         }
         else if (dataValue.equals(DimensionType.class))
         {
-            return DimensionType.byName(new ResourceLocation(readUTF8String(buffer)));
+            return DimensionType.byName(buffer.readResourceLocation());
         }
         else if (dataValue.equals(CompoundNBT.class))
         {
-            return NetworkUtil.readNBTTagCompound(buffer);
+            return buffer.readCompoundTag();
         }
         else if (dataValue.equals(FluidTankGC.class))
         {
@@ -474,111 +460,41 @@ public class NetworkUtil
         throw new NullPointerException("Field type not found: " + field.getType().getSimpleName());
     }
 
-    public static ItemStack readItemStack(ByteBuf buffer) throws IOException
-    {
-        ItemStack itemstack = ItemStack.EMPTY;
-        short itemID = buffer.readShort();
-
-        if (itemID >= 0)
-        {
-            byte stackSize = buffer.readByte();
-            itemstack = new ItemStack(Item.getItemById(itemID), stackSize);
-            if (buffer.readBoolean())
-            {
-                itemstack.setTag(readNBTTagCompound(buffer));
-            }
-        }
-
-        return itemstack;
-    }
-
-    public static void writeItemStack(ItemStack itemStack, ByteBuf buffer) throws IOException
-    {
-        if (itemStack.isEmpty())
-        {
-            buffer.writeShort(-1);
-        }
-        else
-        {
-            buffer.writeShort(Item.getIdFromItem(itemStack.getItem()));
-            buffer.writeByte(itemStack.getCount());
-
-            buffer.writeBoolean(itemStack.getTag() != null);
-            if (itemStack.getTag() != null)
-            {
-                NetworkUtil.writeNBTTagCompound(itemStack.getTag(), buffer);
-            }
-        }
-    }
-
-    public static CompoundNBT readNBTTagCompound(ByteBuf buffer) throws IOException
-    {
-        try
-        {
-            int length = buffer.readInt();
-            byte[] compressed = new byte[length];
-            buffer.readBytes(compressed);
-            ByteArrayInputStream bais = new ByteArrayInputStream(compressed);
-            return CompressedStreamTools.readCompressed(bais);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static void writeNBTTagCompound(CompoundNBT nbt, ByteBuf buffer) throws IOException
-    {
-        try
-        {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            CompressedStreamTools.writeCompressed(nbt, baos);
-            byte[] compressed = baos.toByteArray();
-            buffer.writeInt(compressed.length);
-            buffer.writeBytes(compressed);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public static void writeFluidTank(FluidTank fluidTank, ByteBuf buffer) throws IOException
+    public static void writeFluidTank(FluidTank fluidTank, PacketBuffer buffer) throws IOException
     {
         if (fluidTank == null)
         {
             buffer.writeInt(0);
-            writeUTF8String(buffer, "");
+            buffer.writeString("");
             buffer.writeInt(0);
         }
         else
         {
             buffer.writeInt(fluidTank.getCapacity());
-            writeUTF8String(buffer, fluidTank.getFluid().getFluid().getRegistryName().toString());
+            buffer.writeResourceLocation(fluidTank.getFluid().getFluid().getRegistryName());
             buffer.writeInt(fluidTank.getFluidAmount());
         }
     }
 
-    public static FluidTankGC readFluidTankGC(ByteBuf buffer, World world) throws IOException
+    public static FluidTankGC readFluidTankGC(PacketBuffer buffer, World world) throws IOException
     {
         BlockPos pos = new BlockPos(buffer.readInt(), buffer.readInt(), buffer.readInt());
         TileEntity tile = world.getTileEntity(pos);
         int capacity = buffer.readInt();
-        String fluidName = readUTF8String(buffer);
+        ResourceLocation fluidName = buffer.readResourceLocation();
         FluidTankGC fluidTank = new FluidTankGC(capacity, tile);
         int amount = buffer.readInt();
 
-        Fluid fluid = Registry.FLUID.getOrDefault(new ResourceLocation(fluidName)); // TODO Better way?
+        Fluid fluid = Registry.FLUID.getOrDefault(fluidName); // TODO Better way?
         fluidTank.setFluid(new FluidStack(fluid, amount));
 
         return fluidTank;
     }
 
-    public static FluidTank readFluidTank(ByteBuf buffer) throws IOException
+    public static FluidTank readFluidTank(PacketBuffer buffer) throws IOException
     {
         int capacity = buffer.readInt();
-        String fluidName = readUTF8String(buffer);
+        ResourceLocation fluidName = buffer.readResourceLocation();
         FluidTank fluidTank = new FluidTank(capacity);
         int amount = buffer.readInt();
 
@@ -588,7 +504,7 @@ public class NetworkUtil
         }
         else
         {
-            Fluid fluid = Registry.FLUID.getOrDefault(new ResourceLocation(fluidName)); // TODO Better way?
+            Fluid fluid = Registry.FLUID.getOrDefault(fluidName); // TODO Better way?
             fluidTank.setFluid(new FluidStack(fluid, amount));
         }
 
@@ -683,20 +599,5 @@ public class NetworkUtil
         {
             return a;
         }
-    }
-
-    public static void writeUTF8String(ByteBuf buffer, String value)
-    {
-        byte[] utf8Bytes = value.getBytes(StandardCharsets.UTF_8);
-        buffer.writeInt(utf8Bytes.length);
-        buffer.writeBytes(utf8Bytes);
-    }
-
-    public static String readUTF8String(ByteBuf buffer)
-    {
-        int len = buffer.readInt();
-        String str = buffer.toString(buffer.readerIndex(), len, StandardCharsets.UTF_8);
-        buffer.readerIndex(buffer.readerIndex() + len);
-        return str;
     }
 }

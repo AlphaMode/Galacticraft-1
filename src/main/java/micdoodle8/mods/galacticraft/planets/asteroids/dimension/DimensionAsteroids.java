@@ -3,6 +3,7 @@ package micdoodle8.mods.galacticraft.planets.asteroids.dimension;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.DimensionSpace;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
 import micdoodle8.mods.galacticraft.core.event.EventHandlerGC;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
@@ -29,6 +30,8 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -80,12 +83,12 @@ public class DimensionAsteroids extends DimensionSpace implements ISolarLevel
 //    {
 //        return new Vector3(0, 0, 0);
 //    }
-//
-//    @Override
-//    public Vector3 getSkyColor()
-//    {
-//        return new Vector3(0, 0, 0);
-//    }
+
+    @Override
+    public Vector3 getSkyColor()
+    {
+        return new Vector3(0, 0, 0);
+    }
 
     @Override
     public boolean hasSunset()
@@ -117,13 +120,13 @@ public class DimensionAsteroids extends DimensionSpace implements ISolarLevel
         return 0.25F;
     }
 
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public float getStarBrightness(float par1)
-//    {
-//        return 1.0F;
-//    }
-//
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public float getStarBrightness(float par1)
+    {
+        return 1.0F;
+    }
+
 //	@Override
 //	public IChunkProvider createChunkGenerator()
 //	{
@@ -300,16 +303,7 @@ public class DimensionAsteroids extends DimensionSpace implements ISolarLevel
 
     private void loadAsteroidSavedData()
     {
-        try
-        {
-            this.datafile = new AsteroidSaveData(AsteroidSaveData.saveDataID);
-            this.datafile.read(((ServerWorld) this.world).getSavedData().load(AsteroidSaveData.saveDataID, SharedConstants.getVersion().getWorldVersion()));
-        }
-        catch (IOException e)
-        {
-            this.datafile = null;
-            e.printStackTrace();
-        }
+        this.datafile = ((ServerWorld) this.world).getSavedData().getOrCreate(() -> new AsteroidSaveData(AsteroidSaveData.saveDataID), AsteroidSaveData.saveDataID);
 
         if (this.datafile == null)
         {

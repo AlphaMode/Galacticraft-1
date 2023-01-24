@@ -1,6 +1,8 @@
 package micdoodle8.mods.galacticraft.core;
 
 import micdoodle8.mods.galacticraft.core.blocks.*;
+import micdoodle8.mods.galacticraft.core.blocks.BlockSpaceGlass.GlassFrame;
+import micdoodle8.mods.galacticraft.core.blocks.BlockSpaceGlass.GlassType;
 import micdoodle8.mods.galacticraft.core.items.ItemBlockDesc;
 import micdoodle8.mods.galacticraft.core.items.ItemBlockWallOrFloorDesc;
 import micdoodle8.mods.galacticraft.core.tile.*;
@@ -14,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -75,7 +78,7 @@ public class GCBlocks
     public static final Block furnaceElectric = new BlockFurnaceElectric(Block.Properties.from(oxygenDistributor));
     public static final Block furanceArc = new BlockFurnaceArc(Block.Properties.from(oxygenDistributor));
 //    public static final Block panelLighting = new BlockPanelLighting(Block.Properties.from(oxygenDistributor));
-//    public static final Block spinThruster = new BlockSpinThruster(Block.Properties.from(oxygenDistributor));
+    public static final Block spinThruster = new BlockSpinThruster(Block.Properties.from(oxygenDistributor));
     public static final Block telemetry = new BlockTelemetry(Block.Properties.from(oxygenDistributor));
     public static final Block concealedRedstone = new BlockConcealedRedstone(Block.Properties.from(oxygenDistributor));
     public static final Block concealedRepeater = new BlockConcealedRepeater(Block.Properties.from(oxygenDistributor));
@@ -87,12 +90,12 @@ public class GCBlocks
     public static final Block fluidPipePull = new BlockFluidPipe(Block.Properties.from(fluidPipe), BlockFluidPipe.EnumPipeMode.PULL);
 
     public static final Block fallenMeteor = new BlockFallenMeteor(Block.Properties.create(Material.ROCK).hardnessAndResistance(40.0F).sound(SoundType.STONE));
-//    public static final Block spaceGlassVanilla = new BlockSpaceGlass(builder, GlassType.VANILLA, GlassFrame.PLAIN, null);
-//    public static final Block spaceGlassClear = new BlockSpaceGlass(builder, GlassType.CLEAR, GlassFrame.PLAIN, null);
-//    public static final Block spaceGlassTinVanilla = new BlockSpaceGlass(builder, GlassType.VANILLA, GlassFrame.TIN_DECO, GCBlocks.spaceGlassVanilla);
-//    public static final Block spaceGlassTinClear = new BlockSpaceGlass(builder, GlassType.CLEAR, GlassFrame.TIN_DECO, GCBlocks.spaceGlassClear);
-//    public static final Block spaceGlassStrong = new BlockSpaceGlass(builder, GlassType.STRONG, GlassFrame.PLAIN, null);
-//    public static final Block spaceGlassTinStrong = new BlockSpaceGlass(builder, GlassType.STRONG, GlassFrame.TIN_DECO, GCBlocks.spaceGlassStrong);
+    public static final BlockSpaceGlass spaceGlassVanilla = new BlockSpaceGlass(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.3F, 3F), GlassType.VANILLA, GlassFrame.PLAIN, null);
+    public static final BlockSpaceGlass spaceGlassClear = new BlockSpaceGlass(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.3F, 3F), GlassType.CLEAR, GlassFrame.PLAIN, null);
+    public static final BlockSpaceGlass spaceGlassTinVanilla = new BlockSpaceGlass(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.3F, 4F), GlassType.VANILLA, GlassFrame.TIN_DECO, GCBlocks.spaceGlassVanilla);
+    public static final BlockSpaceGlass spaceGlassTinClear = new BlockSpaceGlass(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.3F, 4F), BlockSpaceGlass.GlassType.CLEAR, GlassFrame.TIN_DECO, GCBlocks.spaceGlassClear);
+    public static final BlockSpaceGlass spaceGlassStrong = new BlockSpaceGlass(Block.Properties.create(Material.GLASS).hardnessAndResistance(4F, 35F), GlassType.STRONG, GlassFrame.PLAIN, null);
+    public static final BlockSpaceGlass spaceGlassTinStrong = new BlockSpaceGlass(Block.Properties.create(Material.GLASS).hardnessAndResistance(4F, 35F), GlassType.STRONG, GlassFrame.TIN_DECO, GCBlocks.spaceGlassStrong);
 
     public static final Block spaceStationBase = new BlockSpaceStationBase(Block.Properties.create(Material.ROCK).hardnessAndResistance(-1.0F, 3600000.0F).noDrops());
 
@@ -251,12 +254,12 @@ public class GCBlocks
 
     public static <V extends IForgeRegistryEntry<V>> void register(IForgeRegistry<V> reg, IForgeRegistryEntry<V> thing, String name)
     {
-        ResourceLocation location = new ResourceLocation(Constants.MOD_ID_CORE, name);
+        ResourceLocation location = new ResourceLocation(ModLoadingContext.get().getActiveNamespace(), name);
         register(reg, thing, location);
     }
 
     public static <V extends IForgeRegistryEntry<V>> void register(IForgeRegistry<V> reg, String name, IForgeRegistryEntry<V> thing) {
-        ResourceLocation location = new ResourceLocation(Constants.MOD_ID_CORE, name);
+        ResourceLocation location = new ResourceLocation(ModLoadingContext.get().getActiveNamespace(), name);
         register(reg, thing, location);
     }
 
@@ -313,7 +316,7 @@ public class GCBlocks
         register(r, GCBlockNames.furnaceElectric, furnaceElectric);
         register(r, GCBlockNames.furanceArc, furanceArc);
 //        register(r, BlockNames.panelLighting, panelLighting);
-//        register(r, BlockNames.spinThruster, spinThruster);
+        register(r, GCBlockNames.spinThruster, spinThruster);
         register(r, GCBlockNames.telemetry, telemetry);
         register(r, GCBlockNames.concealedRedstone, concealedRedstone);
         register(r, GCBlockNames.concealedRepeater, concealedRepeater);
@@ -322,12 +325,12 @@ public class GCBlocks
         register(r, GCBlockNames.fluidPipe, fluidPipe);
         register(r, GCBlockNames.fluidPipePull, fluidPipePull);
         register(r, GCBlockNames.fallenMeteor, fallenMeteor);
-//        register(r, BlockNames.spaceGlassVanilla, spaceGlassVanilla);
-//        register(r, BlockNames.spaceGlassClear, spaceGlassClear);
-//        register(r, BlockNames.spaceGlassTinVanilla, spaceGlassTinVanilla);
-//        register(r, BlockNames.spaceGlassTinClear, spaceGlassTinClear);
-//        register(r, BlockNames.spaceGlassStrong, spaceGlassStrong);
-//        register(r, BlockNames.spaceGlassTinStrong, spaceGlassTinStrong);
+//        register(r, GCBlockNames.spaceGlassVanilla, spaceGlassVanilla);
+        register(r, GCBlockNames.spaceGlassClear, spaceGlassClear);
+//        register(r, GCBlockNames.spaceGlassTinVanilla, spaceGlassTinVanilla);
+//        register(r, GCBlockNames.spaceGlassTinClear, spaceGlassTinClear);
+//        register(r, GCBlockNames.spaceGlassStrong, spaceGlassStrong);
+//        register(r, GCBlockNames.spaceGlassTinStrong, spaceGlassTinStrong);
         register(r, GCBlockNames.spaceStationBase, spaceStationBase);
         register(r, GCBlockNames.fakeBlock, fakeBlock);
 //        register(r, BlockNames.sealableBlock, sealableBlock);
@@ -501,6 +504,7 @@ public class GCBlocks
         register(r, Registry.BLOCK.getKey(storageCluster), new ItemBlockDesc(storageCluster, props));
         register(r, Registry.BLOCK.getKey(furnaceElectric), new ItemBlockDesc(furnaceElectric, props));
         register(r, Registry.BLOCK.getKey(furanceArc), new ItemBlockDesc(furanceArc, props));
+        register(r, Registry.BLOCK.getKey(spinThruster), new ItemBlockDesc(spinThruster, props));
         register(r, Registry.BLOCK.getKey(telemetry), new ItemBlockDesc(telemetry, props));
         register(r, Registry.BLOCK.getKey(concealedRedstone), new BlockItem(concealedRedstone, props));
         register(r, Registry.BLOCK.getKey(concealedRepeater), new BlockItem(concealedRepeater, props));
@@ -508,6 +512,12 @@ public class GCBlocks
         register(r, Registry.BLOCK.getKey(fluidPipe), new ItemBlockDesc(fluidPipe, props));
         register(r, Registry.BLOCK.getKey(fluidPipePull), new ItemBlockDesc(fluidPipePull, props));
         register(r, Registry.BLOCK.getKey(fallenMeteor), new ItemBlockDesc(fallenMeteor, props));
+//        register(r, Registry.BLOCK.getKey(spaceGlassVanilla), new ItemBlockDesc(spaceGlassVanilla, props));
+        register(r, Registry.BLOCK.getKey(spaceGlassClear), new ItemBlockDesc(spaceGlassClear, props));
+//        register(r, Registry.BLOCK.getKey(spaceGlassTinVanilla), new ItemBlockDesc(spaceGlassTinVanilla, props));
+//        register(r, Registry.BLOCK.getKey(spaceGlassTinClear), new ItemBlockDesc(spaceGlassTinClear, props));
+//        register(r, Registry.BLOCK.getKey(spaceGlassStrong), new ItemBlockDesc(spaceGlassStrong, props));
+//        register(r, Registry.BLOCK.getKey(spaceGlassTinStrong), new ItemBlockDesc(spaceGlassTinStrong, props));
         register(r, Registry.BLOCK.getKey(parachest), new ItemBlockDesc(parachest, props));
         register(r, Registry.BLOCK.getKey(aluminumWire), new BlockItem(aluminumWire, props));
         register(r, Registry.BLOCK.getKey(aluminumWireHeavy), new BlockItem(aluminumWireHeavy, props));
@@ -844,7 +854,7 @@ public class GCBlocks
         register(r, TileEntityType.Builder.create(TileEntityCircuitFabricator::new, circuitFabricator).build(null), GCBlockNames.circuitFabricator);
         register(r, TileEntityType.Builder.create(TileEntityAirLockController::new, airLockController).build(null), GCBlockNames.airLockController);
         register(r, TileEntityType.Builder.create(TileEntityOxygenStorageModule::new, oxygenStorageModule).build(null), GCBlockNames.oxygenStorageModule);
-//        register(r, TileEntityType.Builder.create(TileEntityThruster::new, spinThruster).build(null), BlockNames.spinThruster);
+        register(r, TileEntityType.Builder.create(TileEntityThruster::new, spinThruster).build(null), GCBlockNames.spinThruster);
         register(r, TileEntityType.Builder.create(TileEntityArclamp::new, arcLamp).build(null), GCBlockNames.arcLamp);
         register(r, TileEntityType.Builder.create(TileEntityScreen::new, screen).build(null), GCBlockNames.screen);
 //        register(r, TileEntityType.Builder.create(TileEntityPanelLight::new, panelLighting).build(null), BlockNames.panelLighting);

@@ -70,7 +70,7 @@ public class AsteroidsPlayerHandler
                         motY = (player.world.rand.nextDouble() - 0.5) * 0.4;
                         motZ = (player.getPosZ() - z + (player.world.rand.nextDouble() - 0.5) * 40) / 400.0F;
 
-                        final EntitySmallAsteroid smallAsteroid = new EntitySmallAsteroid(AsteroidEntities.SMALL_ASTEROID.get(), player.world);
+                        final EntitySmallAsteroid smallAsteroid = AsteroidEntities.SMALL_ASTEROID.get().create(player.world);
                         smallAsteroid.setPosition(x, y, z);
 //                        smallAsteroid.motionX = motX;
 //                        smallAsteroid.motionY = motY;

@@ -1,24 +1,43 @@
 {
-    "elements": [
-        {
-            "name": "Element",
-            "from": [ 6.0, 0.0, 0.0 ], 
-            "to": [ 7.0, 16.0, 16.0 ], 
-            "shade": false,
-            "faces": {
-                "east": { "texture": "#0", "uv": [ 1.0, 1.0, 15.0, 15.0 ] },
-                "west": { "texture": "#0", "uv": [ 15.0, 1.0, 1.0, 15.0 ] }
-            }
+    "loader": "forge:composite",
+    "parts": {
+        "base": {
+            "parent": "block/cube_all", "textures": { "all": "block/glass" }
         },
-        {
-            "name": "Cube",
-            "from": [ 9.0, 0.0, 0.0 ], 
-            "to": [ 10.0, 16.0, 16.0 ], 
-            "shade": false,
-            "faces": {
-                "east": { "texture": "#0", "uv": [ 1.0, 1.0, 15.0, 15.0 ] },
-                "west": { "texture": "#0", "uv": [ 15.0, 1.0, 1.0, 15.0 ] }
+        "Translucent" : {
+            "loader": "forge:multi-layer",
+            "layers": {
+                "translucent": {
+                    "textures": {
+                        "edge": "block/glass_pane_top",
+                        "particle": "block/glass",
+                        "0": "galacticraftcore:blocks/space_glass_clear",
+                        "1": "galacticraftcore:blocks/space_glass_frame_white"
+                    },
+                    "elements": [
+                        {
+                            "name": "Element",
+                            "from": [ 6.0, 0.0, 0.0 ],
+                            "to": [ 7.0, 16.0, 16.0 ],
+                            "shade": false,
+                            "faces": {
+                                "east": { "texture": "#0", "uv": [ 1.0, 1.0, 15.0, 15.0 ] },
+                                "west": { "texture": "#0", "uv": [ 15.0, 1.0, 1.0, 15.0 ] }
+                            }
+                        },
+                        {
+                            "name": "Cube",
+                            "from": [ 9.0, 0.0, 0.0 ],
+                            "to": [ 10.0, 16.0, 16.0 ],
+                            "shade": false,
+                            "faces": {
+                                "east": { "texture": "#0", "uv": [ 1.0, 1.0, 15.0, 15.0 ] },
+                                "west": { "texture": "#0", "uv": [ 15.0, 1.0, 1.0, 15.0 ] }
+                            }
+                        }
+                    ]
+                }
             }
         }
-    ]
+    }
 }

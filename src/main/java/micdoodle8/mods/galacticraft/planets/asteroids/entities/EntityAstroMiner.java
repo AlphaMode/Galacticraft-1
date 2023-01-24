@@ -34,10 +34,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
@@ -53,6 +53,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -231,7 +232,7 @@ public class EntityAstroMiner extends Entity implements IInventory, IPacketRecei
     @Override
     public IPacket<?> createSpawnPacket()
     {
-        return new SSpawnObjectPacket(this);
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
@@ -695,7 +696,7 @@ public class EntityAstroMiner extends Entity implements IInventory, IPacketRecei
 
     //packet with AIstate, energy, rotationP + Y, mining data count
     @Override
-    public void decodePacketdata(ByteBuf buffer)
+    public void decodePacketdata(PacketBuffer buffer)
     {
         this.AIstate = buffer.readInt();
         this.energyLevel = buffer.readInt();
@@ -2038,7 +2039,7 @@ public class EntityAstroMiner extends Entity implements IInventory, IPacketRecei
             return true;
         }
 //        final EntityAstroMiner miner = new EntityAstroMiner(world, NonNullList.withSize(EntityAstroMiner.INV_SIZE, ItemStack.EMPTY), 0);
-        EntityAstroMiner miner = new EntityAstroMiner(AsteroidEntities.ASTRO_MINER.get(), world);
+        EntityAstroMiner miner = AsteroidEntities.ASTRO_MINER.get().create(world);
         miner.stacks = NonNullList.withSize(EntityAstroMiner.INV_SIZE, ItemStack.EMPTY);
         miner.energyLevel = 0;
         miner.setPlayer(player);

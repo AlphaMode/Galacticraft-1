@@ -22,7 +22,7 @@ public class SoundUpdaterMiner extends TickableSound
 
     public SoundUpdaterMiner(ClientPlayerEntity par1EntityPlayerSP, EntityAstroMiner par2Entity)
     {
-        super(GCSounds.astroMiner, SoundCategory.AMBIENT);
+        super(GCSounds.astroMiner.get(), SoundCategory.AMBIENT);
         this.theRocket = par2Entity;
         this.thePlayer = par1EntityPlayerSP;
         this.volume = 0.00001F;  //If it's zero it won't start playing

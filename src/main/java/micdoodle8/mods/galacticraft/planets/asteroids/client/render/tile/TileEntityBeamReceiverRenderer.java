@@ -2,7 +2,7 @@ package micdoodle8.mods.galacticraft.planets.asteroids.client.render.tile;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.core.client.obj.GCModelCache;
 import micdoodle8.mods.galacticraft.core.tile.ReceiverMode;
 import micdoodle8.mods.galacticraft.core.util.ClientUtil;
@@ -49,7 +49,7 @@ public class TileEntityBeamReceiverRenderer extends TileEntityRenderer<TileEntit
             return;
         }
 
-        GlStateManager.disableRescaleNormal();
+        RenderSystem.disableRescaleNormal();
         matStack.push();
         matStack.translate(0.5F, 0.0F, 0.5F);
         matStack.scale(0.85F, 0.85F, 0.85F);
@@ -90,18 +90,18 @@ public class TileEntityBeamReceiverRenderer extends TileEntityRenderer<TileEntit
 
         if (Minecraft.isAmbientOcclusionEnabled())
         {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            RenderSystem.shadeModel(GL11.GL_SMOOTH);
         }
         else
         {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
+            RenderSystem.shadeModel(GL11.GL_FLAT);
         }
 
 //        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         ClientUtil.drawBakedModel(reflectorModelMain, bufferIn, matStack, combinedLightIn);
 
-        GlStateManager.disableTexture();
-        GlStateManager.disableCull();
+        RenderSystem.disableTexture();
+        RenderSystem.disableCull();
 
         if (tile.modeReceive == ReceiverMode.RECEIVE.ordinal())
         {
@@ -116,8 +116,8 @@ public class TileEntityBeamReceiverRenderer extends TileEntityRenderer<TileEntit
             ClientUtil.drawBakedModelColored(reflectorModelReceiver, bufferIn, matStack, combinedLightIn, 0.1F, 0.1F, 0.1F, 1.0F);
         }
 
-        GlStateManager.enableTexture();
-        GlStateManager.enableCull();
+        RenderSystem.enableTexture();
+        RenderSystem.enableCull();
         float dX = 0.34772F;
         float dY = 0.75097F;
         float dZ = 0.0F;
@@ -132,7 +132,7 @@ public class TileEntityBeamReceiverRenderer extends TileEntityRenderer<TileEntit
 
         matStack.translate(-dX, -dY, -dZ);
 //        GlStateManager.translatef(-dX, -dY, -dZ);
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         ClientUtil.drawBakedModel(reflectorModelRing, bufferIn, matStack, combinedLightIn);
         matStack.pop();
 //        GlStateManager.popMatrix();

@@ -2,7 +2,7 @@ package micdoodle8.mods.galacticraft.planets.asteroids.client.render.tile;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.core.client.obj.GCModelCache;
 import micdoodle8.mods.galacticraft.core.util.ClientUtil;
 import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
@@ -13,14 +13,11 @@ import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.obj.OBJModel;
 import org.lwjgl.opengl.GL11;
 
 @OnlyIn(Dist.CLIENT)
@@ -48,7 +45,7 @@ public class TileEntityBeamReflectorRenderer extends TileEntityRenderer<TileEnti
     @Override
     public void render(TileEntityBeamReflector tile, float partialTicks, MatrixStack matStack, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn)
     {
-        GlStateManager.disableRescaleNormal();
+        RenderSystem.disableRescaleNormal();
 //        GlStateManager.pushMatrix();
         matStack.push();
 //        GlStateManager.translatef((float) x + 0.5F, (float) y, (float) z + 0.5F);
@@ -58,11 +55,11 @@ public class TileEntityBeamReflectorRenderer extends TileEntityRenderer<TileEnti
 
         if (Minecraft.isAmbientOcclusionEnabled())
         {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            RenderSystem.shadeModel(GL11.GL_SMOOTH);
         }
         else
         {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
+            RenderSystem.shadeModel(GL11.GL_FLAT);
         }
 
         ClientUtil.drawBakedModel(reflectorModelBase, bufferIn, matStack, combinedLightIn);

@@ -1,0 +1,7 @@
+{
+  "gravity": "coremods/living_entity.js",
+  "player_list": "coremods/player_list.js",
+  "client_world": "coremods/client_world.js",
+  "fog_renderer": "coremods/fog_renderer.js",
+  "net_handler": "coremods/client_net_handler.js"
+}

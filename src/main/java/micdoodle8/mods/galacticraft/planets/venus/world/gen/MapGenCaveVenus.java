@@ -1,27 +1,34 @@
-//package micdoodle8.mods.galacticraft.planets.venus.world.gen;
-//
-//import micdoodle8.mods.galacticraft.api.prefab.world.gen.MapGenBaseMeta;
-//import micdoodle8.mods.galacticraft.core.Constants;
-//import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlocks;
-//import net.minecraft.block.Block;
-//import net.minecraft.block.BlockState;
-//import net.minecraft.block.Blocks;
-//import net.minecraft.util.math.MathHelper;
-//import net.minecraft.world.World;
-//import net.minecraft.world.chunk.ChunkPrimer;
-//
-//import java.util.Random;
-//
-//public class MapGenCaveVenus extends MapGenBaseMeta
-//{
-//    public static final int BREAK_THROUGH_CHANCE = 25; // 1 in n chance
-//
-//    protected void generateLargeCaveNode(long par1, int par3, int par4, ChunkPrimer primer, double par6, double par8, double par10)
-//    {
-//        this.generateCaveNode(par1, par3, par4, primer, par6, par8, par10, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
-//    }
-//
-//    protected void generateCaveNode(long par1, int par3, int par4, ChunkPrimer primer, double par6, double par8, double par10, float par12, float par13, float par14, int par15, int par16, double par17)
+package micdoodle8.mods.galacticraft.planets.venus.world.gen;
+
+import com.mojang.datafixers.Dynamic;
+import micdoodle8.mods.galacticraft.core.Constants;
+import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlocks;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.gen.carver.CaveWorldCarver;
+import net.minecraft.world.gen.carver.WorldCarver;
+import net.minecraft.world.gen.feature.ProbabilityConfig;
+
+import java.util.BitSet;
+import java.util.Random;
+import java.util.function.Function;
+
+public class MapGenCaveVenus extends CaveWorldCarver
+{
+    public static final int BREAK_THROUGH_CHANCE = 25; // 1 in n chance
+
+    public MapGenCaveVenus(Function<Dynamic<?>, ProbabilityConfig> config, int maxHeight) {
+        super(config, maxHeight);
+    }
+
+//    protected void func_227206_a_(long par1, int par3, int par4, ChunkPrimer primer, double par6, double par8, double par10, float par12, float par13, float par14, int par15, int par16, double par17)
 //    {
 //        final double d4 = par3 * 16 + 8;
 //        final double d5 = par4 * 16 + 8;
@@ -194,43 +201,19 @@
 //            }
 //        }
 //    }
+
+    @Override
+    protected int func_222724_a() {
+        return 40;
+    }
+
+//    @Override
+//    public boolean shouldCarve(Random rand, int chunkX, int chunkZ, ProbabilityConfig config) {
+//        return false;
+//    }
 //
 //    @Override
-//    protected void recursiveGenerate(World par1World, int par2, int par3, int par4, int par5, ChunkPrimer primer)
-//    {
-//        int var7 = this.rand.nextInt(this.rand.nextInt(this.rand.nextInt(40) + 1) + 1);
-//
-//        if (this.rand.nextInt(15) != 0)
-//        {
-//            var7 = 0;
-//        }
-//
-//        for (int var8 = 0; var8 < var7; ++var8)
-//        {
-//            final double var9 = par2 * 16 + this.rand.nextInt(16);
-//            final double var11 = this.rand.nextInt(this.rand.nextInt(120) + 8);
-//            final double var13 = par3 * 16 + this.rand.nextInt(16);
-//            int var15 = 1;
-//
-//            if (this.rand.nextInt(4) == 0)
-//            {
-//                this.generateLargeCaveNode(this.rand.nextLong(), par4, par5, primer, var9, var11, var13);
-//                var15 += this.rand.nextInt(4);
-//            }
-//
-//            for (int var16 = 0; var16 < var15; ++var16)
-//            {
-//                final float var17 = this.rand.nextFloat() * Constants.twoPI;
-//                final float var18 = (this.rand.nextFloat() - 0.5F) * 2.0F / 8.0F;
-//                float var19 = this.rand.nextFloat() * 2.0F + this.rand.nextFloat();
-//
-//                if (this.rand.nextInt(10) == 0)
-//                {
-//                    var19 *= this.rand.nextFloat() * this.rand.nextFloat() * 3.0F + 1.0F;
-//                }
-//
-//                this.generateCaveNode(this.rand.nextLong(), par4, par5, primer, var9, var11, var13, var19, var17, var18, 0, 0, 1.0D);
-//            }
-//        }
+//    protected boolean func_222708_a(double p_222708_1_, double p_222708_3_, double p_222708_5_, int p_222708_7_) {
+//        return false;
 //    }
-//}
+}

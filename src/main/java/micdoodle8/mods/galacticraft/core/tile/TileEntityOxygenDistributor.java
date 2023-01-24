@@ -7,11 +7,11 @@ import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3Dim;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.Annotations.NetworkedField;
-import micdoodle8.mods.galacticraft.core.GCBlockNames;
 import micdoodle8.mods.galacticraft.core.Constants;
+import micdoodle8.mods.galacticraft.core.GCBlockNames;
 import micdoodle8.mods.galacticraft.core.blocks.BlockOxygenDistributor;
 import micdoodle8.mods.galacticraft.core.energy.item.ItemElectricBase;
-import micdoodle8.mods.galacticraft.core.entities.IBubbleProviderColored;
+import micdoodle8.mods.galacticraft.core.entities.IBubbleProvider;
 import micdoodle8.mods.galacticraft.core.inventory.ContainerOxygenDistributor;
 import micdoodle8.mods.galacticraft.core.network.NetworkUtil;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
@@ -23,6 +23,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -42,7 +43,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 
-public class TileEntityOxygenDistributor extends TileEntityOxygen implements IBubbleProviderColored, INamedContainerProvider
+public class TileEntityOxygenDistributor extends TileEntityOxygen implements IBubbleProvider, INamedContainerProvider
 {
     @ObjectHolder(Constants.MOD_ID_CORE + ":" + GCBlockNames.oxygenDistributor)
     public static TileEntityType<TileEntityOxygenDistributor> TYPE;
@@ -179,7 +180,7 @@ public class TileEntityOxygenDistributor extends TileEntityOxygen implements IBu
     }
 
     @Override
-    public void readExtraNetworkedData(ByteBuf dataStream)
+    public void readExtraNetworkedData(PacketBuffer dataStream)
     {
         if (this.world.isRemote)
         {
@@ -196,12 +197,8 @@ public class TileEntityOxygenDistributor extends TileEntityOxygen implements IBu
                     int i1 = dataStream.readInt();
                     int i2 = dataStream.readInt();
                     int i3 = dataStream.readInt();
-                    String str = NetworkUtil.readUTF8String(dataStream);
-                    if (str == null || str == "null")
-                    {
-                        continue;
-                    }
-                    DimensionType i4 = DimensionType.byName(new ResourceLocation(str));
+                    ResourceLocation str = dataStream.readResourceLocation();
+                    DimensionType i4 = DimensionType.byName(str);
                     if (i1 == -1 && i2 == -1 && i3 == -1 && i4 == null)
                     {
                         continue;

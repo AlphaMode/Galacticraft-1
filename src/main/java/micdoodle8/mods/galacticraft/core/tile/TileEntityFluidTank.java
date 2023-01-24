@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -379,7 +380,7 @@ public class TileEntityFluidTank extends TileEntityAdvanced implements IFluidHan
         CompoundNBT nbt = new CompoundNBT();
         nbt.putString("net-type", "desc-packet");
         PacketDynamic packet = new PacketDynamic(this);
-        ByteBuf buf = Unpooled.buffer();
+        PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
         packet.encodeInto(buf);
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
@@ -396,17 +397,13 @@ public class TileEntityFluidTank extends TileEntityAdvanced implements IFluidHan
         {
             return;
         }
-        if (pkt.getNbtCompound() == null)
-        {
-            throw new RuntimeException("[GC] Missing NBTTag compound!");
-        }
         CompoundNBT nbt = pkt.getNbtCompound();
         try
         {
             if ("desc-packet".equals(nbt.getString("net-type")))
             {
                 byte[] bytes = nbt.getByteArray("net-data");
-                ByteBuf data = Unpooled.wrappedBuffer(bytes);
+                PacketBuffer data = new PacketBuffer(Unpooled.wrappedBuffer(bytes));
                 PacketDynamic packet = new PacketDynamic();
                 packet.decodeInto(data);
                 packet.handleClientSide(Minecraft.getInstance().player);
@@ -439,12 +436,12 @@ public class TileEntityFluidTank extends TileEntityAdvanced implements IFluidHan
     }
 
     @Override
-    public void readExtraNetworkedData(ByteBuf buffer)
+    public void readExtraNetworkedData(PacketBuffer buffer)
     {
         if (this.world.isRemote)
         {
             int capacity = buffer.readInt();
-            String fluidName = NetworkUtil.readUTF8String(buffer);
+            ResourceLocation fluidName = buffer.readResourceLocation();
             FluidTankGC fluidTank = new FluidTankGC(capacity, this);
             int amount = buffer.readInt();
 
@@ -454,7 +451,7 @@ public class TileEntityFluidTank extends TileEntityAdvanced implements IFluidHan
             }
             else
             {
-                Fluid fluid = Registry.FLUID.getOrDefault(new ResourceLocation(fluidName));
+                Fluid fluid = Registry.FLUID.getOrDefault(fluidName);
 //                Fluid fluid = FluidRegistry.getFluid(fluidName);
                 fluidTank.setFluid(new FluidStack(fluid, amount));
             }

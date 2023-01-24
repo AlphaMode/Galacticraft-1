@@ -26,6 +26,7 @@ import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -334,7 +335,7 @@ public class TileEntityPainter extends TileEntityInventory implements IDisableab
     }
 
     @Override
-    public void decodePacketdata(ByteBuf buffer)
+    public void decodePacketdata(PacketBuffer buffer)
     {
         if (this.world.isRemote)
         {

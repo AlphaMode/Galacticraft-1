@@ -145,13 +145,6 @@ public class StructureDungeon extends Structure<DungeonConfiguration>
 //        return new MapGenDungeon.Start(this.world, this.rand, chunkX, chunkZ, this.configuration);
 //    }
 
-    @Nullable
-    @Override
-    public BlockPos findNearest(World worldIn, ChunkGenerator<? extends GenerationSettings> chunkGenerator, BlockPos pos, int radius, boolean p_211405_5_)
-    {
-        return null;
-    }
-
     public static class Start extends StructureStart
     {
         //        private DungeonConfiguration configuration;

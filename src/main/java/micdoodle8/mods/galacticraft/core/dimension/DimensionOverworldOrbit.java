@@ -9,6 +9,7 @@ import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
+import micdoodle8.mods.galacticraft.core.client.SkyProviderOrbit;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.world.gen.dungeon.RoomTreasure;
 import net.minecraft.block.Block;
@@ -54,12 +55,12 @@ public class DimensionOverworldOrbit extends DimensionSpaceStation implements IO
 //    {
 //        return new Vector3(0, 0, 0);
 //    }
-//
-//    @Override
-//    public Vector3 getSkyColor()
-//    {
-//        return new Vector3(0, 0, 0);
-//    }
+
+    @Override
+    public Vector3 getSkyColor()
+    {
+        return new Vector3(0, 0, 0);
+    }
 
 
 
@@ -83,25 +84,25 @@ public class DimensionOverworldOrbit extends DimensionSpaceStation implements IO
         return a < 0.42F || a > 0.58F;
     }
 
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public float getStarBrightness(float par1)
-//    {
-//        final float var2 = this.world.getCelestialAngle(par1);
-//        float var3 = 1.0F - (MathHelper.cos(var2 * Constants.twoPI) * 2.0F + 0.25F);
-//
-//        if (var3 < 0.0F)
-//        {
-//            var3 = 0.0F;
-//        }
-//
-//        if (var3 > 1.0F)
-//        {
-//            var3 = 1.0F;
-//        }
-//
-//        return var3 * var3 * 0.5F + 0.3F;
-//    }
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public float getStarBrightness(float par1)
+    {
+        final float var2 = this.world.getCelestialAngle(par1);
+        float var3 = 1.0F - (MathHelper.cos(var2 * Constants.twoPI) * 2.0F + 0.25F);
+
+        if (var3 < 0.0F)
+        {
+            var3 = 0.0F;
+        }
+
+        if (var3 > 1.0F)
+        {
+            var3 = 1.0F;
+        }
+
+        return var3 * var3 * 0.5F + 0.3F;
+    }
 
     @Override
     public boolean isSkyColored()
@@ -289,55 +290,36 @@ public class DimensionOverworldOrbit extends DimensionSpaceStation implements IO
         super.updateWeather(defaultLogic);
     }
 
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void setSpinDeltaPerTick(float angle)
-//    {
-//        SkyProviderOrbit skyProvider = ((SkyProviderOrbit) this.getSkyRenderer());
-//        if (skyProvider != null)
-//        {
-//            skyProvider.spinDeltaPerTick = angle;
-//        }
-//    }
-//
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public float getSkyRotation()
-//    {
-//        SkyProviderOrbit skyProvider = ((SkyProviderOrbit) this.getSkyRenderer());
-//        return skyProvider.spinAngle;
-//    }
-//
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void createSkyProvider()
-//    {
-//        this.setSkyRenderer(new SkyProviderOrbit(new ResourceLocation(Constants.MOD_ID_CORE, "textures/gui/celestialbodies/earth.png"), true, true));
-////        this.setSpinDeltaPerTick(this.getSpinManager().getSpinRate()); TODO Spin
-//
-//        if (this.getCloudRenderer() == null)
-//        {
-//            this.setCloudRenderer(new CloudRenderer());
-//        }
-//    } TODO Sky providers
-
-
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void setSpinDeltaPerTick(float angle)
     {
-
+        SkyProviderOrbit skyProvider = ((SkyProviderOrbit) this.getSkyRenderer());
+        if (skyProvider != null)
+        {
+            skyProvider.spinDeltaPerTick = angle;
+        }
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public float getSkyRotation()
     {
-        return 0;
+        SkyProviderOrbit skyProvider = ((SkyProviderOrbit) this.getSkyRenderer());
+        return skyProvider.spinAngle;
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void createSkyProvider()
     {
+        this.setSkyRenderer(new SkyProviderOrbit(new ResourceLocation(Constants.MOD_ID_CORE, "textures/gui/celestialbodies/earth.png"), true, true));
+        this.setSpinDeltaPerTick(this.getSpinManager().getSpinRate());
 
+        if (this.getCloudRenderer() == null)
+        {
+            this.setCloudRenderer(new CloudRenderer());
+        }
     }
 
     @Override

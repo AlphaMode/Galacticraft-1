@@ -8,6 +8,7 @@ import micdoodle8.mods.galacticraft.core.network.NetworkUtil;
 import micdoodle8.mods.galacticraft.core.network.PacketDynamic;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.LogicalSide;
@@ -114,7 +115,7 @@ public abstract class TileEntityAdvanced extends TileEntityInventory implements 
     {
     }
 
-    public void readExtraNetworkedData(ByteBuf dataStream)
+    public void readExtraNetworkedData(PacketBuffer dataStream)
     {
     }
 
@@ -190,7 +191,7 @@ public abstract class TileEntityAdvanced extends TileEntityInventory implements 
     }
 
     @Override
-    public void decodePacketdata(ByteBuf buffer)
+    public void decodePacketdata(PacketBuffer buffer)
     {
         if (this.world == null)
         {

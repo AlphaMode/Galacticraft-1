@@ -27,7 +27,7 @@ public class GCContainers
     {
         IForgeRegistry<ContainerType<?>> r = evt.getRegistry();
 
-        ContainerType<ContainerBuggy> buggy = IForgeContainerType.create((windowId, inv, data) -> new ContainerBuggy(windowId, inv, EntityBuggy.BuggyType.byId(data.readInt())));
+        ContainerType<ContainerBuggy> buggy = IForgeContainerType.create((windowId, inv, data) -> new ContainerBuggy(windowId, inv, data.readEnumValue(EntityBuggy.BuggyType.class)));
         ContainerType<ContainerCargoLoader> cargoLoader = IForgeContainerType.create((windowId, inv, data) -> new ContainerCargoLoader(windowId, inv, (TileEntityCargoBase) inv.player.world.getTileEntity(data.readBlockPos())));
         ContainerType<ContainerCargoUnloader> cargoUnloader = IForgeContainerType.create((windowId, inv, data) -> new ContainerCargoUnloader(windowId, inv, (TileEntityCargoBase) inv.player.world.getTileEntity(data.readBlockPos())));
         ContainerType<ContainerCircuitFabricator> circuitFabricator = IForgeContainerType.create((windowId, inv, data) -> new ContainerCircuitFabricator(windowId, inv, (TileEntityCircuitFabricator) inv.player.world.getTileEntity(data.readBlockPos())));

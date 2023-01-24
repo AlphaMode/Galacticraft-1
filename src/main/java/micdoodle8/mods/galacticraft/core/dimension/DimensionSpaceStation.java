@@ -22,18 +22,18 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  */
 public abstract class DimensionSpaceStation extends DimensionSpace
 {
-//    private SpinManager spinManager = new SpinManager(this);
+    private SpinManager spinManager = new SpinManager(this);
 
     public DimensionSpaceStation(World worldIn, DimensionType typeIn, float lightMod)
     {
         super(worldIn, typeIn, lightMod);
-//        this.getSpinManager().registerServerSide();
+        this.getSpinManager().registerServerSide();
     }
 
-//    public SpinManager getSpinManager()
-//    {
-//        return spinManager;
-//    }
+    public SpinManager getSpinManager()
+    {
+        return spinManager;
+    }
 
     @Override
     public ChunkGenerator<?> createChunkGenerator()
@@ -46,7 +46,7 @@ public abstract class DimensionSpaceStation extends DimensionSpace
     public void updateWeather(Runnable defaultLogic)
     {
         super.updateWeather(defaultLogic);
-//        spinManager.updateSpin();
+        spinManager.updateSpin();
     }
 
     @OnlyIn(Dist.CLIENT)

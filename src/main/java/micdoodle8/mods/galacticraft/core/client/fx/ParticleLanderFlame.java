@@ -1,5 +1,6 @@
 package micdoodle8.mods.galacticraft.core.client.fx;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
@@ -8,13 +9,11 @@ import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.UUID;
@@ -55,8 +54,8 @@ public class ParticleLanderFlame extends SpriteTexturedParticle
     @Override
     public void renderParticle(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks)
     {
-        GL11.glDepthMask(false);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        RenderSystem.depthMask(false);
+        RenderSystem.disableDepthTest();
         float var8 = (this.age + partialTicks) / this.maxAge * 32.0F;
 
         if (var8 < 0.0F)
@@ -71,8 +70,8 @@ public class ParticleLanderFlame extends SpriteTexturedParticle
 
         this.particleScale = this.smokeParticleScale * var8;
         super.renderParticle(buffer, renderInfo, partialTicks);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(true);
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
     }
 
     @Override
@@ -87,7 +86,7 @@ public class ParticleLanderFlame extends SpriteTexturedParticle
             this.setExpired();
         }
 
-        this.selectSpriteWithAge(this.animatedSprite);
+//        this.selectSpriteWithAge(this.animatedSprite);
         this.move(this.motionX, this.motionY, this.motionZ);
 
         this.particleGreen -= 0.09F;

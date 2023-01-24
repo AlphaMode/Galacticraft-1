@@ -1,5 +1,6 @@
 package micdoodle8.mods.galacticraft.core.client.gui.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
@@ -25,7 +26,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class GuiJoinSpaceRace extends Screen implements ICheckBoxCallback, IText
     private int buttonFlag_xPosition;
     private int buttonFlag_yPosition;
 
-    private final EntityFlag dummyFlag = new EntityFlag(GCEntities.FLAG, Minecraft.getInstance().world);
+    private final EntityFlag dummyFlag = GCEntities.FLAG.create(Minecraft.getInstance().world);
 //    private final ModelFlag dummyModel = new ModelFlag();
 
     private final SpaceRace spaceRaceData;
@@ -118,12 +118,12 @@ public class GuiJoinSpaceRace extends Screen implements ICheckBoxCallback, IText
             this.drawFlagButton(par1, par2);
             this.drawCenteredString(this.font, GCCoreUtil.translate("gui.space_race.join.owner") + ": " + this.spaceRaceData.getPlayerNames().get(0), this.width / 2, this.buttonFlag_yPosition + this.buttonFlag_height + 25, ColorUtil.to32BitColor(255, 150, 150, 150));
             this.drawCenteredString(this.font, GCCoreUtil.translateWithFormat("gui.space_race.join.member_count", this.spaceRaceData.getPlayerNames().size()), this.width / 2, this.buttonFlag_yPosition + this.buttonFlag_height + 40, ColorUtil.to32BitColor(255, 150, 150, 150));
-            GL11.glPushMatrix();
-            GL11.glTranslatef(this.width / 2, this.buttonFlag_yPosition + this.buttonFlag_height + 5 + Minecraft.getInstance().fontRenderer.FONT_HEIGHT / 2, 0);
-            GL11.glScalef(1.5F, 1.5F, 1.0F);
-            GL11.glTranslatef(-this.width / 2, (-(this.buttonFlag_yPosition + this.buttonFlag_height + 5)) - Minecraft.getInstance().fontRenderer.FONT_HEIGHT / 2, 0);
+            RenderSystem.pushMatrix();
+            RenderSystem.translatef(this.width / 2, this.buttonFlag_yPosition + this.buttonFlag_height + 5 + Minecraft.getInstance().fontRenderer.FONT_HEIGHT / 2, 0);
+            RenderSystem.scalef(1.5F, 1.5F, 1.0F);
+            RenderSystem.translatef(-this.width / 2, (-(this.buttonFlag_yPosition + this.buttonFlag_height + 5)) - Minecraft.getInstance().fontRenderer.FONT_HEIGHT / 2, 0);
             this.drawCenteredString(this.font, this.spaceRaceData.getTeamName(), this.width / 2, this.buttonFlag_yPosition + this.buttonFlag_height + 5, ColorUtil.to32BitColor(255, 100, 150, 20));
-            GL11.glPopMatrix();
+            RenderSystem.popMatrix();
         }
 
         super.render(par1, par2, par3);
@@ -131,15 +131,15 @@ public class GuiJoinSpaceRace extends Screen implements ICheckBoxCallback, IText
 
     private void drawFlagButton(int mouseX, int mouseY)
     {
-        GL11.glPushMatrix();
-        GL11.glTranslatef(this.buttonFlag_xPosition + 2.9F, this.buttonFlag_yPosition + this.buttonFlag_height + 1 - 4, 0);
-        GL11.glScalef(74.0F, 74.0F, 1F);
-        GL11.glTranslatef(0.0F, 0.36F, 1.0F);
-        GL11.glScalef(1.0F, 1.0F, -1F);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(this.buttonFlag_xPosition + 2.9F, this.buttonFlag_yPosition + this.buttonFlag_height + 1 - 4, 0);
+        RenderSystem.scalef(74.0F, 74.0F, 1F);
+        RenderSystem.translatef(0.0F, 0.36F, 1.0F);
+        RenderSystem.scalef(1.0F, 1.0F, -1F);
         this.dummyFlag.flagData = this.spaceRaceData.getFlagData();
 //        this.dummyModel.renderFlag(this.dummyFlag, this.ticksPassed); TODO Space race flag render
-        GL11.glColor3f(1, 1, 1);
-        GL11.glPopMatrix();
+        RenderSystem.color3f(1, 1, 1);
+        RenderSystem.popMatrix();
     }
 
     @Override

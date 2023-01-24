@@ -42,6 +42,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.*;
@@ -149,7 +150,7 @@ public class TileEntityLaserTurret extends TileBaseElectricBlockWithInventory im
     }
 
     @Override
-    public void readExtraNetworkedData(ByteBuf dataStream)
+    public void readExtraNetworkedData(PacketBuffer dataStream)
     {
         if (this.world.isRemote)
         {
@@ -157,13 +158,13 @@ public class TileEntityLaserTurret extends TileBaseElectricBlockWithInventory im
             int playerSize = dataStream.readInt();
             for (int i = 0; i < playerSize; ++i)
             {
-                players.add(NetworkUtil.readUTF8String(dataStream));
+                players.add(dataStream.readString());
             }
             entities.clear();
             int entitySize = dataStream.readInt();
             for (int i = 0; i < entitySize; ++i)
             {
-                entities.add(new ResourceLocation(NetworkUtil.readUTF8String(dataStream)));
+                entities.add(dataStream.readResourceLocation());
             }
             if (dataStream.readBoolean())
             {
@@ -411,14 +412,14 @@ public class TileEntityLaserTurret extends TileBaseElectricBlockWithInventory im
                     {
                         toTarget.remove();
                     }
-                    this.world.playSound(null, getPos().up(), GCSounds.laserShoot, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    this.world.playSound(null, getPos().up(), GCSounds.laserShoot.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
                     storage.setEnergyStored(storage.getEnergyStoredGC() - 1000);
                     chargeLevel = 0;
                 }
             }
             else if (chargeLevel == 22)
             {
-                this.world.playSound(null, getPos().up(), GCSounds.laserCharge, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                this.world.playSound(null, getPos().up(), GCSounds.laserCharge.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
         }
         else

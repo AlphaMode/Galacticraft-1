@@ -74,7 +74,7 @@ public class PacketEntityUpdate extends PacketBase
     }
 
     @Override
-    public void encodeInto(ByteBuf buffer)
+    public void encodeInto(PacketBuffer buffer)
     {
         super.encodeInto(buffer);
         buffer.writeInt(this.entityID);
@@ -90,7 +90,7 @@ public class PacketEntityUpdate extends PacketBase
     }
 
     @Override
-    public void decodeInto(ByteBuf buffer)
+    public void decodeInto(PacketBuffer buffer)
     {
         super.decodeInto(buffer);
         this.entityID = buffer.readInt();

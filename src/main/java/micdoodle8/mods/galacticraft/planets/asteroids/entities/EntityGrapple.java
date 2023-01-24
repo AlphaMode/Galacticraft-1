@@ -23,7 +23,6 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
@@ -33,6 +32,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -69,7 +69,7 @@ public class EntityGrapple extends Entity implements IProjectile
 
     public static EntityGrapple createEntityGrapple(World world, PlayerEntity shootingEntity, float par3, ItemStack stringStack)
     {
-        EntityGrapple grapple = new EntityGrapple(AsteroidEntities.GRAPPLE.get(), world);
+        EntityGrapple grapple = AsteroidEntities.GRAPPLE.get().create(world);
         grapple.shootingEntity = shootingEntity;
 //        grapple.setSize(0.75F, 0.75F);
 
@@ -95,7 +95,7 @@ public class EntityGrapple extends Entity implements IProjectile
     @Override
     public IPacket<?> createSpawnPacket()
     {
-        return new SSpawnObjectPacket(this);
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
@@ -226,7 +226,7 @@ public class EntityGrapple extends Entity implements IProjectile
                         GCPlayerStatsClient stats = GCPlayerStatsClient.get(shootingEntity);
                         if (stats != null)
                         {
-//                            stats.getFreefallHandler().updateFreefall(shootingEntity); TODO Freefall
+                            stats.getFreefallHandler().updateFreefall(shootingEntity);
                         }
                     }
                 }
@@ -308,7 +308,7 @@ public class EntityGrapple extends Entity implements IProjectile
                 this.updatePullingEntity(false);
             }
 
-            if (this.shootingEntity != null && this.getDistanceSq(this.shootingEntity) >= 40 * 40)
+            if (this.shootingEntity != null && this.getDistance(this.shootingEntity) >= 40)
             {
                 this.remove();
             }

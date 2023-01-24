@@ -6,15 +6,19 @@ import micdoodle8.mods.galacticraft.core.network.GalacticraftChannelHandler;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityDeconstructor;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
 import micdoodle8.mods.galacticraft.planets.asteroids.blocks.AsteroidBlocks;
+import micdoodle8.mods.galacticraft.planets.asteroids.entities.AsteroidEntities;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
+import micdoodle8.mods.galacticraft.planets.asteroids.world.gen.AsteroidFeatures;
 import micdoodle8.mods.galacticraft.planets.mars.MarsModule;
 import micdoodle8.mods.galacticraft.planets.mars.blocks.MarsBlocks;
 import micdoodle8.mods.galacticraft.planets.mars.items.MarsItems;
 import micdoodle8.mods.galacticraft.planets.venus.VenusModule;
 import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlocks;
 import micdoodle8.mods.galacticraft.planets.venus.items.VenusItems;
+import micdoodle8.mods.galacticraft.planets.venus.world.gen.VenusFeatures;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -58,6 +62,7 @@ public class GalacticraftPlanets
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addGenericListener(Block.class, GalacticraftPlanets::registerBlocks);
         modBus.addGenericListener(Item.class, GalacticraftPlanets::registerItems);
+        modBus.addGenericListener(Biome.class, GalacticraftPlanets::registerBiomes);
         modBus.addListener(this::commonSetup);
 
         GalacticraftCore.isPlanetsLoaded = true;
@@ -69,6 +74,11 @@ public class GalacticraftPlanets
         GalacticraftPlanets.commonModules.add(new MarsModule());
         GalacticraftPlanets.commonModules.add(new AsteroidsModule());
         GalacticraftPlanets.commonModules.add(new VenusModule());
+
+        PlanetFluids.FLUIDS.register(modBus);
+        AsteroidEntities.ENTITIES.register(modBus);
+        AsteroidFeatures.FEATURES.register(modBus);
+        VenusFeatures.FEATURES.register(modBus);
     }
 
     @SubscribeEvent
@@ -89,6 +99,12 @@ public class GalacticraftPlanets
         MarsItems.registerItems(evt);
         AsteroidsItems.registerItems(evt);
         VenusItems.registerItems(evt);
+    }
+
+    @SubscribeEvent
+    public static void registerBiomes(RegistryEvent.Register<Biome> evt)
+    {
+        GalacticraftPlanets.proxy.biomeRegisterEvent(evt);
     }
 
     @OnlyIn(Dist.CLIENT)

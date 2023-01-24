@@ -65,7 +65,12 @@ public class GCEntities
             .setTrackingRange(64)
             .setShouldReceiveVelocityUpdates(true)
             .build("");
-    //    public static final EntityType<EntityAlienVillager> ALIEN_VILLAGER = register(GCEntityNames.alienVillager, GCEntities::alienVillager);
+    public static final EntityType<EntityAlienVillager> ALIEN_VILLAGER = EntityType.Builder.create(EntityAlienVillager::new, EntityClassification.MONSTER)
+            .size(0.6F, 1.8F)
+            .setUpdateInterval(10)
+            .setTrackingRange(64)
+            .setShouldReceiveVelocityUpdates(true)
+            .build("");
     public static final EntityType<EntityTier1Rocket> ROCKET_T1 = EntityType.Builder.create(EntityTier1Rocket::new, EntityClassification.MISC)
             .size(1.2F, 3.5F)
             .setUpdateInterval(1)
@@ -138,7 +143,7 @@ public class GCEntities
         register(r, EVOLVED_ENDERMAN, GCEntityNames.evolvedEnderman);
         register(r, EVOLVED_WITCH, GCEntityNames.evolvedWitch);
         register(r, SKELETON_BOSS, GCEntityNames.skeletonBoss);
-        //    register(r, ALIEN_VILLAGER, GCEntityNames.alienVillager);
+        register(r, ALIEN_VILLAGER, GCEntityNames.alienVillager);
         register(r, ROCKET_T1, GCEntityNames.rocketTier1);
         register(r, METEOR, GCEntityNames.meteor);
         register(r, METEOR_HUGE, GCEntityNames.meteorHuge);

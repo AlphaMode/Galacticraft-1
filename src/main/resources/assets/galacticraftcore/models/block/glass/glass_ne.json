@@ -1,4 +1,11 @@
 {
+    "textures": {
+        "edge": "blocks/glass_pane_top",
+        "particle": "block/glass",
+        "-1": "block/glass",
+        "0": "galacticraftcore:blocks/space_glass_clear",
+        "1": "galacticraftcore:blocks/space_glass_frame_white"
+    },
     "elements": [
         {
             "name": "1b",

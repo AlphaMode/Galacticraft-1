@@ -30,7 +30,7 @@ public class PacketDynamic extends PacketBase
     private int type;
     private Object identifier;
     private ArrayList<Object> sendData;
-    private ByteBuf payloadData;
+    private PacketBuffer payloadData;
 
     public PacketDynamic()
     {
@@ -91,7 +91,7 @@ public class PacketDynamic extends PacketBase
     }
 
     @Override
-    public void encodeInto(ByteBuf buffer)
+    public void encodeInto(PacketBuffer buffer)
     {
         super.encodeInto(buffer);
         buffer.writeInt(this.type);
@@ -109,7 +109,7 @@ public class PacketDynamic extends PacketBase
             break;
         }
 
-        ByteBuf payloadData = Unpooled.buffer();
+        PacketBuffer payloadData = new PacketBuffer(Unpooled.buffer());
 
         try
         {
@@ -126,7 +126,7 @@ public class PacketDynamic extends PacketBase
     }
 
     @Override
-    public void decodeInto(ByteBuf buffer) throws IndexOutOfBoundsException
+    public void decodeInto(PacketBuffer buffer) throws IndexOutOfBoundsException
     {
         super.decodeInto(buffer);
         this.type = buffer.readInt();
@@ -140,17 +140,17 @@ public class PacketDynamic extends PacketBase
         switch (this.type)
         {
         case 0:
-            this.identifier = new Integer(buffer.readInt());
+            this.identifier = buffer.readInt();
 
             int length = buffer.readInt();
-            payloadData = Unpooled.copiedBuffer(buffer.readBytes(length));
+            payloadData = new PacketBuffer(Unpooled.copiedBuffer(buffer.readBytes(length)));
 //                if (entity instanceof IPacketReceiver && buffer.readableBytes() > 0)
             break;
         case 1:
             this.identifier = new BlockPos(buffer.readInt(), buffer.readInt(), buffer.readInt());
 
             length = buffer.readInt();
-            payloadData = Unpooled.copiedBuffer(buffer.readBytes(length));
+            payloadData = new PacketBuffer(Unpooled.copiedBuffer(buffer.readBytes(length)));
 
             break;
         }

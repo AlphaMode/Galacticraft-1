@@ -2,7 +2,6 @@ package micdoodle8.mods.galacticraft.planets.venus.client.render.tile;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.vector.Vector3D;
@@ -14,7 +13,6 @@ import micdoodle8.mods.galacticraft.planets.venus.tile.TileEntityLaserTurret;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -22,8 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.obj.OBJModel;
 import org.lwjgl.opengl.GL11;
 
 @OnlyIn(Dist.CLIENT)
@@ -71,11 +67,11 @@ public class TileEntityLaserTurretRenderer extends TileEntityRenderer<TileEntity
 
         if (Minecraft.isAmbientOcclusionEnabled())
         {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            RenderSystem.shadeModel(GL11.GL_SMOOTH);
         }
         else
         {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
+            RenderSystem.shadeModel(GL11.GL_FLAT);
         }
 
         matStack.scale(1 / 16.0F, 1 / 16.0F, 1 / 16.0F);
@@ -129,7 +125,7 @@ public class TileEntityLaserTurretRenderer extends TileEntityRenderer<TileEntity
         {
 //            GlStateManager.pushMatrix();
             matStack.push();
-            GlStateManager.enableBlend();
+            RenderSystem.enableBlend();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 //            GlStateManager.rotatef(tile.yaw, 0.0F, 1.0F, 0.0F);
             matStack.rotate(new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), tile.yaw, true));
@@ -138,7 +134,7 @@ public class TileEntityLaserTurretRenderer extends TileEntityRenderer<TileEntity
 //            GlStateManager.translatef(-0.6F, 0.28F, 0.0F);
             matStack.translate(-0.6F, 0.28F, 0.0F);
 
-            GlStateManager.disableTexture();
+            RenderSystem.disableTexture();
 
             tess.getBuffer().begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
 
@@ -147,7 +143,7 @@ public class TileEntityLaserTurretRenderer extends TileEntityRenderer<TileEntity
             tess.getBuffer().pos(0.09F, 0.0F, -0.275F).color(0.0F, 1.0F, 0.0F, 1.0F).endVertex();
 
             tess.draw();
-            GlStateManager.enableTexture();
+            RenderSystem.enableTexture();
 
             float scale = tile.chargeLevel / 600.0F;
 //            GlStateManager.scalef(0.01F + scale, 0.01F + scale, 0.01F + scale);
@@ -158,7 +154,7 @@ public class TileEntityLaserTurretRenderer extends TileEntityRenderer<TileEntity
 //            GlStateManager.rotatef(rotate, 0.0F, 1.0F, 0.0F);
             matStack.rotate(new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), rotate, true));
             ClientUtil.drawBakedModel(orb2, bufferIn, matStack, Constants.PACKED_LIGHT_FULL_BRIGHT);
-            GlStateManager.disableBlend();
+            RenderSystem.disableBlend();
 //            GlStateManager.popMatrix();
             matStack.pop();
         }
@@ -169,11 +165,11 @@ public class TileEntityLaserTurretRenderer extends TileEntityRenderer<TileEntity
 
             if (e != null)
             {
-                GlStateManager.disableTexture();
+                RenderSystem.disableTexture();
 //                GlStateManager.pushMatrix();
                 matStack.push();
-                GlStateManager.enableBlend();
-                GlStateManager.disableCull();
+                RenderSystem.enableBlend();
+                RenderSystem.disableCull();
                 RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 //                GlStateManager.rotatef(tile.yaw, 0.0F, 1.0F, 0.0F);
                 matStack.rotate(new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), tile.yaw, true));
@@ -219,8 +215,8 @@ public class TileEntityLaserTurretRenderer extends TileEntityRenderer<TileEntity
 
                 tess.draw();
 
-                GlStateManager.enableCull();
-                GlStateManager.enableTexture();
+                RenderSystem.enableCull();
+                RenderSystem.enableTexture();
                 matStack.pop();
 //                GlStateManager.popMatrix();
             }

@@ -2,7 +2,7 @@ package micdoodle8.mods.galacticraft.core.client.render.tile;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.blocks.BlockArcLamp;
 import micdoodle8.mods.galacticraft.core.client.obj.GCModelCache;
@@ -39,14 +39,14 @@ public class TileEntityArclampRenderer extends TileEntityRenderer<TileEntityArcl
     {
         int metaFacing = arclamp.facing;
 
-        GlStateManager.disableRescaleNormal();
+        RenderSystem.disableRescaleNormal();
 //        GlStateManager.pushMatrix();
         matStack.push();
 //        GlStateManager.translatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
         matStack.translate(0.5F, 0.5F, 0.5F);
 
         RenderHelper.enableStandardItemLighting();
-        GlStateManager.enableRescaleNormal();
+        RenderSystem.enableRescaleNormal();
 
         switch (arclamp.getBlockState().get(BlockArcLamp.FACING))
         {
@@ -110,7 +110,7 @@ public class TileEntityArclampRenderer extends TileEntityRenderer<TileEntityArcl
             break;
         }
 
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 //        GlStateManager.rotatef(45F, -1F, 0, 0);
         matStack.rotate(new Quaternion(Vector3f.XN, 45.0F, true));
 //        GlStateManager.scalef(0.048F, 0.048F, 0.048F);
@@ -121,15 +121,15 @@ public class TileEntityArclampRenderer extends TileEntityRenderer<TileEntityArcl
         float greyLevel = arclamp.getEnabled() ? 1.0F : 26F / 255F;
         //Save the lighting state
 //        GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, 240.0F, 240.0F);
-        GlStateManager.disableLighting();
+        RenderSystem.disableLighting();
 
         ClientUtil.drawBakedModel(lampMetal, bufferIn, matStack, Constants.PACKED_LIGHT_FULL_BRIGHT);
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.disableTexture();
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.disableTexture();
         final Tessellator tess = Tessellator.getInstance();
         BufferBuilder worldRenderer = tess.getBuffer();
-        GlStateManager.color4f(greyLevel, greyLevel, greyLevel, 1.0F);
-        GlStateManager.enableCull();
+        RenderSystem.color4f(greyLevel, greyLevel, greyLevel, 1.0F);
+        RenderSystem.enableCull();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
         float frameA = -3.4331F;  //These co-ordinates came originally from arclamp_light.obj model
         float frameB = -frameA;  //These co-ordinates came originally from arclamp_light.obj model
@@ -140,12 +140,12 @@ public class TileEntityArclampRenderer extends TileEntityRenderer<TileEntityArcl
         worldRenderer.pos(last, frameB, frameY, frameA).endVertex();
         worldRenderer.pos(last, frameA, frameY, frameA).endVertex();
         tess.draw();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.enableTexture();
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableTexture();
         //? need to undo GlStateManager.glBlendFunc()?
 
         //Restore the lighting state
-        GlStateManager.enableLighting();
+        RenderSystem.enableLighting();
 //        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightMapSaveX, lightMapSaveY);
 //        GlStateManager.popMatrix();
         matStack.pop();

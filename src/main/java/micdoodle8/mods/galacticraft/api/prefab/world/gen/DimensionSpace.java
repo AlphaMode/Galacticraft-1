@@ -47,7 +47,7 @@ public abstract class DimensionSpace extends Dimension implements IGalacticraftD
     /**
      * The sky color in this dimension
      */
-//    public abstract Vector3 getSkyColor();
+    public abstract Vector3 getSkyColor();
 
     /**
      * Whether or not there will be rain or snow in this dimension
@@ -261,12 +261,12 @@ public abstract class DimensionSpace extends Dimension implements IGalacticraftD
 //        return new Vec3d(fogColor.floatX(), fogColor.floatY(), fogColor.floatZ());
 //    }
 
-//    @Override
-//    public Vec3d getSkyColor(BlockPos cameraPos, float partialTicks)
-//    {
-//        Vector3 skyColor = this.getSkyColor();
-//        return new Vec3d(skyColor.floatX(), skyColor.floatY(), skyColor.floatZ());
-//    }
+    @Override
+    public Vec3d getSkyColor(BlockPos cameraPos, float partialTicks)
+    {
+        Vector3 skyColor = this.getSkyColor();
+        return new Vec3d(skyColor.floatX(), skyColor.floatY(), skyColor.floatZ());
+    }
 
     @Override
     public boolean isSkyColored()

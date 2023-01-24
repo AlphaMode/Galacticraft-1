@@ -1,7 +1,9 @@
 package micdoodle8.mods.galacticraft.core.client.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.client.IGameScreen;
 import micdoodle8.mods.galacticraft.api.client.IScreenManager;
 import micdoodle8.mods.galacticraft.api.entity.ITelemetry;
@@ -11,7 +13,9 @@ import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -93,13 +97,13 @@ public class GameScreenText implements IGameScreen
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void render(int type, float ticks, float sizeX, float sizeY, IScreenManager scr)
+    public void render(MatrixStack matrixStackIn, int type, float ticks, float sizeX, float sizeY, IScreenManager scr)
     {
         DrawGameScreen screen = (DrawGameScreen) scr;
 
         frameBx = sizeX - frameA;
         frameBy = sizeY - frameA;
-        drawBlackBackground(0.0F);
+        drawBlackBackground(matrixStackIn, 0.0F);
         planeEquation(frameA, frameA, 0, frameA, frameBy, 0, frameA, frameBy, 1);
         GL11.glClipPlane(GL11.GL_CLIP_PLANE0, planes);
         GL11.glEnable(GL11.GL_CLIP_PLANE0);
@@ -295,8 +299,8 @@ public class GameScreenText implements IGameScreen
         }
         float Xoffset = (sizeX - borders - textWidthPixels * scaleText) / 2 + Xmargin;
         float Yoffset = (sizeY - borders - textHeightPixels * scaleText) / 2 + scaleText;
-        GL11.glTranslatef(border + Xoffset, border + Yoffset, 0.0F);
-        GL11.glScalef(scaleText, scaleText, 1.0F);
+        matrixStackIn.translate(border + Xoffset, border + Yoffset, 0.0F);
+        matrixStackIn.scale(scaleText, scaleText, 1.0F);
 
         //Actually draw the text
         int whiteColour = ColorUtil.to32BitColor(255, 240, 216, 255);
@@ -310,11 +314,11 @@ public class GameScreenText implements IGameScreen
         //If there is an entity to render, draw it on the left of the text
         if (renderEntity != null && entity != null)
         {
-            GL11.glTranslatef(-Xmargin / 2 / scaleText, textHeightPixels / 2 + (-Yoffset + (sizeY - borders) / 2) / scaleText, -0.0005F);
+            matrixStackIn.translate(-Xmargin / 2 / scaleText, textHeightPixels / 2 + (-Yoffset + (sizeY - borders) / 2) / scaleText, -0.0005F);
             float scalefactor = 38F / (float) Math.pow(Math.max(entity.getHeight(), entity.getWidth()), 0.65);
-            GL11.glScalef(scalefactor, scalefactor, 0.0015F);
-            GL11.glRotatef(180F, 0, 0, 1);
-            GL11.glRotatef(180F, 0, 1, 0);
+            matrixStackIn.scale(scalefactor, scalefactor, 0.0015F);
+            matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180F));
+            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180F));
             if (entity instanceof ITelemetry)
             {
                 ((ITelemetry) entity).adjustDisplay(telemeter.clientData);
@@ -330,9 +334,9 @@ public class GameScreenText implements IGameScreen
 //            }
 //            RenderPlayerGC.flagThermalOverride = false;
             // TODO Player Rendering ^
-//            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+//            RenderSystem.enableRescaleNormal();
 //            OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-//            GL11.glDisable(GL11.GL_TEXTURE_2D);
+//            RenderSystem.disableTexture();
 //            OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         }
 
@@ -448,22 +452,23 @@ public class GameScreenText implements IGameScreen
         yPos += 10;
     }
 
-    private void drawBlackBackground(float greyLevel)
+    private void drawBlackBackground(MatrixStack matrixStackIn, float greyLevel)
     {
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.disableTexture();
         final Tessellator tess = Tessellator.getInstance();
         BufferBuilder worldRenderer = tess.getBuffer();
-        GL11.glColor4f(greyLevel, greyLevel, greyLevel, 1.0F);
+        RenderSystem.color4f(greyLevel, greyLevel, greyLevel, 1.0F);
+        Matrix4f last = matrixStackIn.getLast().getMatrix();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        worldRenderer.pos(frameA, frameBy, 0.005F).endVertex();
-        worldRenderer.pos(frameBx, frameBy, 0.005F).endVertex();
-        worldRenderer.pos(frameBx, frameA, 0.005F).endVertex();
-        worldRenderer.pos(frameA, frameA, 0.005F).endVertex();
+        worldRenderer.pos(last, frameA, frameBy, 0.005F).endVertex();
+        worldRenderer.pos(last, frameBx, frameBy, 0.005F).endVertex();
+        worldRenderer.pos(last, frameBx, frameA, 0.005F).endVertex();
+        worldRenderer.pos(last, frameA, frameA, 0.005F).endVertex();
         tess.draw();
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableTexture();
     }
 
     private void planeEquation(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3)

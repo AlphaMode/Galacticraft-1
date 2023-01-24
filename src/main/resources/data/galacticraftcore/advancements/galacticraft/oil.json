@@ -7,8 +7,7 @@
             "translate": "advancement.galacticraft.oil.description"
         },
         "icon": {
-            "item": "galacticraftcore:bucket_oil",
-            "data": 0
+            "item": "galacticraftcore:bucket_oil"
         },
         "frame": "task",
         "show_toast": true,
@@ -19,7 +18,7 @@
         "in_oil": {
             "trigger": "minecraft:enter_block",
             "conditions": {
-                "block": "galacticraftcore:crude_oil_still"
+                "block": "galacticraftcore:oil"
             }
         }
     },

@@ -29,7 +29,6 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
@@ -37,6 +36,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.EnumSet;
 import java.util.UUID;
@@ -115,7 +115,7 @@ public class EntitySlimeling extends TameableEntity implements IEntityBreathable
     @Override
     public IPacket<?> createSpawnPacket()
     {
-        return new SSpawnObjectPacket(this);
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
@@ -282,7 +282,7 @@ public class EntitySlimeling extends TameableEntity implements IEntityBreathable
     @Override
     protected SoundEvent getDeathSound()
     {
-        this.playSound(GCSounds.slimeDeath, this.getSoundVolume(), 0.8F);
+        this.playSound(GCSounds.slimeDeath.get(), this.getSoundVolume(), 0.8F);
         return null;
     }
 

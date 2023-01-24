@@ -125,7 +125,7 @@ public class EntityCreeperBoss extends EntityBossBase implements IEntityBreathab
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn)
     {
-        this.playSound(GCSounds.bossOuch, this.getSoundVolume(), this.getSoundPitch() - 0.15F);
+        this.playSound(GCSounds.bossOuch.get(), this.getSoundVolume(), this.getSoundPitch() - 0.15F);
         return null;
     }
 

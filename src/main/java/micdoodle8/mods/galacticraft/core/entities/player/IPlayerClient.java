@@ -9,7 +9,7 @@ public interface IPlayerClient
 {
     void move(ClientPlayerEntity player, MoverType type, Vec3d pos);
 
-    void onUpdate(ClientPlayerEntity player);
+    void tick(ClientPlayerEntity player);
 
     void onTickPre(ClientPlayerEntity player);
 
@@ -19,7 +19,7 @@ public interface IPlayerClient
 
     boolean isEntityInsideOpaqueBlock(ClientPlayerEntity player, boolean vanillaInside);
 
-//    boolean wakeUpPlayer(ClientPlayerEntity player, boolean immediately, boolean updateWorldFlag, boolean setSpawn); TODO Cryo chamber
+    boolean stopSleepInBed(ClientPlayerEntity player, boolean immediately, boolean updateWorldFlag);
 
     void onBuild(int i, ClientPlayerEntity player);
 }

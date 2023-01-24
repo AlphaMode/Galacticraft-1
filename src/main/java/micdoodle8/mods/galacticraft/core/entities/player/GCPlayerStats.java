@@ -4,6 +4,7 @@ import micdoodle8.mods.galacticraft.api.entity.IRocketType;
 import micdoodle8.mods.galacticraft.api.recipe.ISchematicPage;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.api.vector.Vector3D;
 import micdoodle8.mods.galacticraft.core.inventory.InventoryExtended;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -205,9 +206,9 @@ public abstract class GCPlayerStats
 
     public abstract void setChestSpawnCooldown(int chestSpawnCooldown);
 
-    public abstract Vector3 getChestSpawnVector();
+    public abstract Vector3D getChestSpawnVector();
 
-    public abstract void setChestSpawnVector(Vector3 chestSpawnVector);
+    public abstract void setChestSpawnVector(Vector3D chestSpawnVector);
 
     public abstract int getTeleportCooldown();
 

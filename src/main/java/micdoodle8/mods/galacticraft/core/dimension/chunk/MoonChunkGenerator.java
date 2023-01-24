@@ -2,6 +2,7 @@ package micdoodle8.mods.galacticraft.core.dimension.chunk;
 
 import micdoodle8.mods.galacticraft.core.world.gen.CraterFeature;
 import micdoodle8.mods.galacticraft.core.world.gen.GCFeatures;
+import micdoodle8.mods.galacticraft.core.world.gen.MoonVillageConfiguration;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -29,6 +30,7 @@ public class MoonChunkGenerator extends NoiseChunkGenerator<MoonGenSettings>
     });
 
     private final ConfiguredFeature<NoFeatureConfig, ?> craterGen = GCFeatures.MOON_CRATER.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG);
+    private final ConfiguredFeature<MoonVillageConfiguration, ?> villageGen = GCFeatures.MOON_VILLAGE.withConfiguration(new MoonVillageConfiguration());
 
     private final OctavesNoiseGenerator depthNoise;
 
@@ -48,6 +50,7 @@ public class MoonChunkGenerator extends NoiseChunkGenerator<MoonGenSettings>
         int l = j * 16;
         BlockPos blockpos = new BlockPos(k, 0, l);
         craterGen.place(region, this, region.getRandom(), blockpos);
+        villageGen.place(region, this, region.getRandom(), blockpos);
         super.decorate(region);
     }
 

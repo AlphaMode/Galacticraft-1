@@ -1,5 +1,7 @@
 package micdoodle8.mods.galacticraft.api.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 public interface IGameScreen
 {
     /**
@@ -27,13 +29,13 @@ public interface IGameScreen
      * @param scaleY Dimension of the screen in Y direction
      * @param screen The screen driver (DrawGameScreen) for this particular screen
      *               <p>
-     *               NOTE 1: It is not necessary to enclose your code with glPushMatrix and
-     *               glPopMatrix, as this will be done by the calling method.
+     *               NOTE 1: It is not necessary to enclose your code with {@link MatrixStack#push()} and
+     *               {@link MatrixStack#pop()}, as this will be done by the calling method.
      *               You can also change the lighting in your render as the calling
      *               method will finish by calling RenderHelper.enableStandardItemLighting().
      *               <p>
      *               NOTE 2: if disabling GL11.GL_TEXTURE_2D in your code it is very
      *               IMPORTANT to re-enable it again.
      */
-    void render(int type, float ticks, float scaleX, float scaleY, IScreenManager screen);
+    void render(MatrixStack matrixStackIn, int type, float ticks, float scaleX, float scaleY, IScreenManager screen);
 }

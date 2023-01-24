@@ -47,7 +47,7 @@ public class RenderEvolvedSkeleton extends BipedRenderer<EntityEvolvedSkeleton, 
         matrixStackIn.scale(1.2F, 1.2F, 1.2F);
         if (texSwitch)
         {
-            OverlaySensorGlasses.preRenderMobs();
+            OverlaySensorGlasses.preRenderMobs(matrixStackIn);
         }
     }
 

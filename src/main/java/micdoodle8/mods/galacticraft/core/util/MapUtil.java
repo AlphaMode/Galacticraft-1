@@ -593,9 +593,8 @@ public class MapUtil
      * @param overworldImage Output image already created as a blank image, dimensions biomeMapSizeX x biomeMapSizeY
      * @param paletteImage   Palette image, dimensions must be a square with sides biomeMapSizeZ / 4
      */
-    public static NativeImage convertTo12pxTexture(BufferedImage overworldImage, BufferedImage paletteImage)
+    public static NativeImage convertTo12pxTexture(NativeImage overworldImage, NativeImage paletteImage)
     {
-        NativeImage result = new NativeImage(overworldImage.getWidth(), overworldImage.getHeight(), false);
         TreeMap<Integer, Integer> mapColPos = new TreeMap<>();
         TreeMap<Integer, Integer> mapColPosB = new TreeMap<>();
         int count = 0;
@@ -610,10 +609,10 @@ public class MapUtil
                 {
                     for (int zz = 0; zz < 4; zz++)
                     {
-                        int col = overworldImage.getRGB(xx + x, zz + z);
-                        r += (col >> 16);
-                        g += (col >> 8) & 255;
-                        b += col & 255;
+                        int col = overworldImage.getPixelRGBA(xx + x, zz + z);
+                        r += NativeImage.getRed(col);
+                        g += NativeImage.getGreen(col);
+                        b += NativeImage.getBlue(col);
                     }
                 }
                 while (mapColPos.containsKey(g - b))
@@ -623,10 +622,10 @@ public class MapUtil
                 mapColPos.put(g - b, count);
                 if (x < overworldImage.getHeight())
                 {
-                    int col = paletteImage.getRGB(x + 1, z + 1);
-                    r = (col >> 16);
-                    g = (col >> 8) & 255;
-                    b = col & 255;
+                    int col = paletteImage.getPixelRGBA(x + 1, z + 1);
+                    r = NativeImage.getRed(col);
+                    g = NativeImage.getGreen(col);
+                    b = NativeImage.getBlue(col);
                     while (mapColPosB.containsKey(g - b))
                     {
                         g++;
@@ -658,14 +657,14 @@ public class MapUtil
                 {
                     for (int zzz = 0; zzz < 4; zzz++)
                     {
-                        result.setPixelRGBA(xx * 4 + xxx, zz * 4 + zzz, newCol);
+                        overworldImage.setPixelRGBA(xx * 4 + xxx, zz * 4 + zzz, newCol);
                     }
                 }
                 count++;
             }
         }
 
-        return result;
+        return overworldImage;
     }
 
     //Unused
@@ -877,7 +876,7 @@ public class MapUtil
         else if (raw.length == OVERWORLD_TEXTURE_WIDTH * OVERWORLD_TEXTURE_HEIGHT * 2)
         {
             //raw is a WIDTH_STD x HEIGHT_STD array of 2 byte entries: biome type followed by height
-            BufferedImage worldImage = new BufferedImage(OVERWORLD_TEXTURE_WIDTH, OVERWORLD_TEXTURE_HEIGHT, BufferedImage.TYPE_INT_RGB);
+            NativeImage worldImage = new NativeImage(OVERWORLD_TEXTURE_WIDTH, OVERWORLD_TEXTURE_HEIGHT, false);
             ArrayList<Integer> cols = new ArrayList<Integer>();
             int lastcol = -1;
             int idx = 0;
@@ -898,19 +897,21 @@ public class MapUtil
                     {
                         biome = 24;
                     }
-
-                    worldImage.setRGB(x, z, convertBiomeColour(biome, height));
+                    int col = convertBiomeColour(biome, height);
+                    int r = (col >> 16);
+                    int g = (col >> 8) & 255;
+                    int b = col & 255;
+                    worldImage.setPixelRGBA(x, z, NativeImage.getCombined(0, r, g, b));
                 }
             }
 
             IResourceManager rm = Minecraft.getInstance().getResourceManager();
-            BufferedImage paletteImage = null;
+            NativeImage paletteImage = null;
             try
             {
                 InputStream in = rm.getResource(new ResourceLocation(Constants.MOD_ID_CORE, "textures/gui/celestialbodies/earth.png")).getInputStream();
-                paletteImage = ImageIO.read(in);
+                paletteImage = NativeImage.read(in);
                 in.close();
-                paletteImage.getHeight();
             }
             catch (Exception e)
             {
@@ -932,7 +933,7 @@ public class MapUtil
                 }
                 ClientProxyCore.overworldTextureWide.update(result);
                 ClientProxyCore.overworldTextureClient.update(result);
-                ClientProxyCore.overworldTexturesValid = true;
+//                ClientProxyCore.overworldTexturesValid = true;
             }
         }
         else if (folder != null)
@@ -1086,7 +1087,11 @@ public class MapUtil
                 }
                 else
                 {
-                    image.setPixelRGBA(imagex, imageZ, convertBiomeColour(biome, height) + 0xff000000);
+                    int col = convertBiomeColour(biome, height) + 0xff000000;
+                    int r = (col >> 16);
+                    int g = (col >> 8) & 255;
+                    int b = col & 255;
+                    image.setPixelRGBA(imagex, imageZ, NativeImage.getCombined(0, r, g, b));
                 }
             }
         }

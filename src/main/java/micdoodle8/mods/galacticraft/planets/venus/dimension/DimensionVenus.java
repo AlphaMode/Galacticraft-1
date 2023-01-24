@@ -72,21 +72,21 @@ public class DimensionVenus extends DimensionSpace implements IGalacticraftDimen
                 dayColB * day + nightColB * night);
     }
 
-//    @Override
-//    public Vector3 getSkyColor()
-//    {
-//        float night = this.getStarBrightness(1.0F);
-//        float day = 1.0F - this.getStarBrightness(1.0F);
-//        float dayColR = 255.0F / 255.0F;
-//        float dayColG = 207.0F / 255.0F;
-//        float dayColB = 81.0F / 255.0F;
-//        float nightColR = 118.0F / 255.0F;
-//        float nightColG = 89.0F / 255.0F;
-//        float nightColB = 21.0F / 255.0F;
-//        return new Vector3(dayColR * day + nightColR * night,
-//                dayColG * day + nightColG * night,
-//                dayColB * day + nightColB * night);
-//    }
+    @Override
+    public Vector3 getSkyColor()
+    {
+        float night = this.getStarBrightness(1.0F);
+        float day = 1.0F - this.getStarBrightness(1.0F);
+        float dayColR = 255.0F / 255.0F;
+        float dayColG = 207.0F / 255.0F;
+        float dayColB = 81.0F / 255.0F;
+        float nightColR = 118.0F / 255.0F;
+        float nightColG = 89.0F / 255.0F;
+        float nightColB = 21.0F / 255.0F;
+        return new Vector3(dayColR * day + nightColR * night,
+                dayColG * day + nightColG * night,
+                dayColB * day + nightColB * night);
+    }
 
     @Override
     public IParticleData getParticle(ClientWorld world, double x, double y, double z)
@@ -122,11 +122,11 @@ public class DimensionVenus extends DimensionSpace implements IGalacticraftDimen
         return new VenusChunkGenerator(this.world, type.create(providerSettings), settings);
     }
 
-//    @Override
+    @Override
     @OnlyIn(Dist.CLIENT)
-    public float getStarBrightness(float par1)
+    public float getStarBrightness(float partialTicks)
     {
-        float f1 = this.world.getCelestialAngle(par1);
+        float f1 = this.world.getCelestialAngle(partialTicks);
         float f2 = 1.0F - (MathHelper.cos(f1 * Constants.twoPI) * 2.0F + 0.25F);
 
         if (f2 < 0.0F)

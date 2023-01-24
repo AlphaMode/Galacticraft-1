@@ -3,12 +3,13 @@ package micdoodle8.mods.galacticraft.core.tick;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.block.IDetectableResource;
 import micdoodle8.mods.galacticraft.api.entity.IEntityNoisy;
 import micdoodle8.mods.galacticraft.api.entity.IIgnoreShift;
 import micdoodle8.mods.galacticraft.api.item.ISensorGlassesArmor;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
+import micdoodle8.mods.galacticraft.api.recipe.CompressorRecipes;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftDimension;
@@ -18,9 +19,12 @@ import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.*;
 import micdoodle8.mods.galacticraft.core.client.gui.overlay.*;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
+import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiNewSpaceRace;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiTeleporting;
+import micdoodle8.mods.galacticraft.core.client.jei.GalacticraftJEI;
 import micdoodle8.mods.galacticraft.core.dimension.DimensionMoon;
-import micdoodle8.mods.galacticraft.core.entities.IBubbleProviderColored;
+import micdoodle8.mods.galacticraft.core.dimension.DimensionSpaceStation;
+import micdoodle8.mods.galacticraft.core.entities.IBubbleProvider;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStatsClient;
 import micdoodle8.mods.galacticraft.core.fluid.FluidNetwork;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
@@ -91,12 +95,12 @@ public class TickHandlerClient
         }
 
         MapUtil.resetClient();
-//        GCBlocks.spaceGlassVanilla.resetColor();
-//        GCBlocks.spaceGlassClear.resetColor();
-//        GCBlocks.spaceGlassStrong.resetColor();
-//        GCBlocks.spaceGlassTinVanilla.resetColor();
-//        GCBlocks.spaceGlassTinClear.resetColor();
-//        GCBlocks.spaceGlassTinStrong.resetColor(); TODO Space glass
+        GCBlocks.spaceGlassVanilla.resetColor();
+        GCBlocks.spaceGlassClear.resetColor();
+        GCBlocks.spaceGlassStrong.resetColor();
+        GCBlocks.spaceGlassTinVanilla.resetColor();
+        GCBlocks.spaceGlassTinClear.resetColor();
+        GCBlocks.spaceGlassTinStrong.resetColor();
     }
 
     public static void addFluidNetwork(FluidNetwork network)
@@ -198,27 +202,22 @@ public class TickHandlerClient
         {
             if (minecraft.currentScreen instanceof IngameMenuScreen)
             {
-//                int i = Mouse.getEventX() * minecraft.currentScreen.width / minecraft.displayWidth;
-//                int j = minecraft.currentScreen.height - Mouse.getEventY() * minecraft.currentScreen.height / minecraft.displayHeight - 1;
-//
-//                int k = Mouse.getEventButton();
-//
-//                int deltaColor = 0;
-//
-//                if (i > minecraft.currentScreen.width - 100 && j > minecraft.currentScreen.height - 35)
-//                {
-//                    deltaColor = 20;
-//
-//                    if (k == 0)
-//                    {
-//                        if (Mouse.getEventButtonState())
-//                        {
-//                            minecraft.displayGuiScreen(new GuiNewSpaceRace(playerBaseClient));
-//                        }
-//                    }
-//                } TODO Space race button
+                double i = minecraft.mouseHelper.getMouseX() * minecraft.getMainWindow().getScaledWidth() / minecraft.getMainWindow().getWidth();
+                double j = minecraft.mouseHelper.getMouseY() * minecraft.getMainWindow().getScaledHeight() / minecraft.getMainWindow().getHeight();
 
-//                this.fillGradient(minecraft.currentScreen.width - 100, minecraft.currentScreen.height - 35, minecraft.currentScreen.width, minecraft.currentScreen.height, ColorUtil.to32BitColor(150, 10 + deltaColor, 10 + deltaColor, 10 + deltaColor), ColorUtil.to32BitColor(250, 10 + deltaColor, 10 + deltaColor, 10 + deltaColor));
+                int deltaColor = 0;
+
+                if (i > minecraft.currentScreen.width - 100 && j > minecraft.currentScreen.height - 35)
+                {
+                    deltaColor = 20;
+
+                    if (minecraft.mouseHelper.isLeftDown())
+                    {
+                        minecraft.displayGuiScreen(new GuiNewSpaceRace(playerBaseClient)); // TODO space race
+                    }
+                }
+
+                this.fillGradient(minecraft.currentScreen.width - 100, minecraft.currentScreen.height - 35, minecraft.currentScreen.width, minecraft.currentScreen.height, ColorUtil.to32BitColor(150, 10 + deltaColor, 10 + deltaColor, 10 + deltaColor), ColorUtil.to32BitColor(250, 10 + deltaColor, 10 + deltaColor, 10 + deltaColor));
                 minecraft.fontRenderer.drawString(GCCoreUtil.translate("gui.space_race.create.title.name.0"), minecraft.currentScreen.width - 50 - minecraft.fontRenderer.getStringWidth(GCCoreUtil.translate("gui.space_race.create.title.name.0")) / 2, minecraft.currentScreen.height - 26, ColorUtil.to32BitColor(255, 240, 240, 240));
                 minecraft.fontRenderer.drawString(GCCoreUtil.translate("gui.space_race.create.title.name.1"), minecraft.currentScreen.width - 50 - minecraft.fontRenderer.getStringWidth(GCCoreUtil.translate("gui.space_race.create.title.name.1")) / 2, minecraft.currentScreen.height - 16, ColorUtil.to32BitColor(255, 240, 240, 240));
                 AbstractGui.fill(minecraft.currentScreen.width - 100, minecraft.currentScreen.height - 35, minecraft.currentScreen.width - 99, minecraft.currentScreen.height, ColorUtil.to32BitColor(255, 0, 0, 0));
@@ -237,10 +236,10 @@ public class TickHandlerClient
                 {
                 }
 
-//                OverlayRocket.renderSpaceshipOverlay();
-//                OverlayLander.renderLanderOverlay(TickHandlerClient.tickCount);
-//                OverlayDockingRocket.renderDockingOverlay(TickHandlerClient.tickCount);
-//                OverlayLaunchCountdown.renderCountdownOverlay(); TODO Overlays
+                OverlayRocket.renderSpaceshipOverlay();
+                OverlayLander.renderLanderOverlay(TickHandlerClient.tickCount);
+                OverlayDockingRocket.renderDockingOverlay(TickHandlerClient.tickCount);
+                OverlayLaunchCountdown.renderCountdownOverlay();
             }
 
             if (player.world.getDimension() instanceof IGalacticraftDimension && OxygenUtil.shouldDisplayTankGui(minecraft.currentScreen) && OxygenUtil.noAtmosphericCombustion(player.world.getDimension()) && !(playerBaseClient.isCreative() || playerBaseClient.isSpectator()) && !minecraft.gameSettings.showDebugInfo)
@@ -260,8 +259,7 @@ public class TickHandlerClient
                 }
 
                 int thermalLevel = stats.getThermalLevel() + 22;
-//                OverlayOxygenTanks.renderOxygenTankIndicator(minecraft, thermalLevel, var6, var7, !ConfigManagerCore.oxygenIndicatorLeft.get(), !ConfigManagerCore.oxygenIndicatorBottom.get(), Math.abs(thermalLevel - 22) >= 10 && !stats.isThermalLevelNormalising());
-                // TODO Overlays
+                OverlayOxygenTanks.renderOxygenTankIndicator(minecraft, thermalLevel, var6, var7, !ConfigManagerCore.oxygenIndicatorLeft.get(), !ConfigManagerCore.oxygenIndicatorBottom.get(), Math.abs(thermalLevel - 22) >= 10 && !stats.isThermalLevelNormalising());
             }
 
             if (playerBaseClient != null && player.world.getDimension() instanceof IGalacticraftDimension && !stats.isOxygenSetupValid() && OxygenUtil.noAtmosphericCombustion(player.world.getDimension()) && minecraft.currentScreen == null && !minecraft.gameSettings.hideGUI && !(playerBaseClient.isCreative() || playerBaseClient.isSpectator()))
@@ -351,22 +349,22 @@ public class TickHandlerClient
 
             if (TickHandlerClient.tickCount % 20 == 0)
             {
-//                BubbleRenderer.clearBubbles();
-//
-//                for (TileEntity tile : player.world.tickableTileEntities)
-//                {
-//                    if (tile instanceof IBubbleProviderColored)
-//                    {
-//                        BubbleRenderer.addBubble((IBubbleProviderColored) tile);
-//                    }
-//                } TODO Bubble Rendering
+                BubbleRenderer.clearBubbles();
+
+                for (TileEntity tile : player.world.tickableTileEntities)
+                {
+                    if (tile instanceof IBubbleProvider)
+                    {
+                        BubbleRenderer.addBubble((IBubbleProvider) tile);
+                    }
+                }
 
                 if (updateJEIhiding)
                 {
                     updateJEIhiding = false;
                     // Update JEI to hide the ingot compressor recipe for GC steel in hard mode
                     // Update JEI to hide adventure mode recipes when not in adventure mode
-//                    GalacticraftJEI.updateHidden(CompressorRecipes.steelIngotsPresent && ConfigManagerCore.hardMode.get() && !ConfigManagerCore.challengeRecipes.get(), !ConfigManagerCore.challengeRecipes.get()); TODO JEI
+                    GalacticraftJEI.updateHidden(CompressorRecipes.steelIngotsPresent && ConfigManagerCore.hardMode.get() && !ConfigManagerCore.challengeRecipes, !ConfigManagerCore.challengeRecipes);
                 }
 
                 for (List<Footprint> fpList : FootprintRenderer.footprints.values())
@@ -484,29 +482,29 @@ public class TickHandlerClient
             {
                 if (world.getDimension() instanceof OverworldDimension)
                 {
-//                    if (world.getDimension().getSkyRenderer() == null && inSpaceShip &&
-//                            player.getRidingEntity().posY > Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT)
-//                    {
-//                        world.getDimension().setSkyRenderer(new SkyProviderOverworld());
-//                    }
-//                    else if (world.getDimension().getSkyRenderer() instanceof SkyProviderOverworld && player.getPosY() <= Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT)
-//                    {
-//                        world.getDimension().setSkyRenderer(null);
-//                    }  TODO Sky rendering
+                    if (world.getDimension().getSkyRenderer() == null && inSpaceShip &&
+                            player.getRidingEntity().getPosY() > Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT)
+                    {
+                        world.getDimension().setSkyRenderer(new SkyProviderOverworld());
+                    }
+                    else if (world.getDimension().getSkyRenderer() instanceof SkyProviderOverworld && player.getPosY() <= Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT)
+                    {
+                        world.getDimension().setSkyRenderer(null);
+                    }
                 }
-//                else if (world.getDimension() instanceof DimensionSpaceStation)
-//                {
-//                    if (world.getDimension().getSkyRenderer() == null)
-//                    {
-//                        ((DimensionSpaceStation) world.getDimension()).createSkyProvider();
-//                    }
-//                } TODO Space stations
+                else if (world.getDimension() instanceof DimensionSpaceStation)
+                {
+                    if (world.getDimension().getSkyRenderer() == null)
+                    {
+                        ((DimensionSpaceStation) world.getDimension()).createSkyProvider();
+                    }
+                }
                 else if (world.getDimension() instanceof DimensionMoon)
                 {
-//                    if (world.getDimension().getSkyRenderer() == null)
-//                    {
-//                        world.getDimension().setSkyRenderer(new SkyProviderMoon());
-//                    }  TODO Sky rendering
+                    if (world.getDimension().getSkyRenderer() == null)
+                    {
+                        world.getDimension().setSkyRenderer(new SkyProviderMoon());
+                    }
 
                     if (world.getDimension().getCloudRenderer() == null)
                     {
@@ -671,32 +669,32 @@ public class TickHandlerClient
 //        Minecraft.getInstance().entityRenderer.thirdPersonDistancePrev = value;
     }
 
-//    private void fillGradient(int par1, int par2, int par3, int par4, int par5, int par6)
-//    {
-//        float f = (par5 >> 24 & 255) / 255.0F;
-//        float f1 = (par5 >> 16 & 255) / 255.0F;
-//        float f2 = (par5 >> 8 & 255) / 255.0F;
-//        float f3 = (par5 & 255) / 255.0F;
-//        float f4 = (par6 >> 24 & 255) / 255.0F;
-//        float f5 = (par6 >> 16 & 255) / 255.0F;
-//        float f6 = (par6 >> 8 & 255) / 255.0F;
-//        float f7 = (par6 & 255) / 255.0F;
-//        GL11.glDisable(GL11.GL_TEXTURE_2D);
-//        GL11.glEnable(GL11.GL_BLEND);
-//        GL11.glDisable(GL11.GL_ALPHA_TEST);
-//        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param, GlStateManager.SourceFactor.ONE.param, GlStateManager.DestFactor.ZERO.param);
-//        GL11.glShadeModel(GL11.GL_SMOOTH);
-//        Tessellator tessellator = Tessellator.getInstance();
-//        BufferBuilder worldRenderer = tessellator.getBuffer();
-//        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-//        worldRenderer.pos(par3, par2, 0.0D).color(f1, f2, f3, f).endVertex();
-//        worldRenderer.pos(par1, par2, 0.0D).color(f1, f2, f3, f).endVertex();
-//        worldRenderer.pos(par1, par4, 0.0D).color(f5, f6, f7, f4).endVertex();
-//        worldRenderer.pos(par3, par4, 0.0D).color(f5, f6, f7, f4).endVertex();
-//        tessellator.draw();
-//        GL11.glShadeModel(GL11.GL_FLAT);
-//        GL11.glDisable(GL11.GL_BLEND);
-//        GL11.glEnable(GL11.GL_ALPHA_TEST);
-//        GL11.glEnable(GL11.GL_TEXTURE_2D);
-//    }
+    private void fillGradient(int par1, int par2, int par3, int par4, int par5, int par6)
+    {
+        float f = (par5 >> 24 & 255) / 255.0F;
+        float f1 = (par5 >> 16 & 255) / 255.0F;
+        float f2 = (par5 >> 8 & 255) / 255.0F;
+        float f3 = (par5 & 255) / 255.0F;
+        float f4 = (par6 >> 24 & 255) / 255.0F;
+        float f5 = (par6 >> 16 & 255) / 255.0F;
+        float f6 = (par6 >> 8 & 255) / 255.0F;
+        float f7 = (par6 & 255) / 255.0F;
+        RenderSystem.disableTexture();
+        RenderSystem.enableBlend();
+        RenderSystem.disableAlphaTest();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.shadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder worldRenderer = tessellator.getBuffer();
+        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        worldRenderer.pos(par3, par2, 0.0D).color(f1, f2, f3, f).endVertex();
+        worldRenderer.pos(par1, par2, 0.0D).color(f1, f2, f3, f).endVertex();
+        worldRenderer.pos(par1, par4, 0.0D).color(f5, f6, f7, f4).endVertex();
+        worldRenderer.pos(par3, par4, 0.0D).color(f5, f6, f7, f4).endVertex();
+        tessellator.draw();
+        RenderSystem.shadeModel(GL11.GL_FLAT);
+        RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.enableTexture();
+    }
 }

@@ -1,9 +1,19 @@
 package micdoodle8.mods.galacticraft.planets.mars.dimension.biome;
 
 import micdoodle8.mods.galacticraft.api.world.BiomeGC;
+import micdoodle8.mods.galacticraft.core.world.gen.dungeon.DungeonConfiguration;
+import micdoodle8.mods.galacticraft.planets.mars.blocks.BlockBasicMars;
 import micdoodle8.mods.galacticraft.planets.mars.blocks.MarsBlocks;
-import net.minecraft.block.BlockState;
+import micdoodle8.mods.galacticraft.planets.mars.world.gen.MapGenDungeonMars;
+import micdoodle8.mods.galacticraft.planets.mars.world.gen.MarsFeatures;
+import micdoodle8.mods.galacticraft.planets.mars.world.gen.RoomBossMars;
+import micdoodle8.mods.galacticraft.planets.mars.world.gen.RoomTreasureMars;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.placement.IPlacementConfig;
+import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilderConfig;
 
@@ -14,7 +24,11 @@ public class BiomeMars extends BiomeGC
 
     BiomeMars()
     {
-        super((new Biome.Builder()).surfaceBuilder(SurfaceBuilder.DEFAULT, new SurfaceBuilderConfig(MarsBlocks.rockSurface.getDefaultState(), MarsBlocks.rockMiddle.getDefaultState(), MarsBlocks.rockMiddle.getDefaultState())).precipitation(Biome.RainType.NONE).category(Category.NONE).depth(2.5F).scale(0.4F).temperature(0.0F).downfall(0.0F).waterColor(4159204).waterFogColor(329011).parent(null), true);
+        super(defaultBuilder().surfaceBuilder(SurfaceBuilder.DEFAULT, new SurfaceBuilderConfig(MarsBlocks.rockSurface.getDefaultState(), MarsBlocks.rockMiddle.getDefaultState(), MarsBlocks.MARS_STONE.getDefaultState())).precipitation(Biome.RainType.NONE).category(Category.NONE).depth(2.5F).scale(0.4F).temperature(0.0F).downfall(0.0F).waterColor(4159204).waterFogColor(329011).parent(null), true);
+        ConfiguredFeature<DungeonConfiguration, ? extends Structure<DungeonConfiguration>> dungeon = MarsFeatures.MARS_DUNGEON.withConfiguration(new DungeonConfiguration(MarsBlocks.dungeonBrick.getDefaultState(), 30, 8, 16, 7, 7,
+                RoomBossMars.class, RoomTreasureMars.class));
+        addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, dungeon);
+        addStructure(dungeon);
     }
 
 //    @Override

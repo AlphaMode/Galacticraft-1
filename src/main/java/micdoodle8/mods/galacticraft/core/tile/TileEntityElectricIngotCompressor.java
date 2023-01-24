@@ -110,7 +110,7 @@ public class TileEntityElectricIngotCompressor extends TileBaseElectricBlock imp
                     {
                         if (this.advanced)
                         {
-                            this.world.playSound(null, this.getPos(), GCSounds.advanced_compressor, SoundCategory.BLOCKS, 0.23F, this.world.rand.nextFloat() * 0.1F + 9.5F);
+                            this.world.playSound(null, this.getPos(), GCSounds.advanced_compressor.get(), SoundCategory.BLOCKS, 0.23F, this.world.rand.nextFloat() * 0.1F + 9.5F);
                         }
                         else
                         {

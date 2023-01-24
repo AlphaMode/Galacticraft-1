@@ -2,6 +2,7 @@ package micdoodle8.mods.galacticraft.core.world.gen;
 
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GCBlocks;
+import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.world.gen.dungeon.*;
 import micdoodle8.mods.galacticraft.core.world.gen.placement.SapphirePlacement;
 import net.minecraft.util.registry.Registry;
@@ -23,6 +24,7 @@ public class GCFeatures
 {
     public static final DeferredRegister<Feature<?>> FEATURES = new DeferredRegister<>(ForgeRegistries.FEATURES, Constants.MOD_ID_CORE);
 
+    public static final MapGenVillageMoon MOON_VILLAGE = new MapGenVillageMoon(MoonVillageConfiguration::deserialize);
     public static final StructureDungeon MOON_DUNGEON = new StructureDungeon(DungeonConfiguration::deserialize);
     public static final CraterFeature MOON_CRATER = new CraterFeature(NoFeatureConfig::deserialize);
 //    public static final CraterConfig SMALL_CRATERS = new CraterConfig(false);
@@ -36,6 +38,14 @@ public class GCFeatures
     public static IStructurePieceType CMOON_DUNGEON_SPAWNER = RoomSpawner::new;
     public static IStructurePieceType CMOON_DUNGEON_CHEST = RoomChest::new;
     public static IStructurePieceType CMOON_DUNGEON_ENTRANCE = RoomEntrance::new;
+    public static IStructurePieceType CMOON_VILLAGE_START = StructureComponentVillageStartPiece::new;
+    public static IStructurePieceType CMOON_VILLAGE_FIELD = StructureComponentVillageField::new;
+    public static IStructurePieceType CMOON_VILLAGE_FIELD_TWO = StructureComponentVillageField2::new;
+    public static IStructurePieceType CMOON_VILLAGE_HOUSE = StructureComponentVillageHouse::new;
+    public static IStructurePieceType CMOON_VILLAGE_PATH = StructureComponentVillagePathGen::new;
+    public static IStructurePieceType CMOON_VILLAGE_TORCH = StructureComponentVillageTorch::new;
+    public static IStructurePieceType CMOON_VILLAGE_WELL = StructureComponentVillageWell::new;
+    public static IStructurePieceType CMOON_VILLAGE_WOOD_HUT = StructureComponentVillageWoodHut::new;
 
     public static final Placement<NoPlacementConfig> SAPPHIRE_ORE_PLACEMENT = new SapphirePlacement(NoPlacementConfig::deserialize);
 
@@ -43,6 +53,7 @@ public class GCFeatures
     public static void registerFeatures(RegistryEvent.Register<Feature<?>> event)
     {
         GCBlocks.register(event.getRegistry(), MOON_CRATER, "moon_crater");
+        GCBlocks.register(event.getRegistry(), MOON_VILLAGE, "moon_village");
         GCBlocks.register(event.getRegistry(), MOON_DUNGEON, "gc_dungeon");
         GCBlocks.register(event.getRegistry(), SAPPHIRE_ORE, "sapphire_ore");
         Registry.register(Registry.STRUCTURE_PIECE, "moon_dungeon_start", CMOON_DUNGEON_START);
@@ -53,6 +64,14 @@ public class GCFeatures
         Registry.register(Registry.STRUCTURE_PIECE, "moon_dungeon_spawner_room", CMOON_DUNGEON_SPAWNER);
         Registry.register(Registry.STRUCTURE_PIECE, "moon_dungeon_chest_room", CMOON_DUNGEON_CHEST);
         Registry.register(Registry.STRUCTURE_PIECE, "moon_dungeon_entrance_room", CMOON_DUNGEON_ENTRANCE);
+        Registry.register(Registry.STRUCTURE_PIECE, GalacticraftCore.rl("moon_village_start"), CMOON_VILLAGE_START);
+        Registry.register(Registry.STRUCTURE_PIECE, GalacticraftCore.rl("moon_village_field"), CMOON_VILLAGE_FIELD);
+        Registry.register(Registry.STRUCTURE_PIECE, GalacticraftCore.rl("moon_village_field_two"), CMOON_VILLAGE_FIELD_TWO);
+        Registry.register(Registry.STRUCTURE_PIECE, GalacticraftCore.rl("moon_village_house"), CMOON_VILLAGE_HOUSE);
+        Registry.register(Registry.STRUCTURE_PIECE, GalacticraftCore.rl("moon_village_path"), CMOON_VILLAGE_PATH);
+        Registry.register(Registry.STRUCTURE_PIECE, GalacticraftCore.rl("moon_village_torch"), CMOON_VILLAGE_TORCH);
+        Registry.register(Registry.STRUCTURE_PIECE, GalacticraftCore.rl("moon_village_well"), CMOON_VILLAGE_WELL);
+        Registry.register(Registry.STRUCTURE_PIECE, GalacticraftCore.rl("moon_village_wood_hut"), CMOON_VILLAGE_WOOD_HUT);
     }
 
     @SubscribeEvent

@@ -95,7 +95,7 @@ public class PacketFluidNetworkUpdate extends PacketBase
     }
 
     @Override
-    public void encodeInto(ByteBuf buffer)
+    public void encodeInto(PacketBuffer buffer)
     {
         super.encodeInto(buffer);
         buffer.writeInt(this.pos.getX());
@@ -121,7 +121,7 @@ public class PacketFluidNetworkUpdate extends PacketBase
             if (this.stack != null)
             {
                 buffer.writeBoolean(true);
-                NetworkUtil.writeUTF8String(buffer, this.stack.getFluid().getRegistryName().toString());
+                buffer.writeResourceLocation(this.stack.getFluid().getRegistryName());
                 buffer.writeInt(this.stack.getAmount());
             }
             else
@@ -135,7 +135,7 @@ public class PacketFluidNetworkUpdate extends PacketBase
     }
 
     @Override
-    public void decodeInto(ByteBuf buffer)
+    public void decodeInto(PacketBuffer buffer)
     {
         super.decodeInto(buffer);
         this.pos = new BlockPos(buffer.readInt(), buffer.readInt(), buffer.readInt());
@@ -156,7 +156,7 @@ public class PacketFluidNetworkUpdate extends PacketBase
         case FLUID:
             if (buffer.readBoolean())
             {
-                this.fluidType = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(NetworkUtil.readUTF8String(buffer)));
+                this.fluidType = ForgeRegistries.FLUIDS.getValue(buffer.readResourceLocation());
                 if (this.fluidType != null)
                 {
                     this.stack = new FluidStack(this.fluidType, buffer.readInt());

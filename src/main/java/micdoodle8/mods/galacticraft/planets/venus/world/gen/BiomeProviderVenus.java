@@ -9,9 +9,11 @@
 //import net.minecraft.world.WorldType;
 //import net.minecraft.world.biome.Biome;
 //import net.minecraft.world.biome.BiomeCache;
-//import net.minecraft.world.biome.dimension.BiomeProvider;
+//import net.minecraft.world.biome.provider.BiomeProvider;
 //import net.minecraft.world.gen.layer.Layer;
 //import net.minecraft.world.gen.layer.IntCache;
+//import net.minecraftforge.api.distmarker.Dist;
+//import net.minecraftforge.api.distmarker.OnlyIn;
 //import net.minecraftforge.fml.LogicalSide;
 //import net.minecraftforge.fml.relauncher.SideOnly;
 //
@@ -164,32 +166,33 @@
 //    }
 //
 //    @Override
-//    public BlockPos findBiomePosition(int x, int z, int range, List<Biome> biomes, Random random)
+//    public BlockPos func_225531_a_(int xIn, int yIn, int zIn, int radiusIn, List<Biome> biomes, Random random)
 //    {
-//        int i = x - range >> 2;
-//        int j = z - range >> 2;
-//        int k = x + range >> 2;
-//        int l = z + range >> 2;
-//        int diffX = (k - i) + 1;
-//        int diffZ = (l - j) + 1;
-//        int[] unzoomed = this.unzoomedBiomes.getInts(i, j, diffX, diffZ);
-//        BlockPos blockPos = null;
-//        int count = 0;
+//        int i = xIn - radiusIn >> 2;
+//        int j = zIn - radiusIn >> 2;
+//        int k = xIn + radiusIn >> 2;
+//        int l = zIn + radiusIn >> 2;
+//        int diffX = k - i + 1;
+//        int diffZ = l - j + 1;
+//        int k1 = yIn >> 2;
+//        BlockPos blockpos = null;
+//        int l1 = 0;
 //
-//        for (int a = 0; a < unzoomed.length; ++a)
-//        {
-//            int x0 = i + a % diffX << 2;
-//            int z0 = j + a / diffX << 2;
-//            Biome biome = Biome.getBiome(unzoomed[a]);
+//        for(int i2 = 0; i2 < diffZ; ++i2) {
+//            for(int j2 = 0; j2 < diffX; ++j2) {
+//                int k2 = i + j2;
+//                int l2 = j + i2;
+//                if (biomes.contains(this.getNoiseBiome(k2, k1, l2))) {
+//                    if (blockpos == null || random.nextInt(l1 + 1) == 0) {
+//                        blockpos = new BlockPos(k2 << 2, yIn, l2 << 2);
+//                    }
 //
-//            if (biomes.contains(biome) && (blockPos == null || random.nextInt(count + 1) == 0))
-//            {
-//                blockPos = new BlockPos(x0, 0, z0);
-//                count++;
+//                    ++l1;
+//                }
 //            }
 //        }
 //
-//        return blockPos;
+//        return blockpos;
 //    }
 //
 //    @Override

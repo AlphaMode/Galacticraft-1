@@ -157,7 +157,7 @@ public class EntitySkeletonBoss extends EntityBossBase implements IEntityBreatha
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn)
     {
-        this.playSound(GCSounds.bossOoh, this.getSoundVolume(), this.getSoundPitch() + 1.0F);
+        this.playSound(GCSounds.bossOoh.get(), this.getSoundVolume(), this.getSoundPitch() + 1.0F);
         return null;
     }
 

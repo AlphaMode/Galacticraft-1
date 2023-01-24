@@ -92,7 +92,7 @@ public class PacketSimpleAsteroids extends PacketBase
     public static void encode(final PacketSimpleAsteroids message, final PacketBuffer buf)
     {
         buf.writeInt(message.type.ordinal());
-        NetworkUtil.writeUTF8String(buf, message.getDimensionID().getRegistryName().toString());
+        buf.writeResourceLocation(message.getDimensionID().getRegistryName());
 
         try
         {
@@ -107,7 +107,7 @@ public class PacketSimpleAsteroids extends PacketBase
     public static PacketSimpleAsteroids decode(PacketBuffer buf)
     {
         PacketSimpleAsteroids.EnumSimplePacketAsteroids type = PacketSimpleAsteroids.EnumSimplePacketAsteroids.values()[buf.readInt()];
-        DimensionType dim = DimensionType.byName(new ResourceLocation(NetworkUtil.readUTF8String(buf)));
+        DimensionType dim = DimensionType.byName(buf.readResourceLocation());
         ArrayList<Object> data = null;
 
         try
@@ -147,7 +147,7 @@ public class PacketSimpleAsteroids extends PacketBase
     }
 
     @Override
-    public void encodeInto(ByteBuf buffer)
+    public void encodeInto(PacketBuffer buffer)
     {
         super.encodeInto(buffer);
         buffer.writeInt(this.type.ordinal());
@@ -163,7 +163,7 @@ public class PacketSimpleAsteroids extends PacketBase
     }
 
     @Override
-    public void decodeInto(ByteBuf buffer)
+    public void decodeInto(PacketBuffer buffer)
     {
         super.decodeInto(buffer);
         this.type = EnumSimplePacketAsteroids.values()[buffer.readInt()];

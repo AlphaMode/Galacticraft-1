@@ -1,5 +1,6 @@
 package micdoodle8.mods.galacticraft.core.client.gui.element;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import micdoodle8.mods.galacticraft.core.util.EnumColor;
@@ -54,7 +55,7 @@ public class GuiElementCheckboxPreLaunch extends Button
         {
             Minecraft minecraft = Minecraft.getInstance();
             minecraft.getTextureManager().bindTexture(GuiElementCheckboxPreLaunch.texture);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.isHovered = par2 >= this.x && par3 >= this.y && par2 < this.x + this.width && par3 < this.y + this.height;
             int texWidth = this.isSelected ? 12 : 9;
             int texHeight = this.isSelected ? 16 : 9;

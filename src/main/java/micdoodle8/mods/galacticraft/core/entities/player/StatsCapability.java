@@ -5,7 +5,9 @@ import micdoodle8.mods.galacticraft.api.recipe.ISchematicPage;
 import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.api.vector.Vector3D;
 import micdoodle8.mods.galacticraft.core.GCBlocks;
+import micdoodle8.mods.galacticraft.core.command.CommandGCInv;
 import micdoodle8.mods.galacticraft.core.inventory.InventoryExtended;
 import micdoodle8.mods.galacticraft.core.util.ColorUtil;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
@@ -91,7 +93,7 @@ public class StatsCapability extends GCPlayerStats
     public boolean hasOpenedPlanetSelectionGui = false;
 
     public int chestSpawnCooldown;
-    public micdoodle8.mods.galacticraft.api.vector.Vector3 chestSpawnVector;
+    public Vector3D chestSpawnVector;
 
     public int teleportCooldown;
 
@@ -670,13 +672,13 @@ public class StatsCapability extends GCPlayerStats
     }
 
     @Override
-    public Vector3 getChestSpawnVector()
+    public Vector3D getChestSpawnVector()
     {
         return chestSpawnVector;
     }
 
     @Override
-    public void setChestSpawnVector(Vector3 chestSpawnVector)
+    public void setChestSpawnVector(Vector3D chestSpawnVector)
     {
         this.chestSpawnVector = chestSpawnVector;
     }
@@ -1112,14 +1114,14 @@ public class StatsCapability extends GCPlayerStats
             // (if there was no offline load, then the dontload flag in doLoad()
             // will make sure nothing happens)
             ServerPlayerEntity p = this.player.get();
-//            if (p != null)
-//            {
-//                ItemStack[] saveinv = CommandGCInv.getSaveData(PlayerUtil.getName(p).toLowerCase());
-//                if (saveinv != null)
-//                {
-//                    CommandGCInv.doLoad(p);
-//                }
-//            } TODO Commands
+            if (p != null)
+            {
+                ItemStack[] saveinv = CommandGCInv.getSaveData(PlayerUtil.getName(p).toLowerCase());
+                if (saveinv != null)
+                {
+                    CommandGCInv.doLoad(p);
+                }
+            }
 
             if (nbt.contains("SpaceshipTier"))
             {

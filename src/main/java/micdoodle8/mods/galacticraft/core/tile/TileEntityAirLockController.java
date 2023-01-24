@@ -180,7 +180,7 @@ public class TileEntityAirLockController extends TileEntityAdvanced
 
         if (this.world.getBlockState(new BlockPos(x, y, z)).getBlock() != GCBlocks.airLockSeal)
         {
-            this.world.playSound(null, x, y, z, GCSounds.openAirLock, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            this.world.playSound(null, x, y, z, GCSounds.openAirLock.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
         }
 
         if (this.horizontalModeEnabled)
@@ -249,7 +249,7 @@ public class TileEntityAirLockController extends TileEntityAdvanced
 
         if (state.getMaterial() != Material.AIR)
         {
-            this.world.playSound(null, x, y, z, GCSounds.closeAirLock, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            this.world.playSound(null, x, y, z, GCSounds.closeAirLock.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
         }
 
         boolean sealedSide = false;

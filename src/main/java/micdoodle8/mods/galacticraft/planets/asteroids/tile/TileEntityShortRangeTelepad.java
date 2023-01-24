@@ -33,6 +33,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ActionResultType;
@@ -273,7 +274,7 @@ public class TileEntityShortRangeTelepad extends TileBaseElectricBlock implement
     }
 
     @Override
-    public void readExtraNetworkedData(ByteBuf dataStream)
+    public void readExtraNetworkedData(PacketBuffer dataStream)
     {
         super.readExtraNetworkedData(dataStream);
         targetAddressResult = EnumTelepadSearchResult.values()[dataStream.readInt()];

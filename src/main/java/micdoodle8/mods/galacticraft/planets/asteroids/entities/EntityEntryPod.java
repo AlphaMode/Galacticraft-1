@@ -2,7 +2,6 @@ package micdoodle8.mods.galacticraft.planets.asteroids.entities;
 
 import micdoodle8.mods.galacticraft.api.entity.ICameraZoomEntity;
 import micdoodle8.mods.galacticraft.api.entity.IIgnoreShift;
-import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.vector.Vector3D;
 import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.entities.EntityLanderBase;
@@ -15,13 +14,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityEntryPod extends EntityLanderBase implements IScaleableFuelLevel, ICameraZoomEntity, IIgnoreShift
 {
@@ -33,7 +32,7 @@ public class EntityEntryPod extends EntityLanderBase implements IScaleableFuelLe
 
     public static EntityEntryPod createEntityEntryPod(ServerPlayerEntity player)
     {
-        EntityEntryPod pod = new EntityEntryPod(AsteroidEntities.ENTRY_POD.get(), player.world);
+        EntityEntryPod pod = AsteroidEntities.ENTRY_POD.get().create(player.world);
         GCPlayerStats stats = GCPlayerStats.get(player);
         pod.stacks = NonNullList.withSize(stats.getRocketStacks().size() + 1, ItemStack.EMPTY);
         pod.fuelTank.setFluid(new FluidStack(GCFluids.FUEL.getFluid(), stats.getFuelLevel()));
@@ -59,7 +58,7 @@ public class EntityEntryPod extends EntityLanderBase implements IScaleableFuelLe
     @Override
     public IPacket<?> createSpawnPacket()
     {
-        return new SSpawnObjectPacket(this);
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override

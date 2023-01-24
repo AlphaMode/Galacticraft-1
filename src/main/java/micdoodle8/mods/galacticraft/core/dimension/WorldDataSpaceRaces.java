@@ -7,7 +7,7 @@ import net.minecraft.world.storage.WorldSavedData;
 
 public class WorldDataSpaceRaces extends WorldSavedData
 {
-    public static final String saveDataID = Constants.GCDATAFOLDER + "GCSpaceRaceData";
+    public static final String saveDataID = "GCSpaceRaceData";
     private CompoundNBT dataCompound;
 
     public WorldDataSpaceRaces()

@@ -7,8 +7,7 @@
             "translate": "advancement.galacticraft.launch_rocket.description"
         },
         "icon": {
-            "item": "minecraft:flint_and_steel",
-            "data": 0
+            "item": "minecraft:flint_and_steel"
         },
         "frame": "goal",
         "show_toast": true,

@@ -3,14 +3,9 @@ package micdoodle8.mods.galacticraft.planets.mars.blocks;
 import micdoodle8.mods.galacticraft.api.block.IDetectableResource;
 import micdoodle8.mods.galacticraft.api.block.IPlantableBlock;
 import micdoodle8.mods.galacticraft.api.block.ITerraformableBlock;
-import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.items.ISortable;
-import micdoodle8.mods.galacticraft.core.client.GCParticles;
-import micdoodle8.mods.galacticraft.core.client.fx.BlockPosParticleData;
-import micdoodle8.mods.galacticraft.core.client.fx.EntityParticleData;
 import micdoodle8.mods.galacticraft.core.client.sounds.GCSounds;
 import micdoodle8.mods.galacticraft.core.util.EnumSortCategory;
-import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
 import micdoodle8.mods.galacticraft.planets.mars.client.fx.MarsParticles;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -234,7 +229,7 @@ public class BlockBasicMars extends Block implements IDetectableResource, IPlant
 
                 if (rand.nextInt(100) == 0)
                 {
-                    worldIn.playSound(null, pos.getX(), pos.getY(), pos.getZ(), GCSounds.singleDrip, SoundCategory.AMBIENT, 1, 0.8F + rand.nextFloat() / 5.0F);
+                    worldIn.playSound(null, pos.getX(), pos.getY(), pos.getZ(), GCSounds.singleDrip.get(), SoundCategory.AMBIENT, 1, 0.8F + rand.nextFloat() / 5.0F);
                 }
             }
         }
@@ -257,7 +252,7 @@ public class BlockBasicMars extends Block implements IDetectableResource, IPlant
     @Override
     public boolean isReplaceableOreGen(BlockState state, IWorldReader world, BlockPos pos, java.util.function.Predicate<BlockState> target)
     {
-        return this == MarsBlocks.rockMiddle || this == MarsBlocks.stone;
+        return this == MarsBlocks.rockMiddle || this == MarsBlocks.MARS_STONE;
     }
 
 //    @Override

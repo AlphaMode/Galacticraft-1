@@ -1,16 +1,20 @@
 package micdoodle8.mods.galacticraft.planets.asteroids.event;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.event.client.CelestialBodyRenderEvent;
+import micdoodle8.mods.galacticraft.api.world.IGalacticraftDimension;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.client.CloudRenderer;
 import micdoodle8.mods.galacticraft.core.client.gui.screen.GuiCelestialSelection;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore.EventSpecialRender;
 import micdoodle8.mods.galacticraft.core.util.ClientUtil;
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
+import micdoodle8.mods.galacticraft.planets.asteroids.client.SkyProviderAsteroids;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.render.NetworkRenderer;
 import micdoodle8.mods.galacticraft.planets.asteroids.dimension.DimensionAsteroids;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,10 +36,10 @@ public class AsteroidsEventHandlerClient
         {
             if (world.getDimension() instanceof DimensionAsteroids)
             {
-//                if (world.getDimension().getSkyRenderer() == null)
-//                {
-//                    world.getDimension().setSkyRenderer(new SkyProviderAsteroids((IGalacticraftDimension) world.getDimension()));
-//                } TODO Sky provider
+                if (world.getDimension().getSkyRenderer() == null)
+                {
+                    world.getDimension().setSkyRenderer(new SkyProviderAsteroids((IGalacticraftDimension) world.getDimension()));
+                }
 
                 if (world.getDimension().getCloudRenderer() == null)
                 {
@@ -56,11 +60,11 @@ public class AsteroidsEventHandlerClient
             if (screen instanceof GuiCelestialSelection)
             {
                 alpha = ((GuiCelestialSelection) screen).getAlpha(renderEvent.celestialBody);
-                GL11.glColor4f(0.7F, 0.0F, 0.0F, alpha / 2.0F);
+                RenderSystem.color4f(0.7F, 0.0F, 0.0F, alpha / 2.0F);
             }
             else
             {
-                GL11.glColor4f(0.3F, 0.1F, 0.1F, 1.0F);
+                RenderSystem.color4f(0.3F, 0.1F, 0.1F, 1.0F);
             }
             renderEvent.setCanceled(true);
             GL11.glBegin(GL11.GL_LINE_LOOP);
@@ -101,7 +105,7 @@ public class AsteroidsEventHandlerClient
             }
 
             GL11.glEnd();
-            GL11.glColor4f(0.7F, 0.0F, 0.0F, alpha / 10.0F);
+            RenderSystem.color4f(0.7F, 0.0F, 0.0F, alpha / 10.0F);
             GL11.glBegin(GL11.GL_QUADS);
 
             x = min * renderEvent.celestialBody.getRelativeDistanceFromCenter().unScaledDistance;
@@ -134,8 +138,10 @@ public class AsteroidsEventHandlerClient
     public void onBodyRender(CelestialBodyRenderEvent.Pre renderEvent)
     {
         if (renderEvent.celestialBody.equals(AsteroidsModule.planetAsteroids))
-        {
-            GL11.glRotatef(ClientUtil.getClientTimeTotal() / 10.0F % 360, 0, 0, 1);
+        {if (renderEvent.matrixStackIn != null)
+            renderEvent.matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(ClientUtil.getClientTimeTotal() / 10.0F % 360));
+            else
+                RenderSystem.rotatef(ClientUtil.getClientTimeTotal() / 10.0F % 360, 0, 0, 1);
         }
     }
 
@@ -143,6 +149,6 @@ public class AsteroidsEventHandlerClient
     @SubscribeEvent
     public void onSpecialRender(EventSpecialRender event)
     {
-        NetworkRenderer.renderNetworks(Minecraft.getInstance().world, event.partialTicks);
+        NetworkRenderer.renderNetworks(event.matrixStack, Minecraft.getInstance().world, event.partialTicks);
     }
 }

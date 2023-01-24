@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class AsteroidFeatures
 {
-    public static final DeferredRegister<Feature<?>> FEATURES = new DeferredRegister<>(ForgeRegistries.FEATURES, Constants.MOD_ID_CORE);
+    public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, Constants.MOD_ID_CORE);
 
     public static final RegistryObject<MapGenAbandonedBase> ASTEROID_BASE = register("asteroid_base", () -> new MapGenAbandonedBase(BaseConfiguration::deserialize));
     public static IStructurePieceType CBASE_START = BaseStart::new;

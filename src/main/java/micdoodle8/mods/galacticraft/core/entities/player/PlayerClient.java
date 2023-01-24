@@ -1,32 +1,37 @@
 package micdoodle8.mods.galacticraft.core.entities.player;
 
 import micdoodle8.mods.galacticraft.api.entity.ICameraZoomEntity;
+import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftDimension;
 import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.client.FootprintRenderer;
 import micdoodle8.mods.galacticraft.core.client.sounds.GCSounds;
 import micdoodle8.mods.galacticraft.core.dimension.DimensionMoon;
 import micdoodle8.mods.galacticraft.core.entities.EntityLanderBase;
+import micdoodle8.mods.galacticraft.core.event.EventWakePlayer;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import micdoodle8.mods.galacticraft.core.tick.TickHandlerClient;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.core.util.EnumColor;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
+import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import micdoodle8.mods.galacticraft.core.wrappers.PlayerGearData;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.MoverType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.MinecraftForge;
 
 public class PlayerClient implements IPlayerClient
 {
@@ -40,14 +45,14 @@ public class PlayerClient implements IPlayerClient
         this.updateFeet(player, motion.x, motion.z);
     }
 
-//    @Override
-//    public boolean wakeUpPlayer(ClientPlayerEntity player, boolean immediately, boolean updateWorldFlag, boolean setSpawn)
-//    {
-//        return this.wakeUpPlayer(player, immediately, updateWorldFlag, setSpawn, false); TODO Cryo chamber
-//    }
+    @Override
+    public boolean stopSleepInBed(ClientPlayerEntity player, boolean immediately, boolean updateWorldFlag)
+    {
+        return this.wakeUpPlayer(player, immediately, updateWorldFlag, false);
+    }
 
     @Override
-    public void onUpdate(ClientPlayerEntity player)
+    public void tick(ClientPlayerEntity player)
     {
         GCPlayerStatsClient stats = GCPlayerStatsClient.get(player);
         stats.setTick(stats.getTick() + 1);
@@ -81,22 +86,20 @@ public class PlayerClient implements IPlayerClient
             if (!startup)
             {
                 stats.setInFreefallLast(stats.isInFreefall());
-//                stats.setInFreefall(stats.getPlatformControlled() || stats.getFreefallHandler().testFreefall(player)); TODO Freefall handler
+                stats.setInFreefall(stats.getPlatformControlled() || stats.getFreefallHandler().testFreefall(player));
                 startup = true;
             }
             if (stats.getPlatformControlled() || player.world.getDimension() instanceof IZeroGDimension)
             {
                 stats.setInFreefallLast(stats.isInFreefall());
-//                stats.setInFreefall(stats.getPlatformControlled() || stats.getFreefallHandler().testFreefall(player));
-//                this.downMot2 = stats.getDownMotionLast();
-//                stats.setDownMotionLast(player.motionY);
-//                stats.getFreefallHandler().preVanillaMotion(player);
-//                if (stats.getPlatformControlled())
-//                {
-//                    player.motionY = stats.getPlatformVelocity(player.getPosY());
-//                    player.motionX = 0D;
-//                    player.motionZ = 0D;
-//                }
+                stats.setInFreefall(stats.getPlatformControlled() || stats.getFreefallHandler().testFreefall(player));
+                this.downMot2 = stats.getDownMotionLast();
+                stats.setDownMotionLast(player.getMotion().getY());
+                stats.getFreefallHandler().preVanillaMotion(player);
+                if (stats.getPlatformControlled())
+                {
+                    player.setMotion(0D, stats.getPlatformVelocity(player.getPosY()), 0D);
+                }
             }
         }
 
@@ -138,7 +141,7 @@ public class PlayerClient implements IPlayerClient
 
         if (stats.getPlatformControlled() || player.world.getDimension() instanceof IZeroGDimension)
         {
-//            stats.getFreefallHandler().postVanillaMotion(player); TODO Freefall handler
+            stats.getFreefallHandler().postVanillaMotion(player);
 
             if (stats.isInFreefall() || ridingThirdPersonEntity)
             {
@@ -153,7 +156,7 @@ public class PlayerClient implements IPlayerClient
                     {
                         if (stats.getLandingTicks() > stats.getMaxLandingticks() + 4)
                         {
-//	                        stats.getFreefallHandler().pjumpticks = stats.getLandingTicks() - stats.getMaxLandingticks() - 5;  TODO Freefall handler
+	                        stats.getFreefallHandler().pjumpticks = stats.getLandingTicks() - stats.getMaxLandingticks() - 5;
                         }
                         stats.setLandingTicks(stats.getMaxLandingticks());
                     }
@@ -246,7 +249,7 @@ public class PlayerClient implements IPlayerClient
 
         if (!stats.isLastUsingParachute() && stats.isUsingParachute())
         {
-            player.playSound(GCSounds.parachute, 0.95F + player.getRNG().nextFloat() * 0.1F, 1.0F);
+            player.playSound(GCSounds.parachute.get(), 0.95F + player.getRNG().nextFloat() * 0.1F, 1.0F);
         }
 
         stats.setLastUsingParachute(stats.isUsingParachute());
@@ -300,63 +303,59 @@ public class PlayerClient implements IPlayerClient
             // If the block below is the moon block
             if (state.getBlock() == GCBlocks.moonTurf)
             {
-                // And is the correct metadata (moon turf)
-//                if (state.get(BlockBasicMoon.BASIC_TYPE_MOON) == BlockBasicMoon.EnumBlockBasicMoon.MOON_TURF)
-//                {
-//                    // If it has been long enough since the last step
-//                    if (stats.getDistanceSinceLastStep() > 0.35)
-//                    {
-//                        Vector3 pos = new Vector3(player);
-//                        // Set the footprint position to the block below and add random number to stop z-fighting
-//                        pos.y = MathHelper.floor(player.getPosY()) + player.getRNG().nextFloat() / 100.0F;
-//
-//                        // Adjust footprint to left or right depending on step count
-//                        switch (stats.getLastStep())
-//                        {
-//                        case 0:
-//                            pos.translate(new Vector3(Math.sin(Math.toRadians(-player.rotationYaw + 90)) * 0.25, 0, Math.cos(Math.toRadians(-player.rotationYaw + 90)) * 0.25));
-//                            break;
-//                        case 1:
-//                            pos.translate(new Vector3(Math.sin(Math.toRadians(-player.rotationYaw - 90)) * 0.25, 0, Math.cos(Math.toRadians(-player.rotationYaw - 90)) * 0.25));
-//                            break;
-//                        }
-//
-//                        pos = WorldUtil.getFootprintPosition(player.world, player.rotationYaw - 180, pos, new BlockVec3(player));
-//
-//                        long chunkKey = ChunkPos.asLong(pos.intX() >> 4, pos.intZ() >> 4);
-//                        int lightmapVal = player.world.getCombinedLight(new BlockPos(pos.intX(), pos.intY(), pos.intZ()), 0);
-//                        FootprintRenderer.addFootprint(chunkKey, GCCoreUtil.getDimensionID(player.world), pos, player.rotationYaw, player.getName(), lightmapVal);
-//
-//                        // Increment and cap step counter at 1
-//                        stats.setLastStep((stats.getLastStep() + 1) % 2);
-//                        stats.setDistanceSinceLastStep(0);
-//                    }
-//                    else
-//                    {
-//                        stats.setDistanceSinceLastStep(stats.getDistanceSinceLastStep() + motionSqrd);
-//                    }
-//                } TODO Footprints
+                // If it has been long enough since the last step
+                if (stats.getDistanceSinceLastStep() > 0.35)
+                {
+                    Vector3 pos = new Vector3(player);
+                    // Set the footprint position to the block below and add random number to stop z-fighting
+                    pos.y = MathHelper.floor(player.getPosY()) + player.getRNG().nextFloat() / 100.0F;
+
+                    // Adjust footprint to left or right depending on step count
+                    switch (stats.getLastStep())
+                    {
+                    case 0:
+                        pos.translate(new Vector3((float) (Math.sin(Math.toRadians(-player.rotationYaw + 90)) * 0.25), 0, (float) (Math.cos(Math.toRadians(-player.rotationYaw + 90)) * 0.25)));
+                        break;
+                    case 1:
+                        pos.translate(new Vector3((float) (Math.sin(Math.toRadians(-player.rotationYaw - 90)) * 0.25), 0, (float) (Math.cos(Math.toRadians(-player.rotationYaw - 90)) * 0.25)));
+                        break;
+                    }
+
+                    pos = WorldUtil.getFootprintPosition(player.world, player.rotationYaw - 180, pos, new BlockVec3(player));
+
+                    long chunkKey = ChunkPos.asLong(pos.intX() >> 4, pos.intZ() >> 4);
+                    int lightmapVal = WorldRenderer.getCombinedLight(player.world, new BlockPos(pos.intX(), pos.intY(), pos.intZ()));
+                    FootprintRenderer.addFootprint(chunkKey, GCCoreUtil.getDimensionType(player.world), pos, player.rotationYaw, player.getName().getString(), lightmapVal);
+
+                    // Increment and cap step counter at 1
+                    stats.setLastStep((stats.getLastStep() + 1) % 2);
+                    stats.setDistanceSinceLastStep(0);
+                }
+                else
+                {
+                    stats.setDistanceSinceLastStep(stats.getDistanceSinceLastStep() + motionSqrd);
+                }
             }
         }
     }
 
-//    public boolean wakeUpPlayer(ClientPlayerEntity player, boolean immediately, boolean updateWorldFlag, boolean setSpawn, boolean bypass)
-//    {
-//        BlockPos c = player.bedLocation;
-//
-//        if (c != null)
-//        {
-//            EventWakePlayer event = new EventWakePlayer(player, c, immediately, updateWorldFlag, setSpawn, bypass);
-//            MinecraftForge.EVENT_BUS.post(event);
-//
-//            if (bypass || event.result == null || event.result == PlayerEntity.SleepResult.OK)
-//            {
-//                return false;
-//            }
-//        }
-//
-//        return true;
-//    } TODO Cryo chamber
+    public boolean wakeUpPlayer(ClientPlayerEntity player, boolean immediately, boolean updateWorldFlag, boolean bypass)
+    {
+        BlockPos c = player.getBedLocation();
+
+        if (c != null)
+        {
+            EventWakePlayer event = new EventWakePlayer(player, c, immediately, updateWorldFlag, bypass);
+            MinecraftForge.EVENT_BUS.post(event);
+
+            if (bypass || event.result == null)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     @Override
     public void onBuild(int i, ClientPlayerEntity player)

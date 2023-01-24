@@ -1,176 +1,160 @@
-//package micdoodle8.mods.galacticraft.core.client.render.entities;
-//
-//import com.google.common.base.Function;
-//import com.google.common.collect.ImmutableList;
-//
-//import micdoodle8.mods.galacticraft.core.Constants;
-//import micdoodle8.mods.galacticraft.core.client.model.OBJLoaderGC;
-//import micdoodle8.mods.galacticraft.core.entities.EntityBuggy;
-//import micdoodle8.mods.galacticraft.core.util.ClientUtil;
-//import net.minecraft.client.Minecraft;
-//import net.minecraft.client.renderer.RenderHelper;
-//import net.minecraft.client.renderer.culling.ICamera;
-//import net.minecraft.client.renderer.entity.EntityRenderer;
-//import net.minecraft.client.renderer.entity.EntityRendererManager;
-//import net.minecraft.client.renderer.texture.AtlasTexture;
-//import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-//import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-//import net.minecraft.util.ResourceLocation;
-//import net.minecraft.util.math.AxisAlignedBB;
-//import net.minecraftforge.api.distmarker.Dist;
-//import net.minecraftforge.api.distmarker.OnlyIn;
-//import net.minecraftforge.client.model.IModel;
-//import net.minecraftforge.client.model.obj.OBJModel;
-//
-//import org.lwjgl.opengl.GL11;
-//
-//@OnlyIn(Dist.CLIENT)
-//public class RenderBuggy extends EntityRenderer<EntityBuggy>
-//{
-//    private OBJModel.OBJBakedModel mainModel;
-//    private OBJModel.OBJBakedModel radarDish;
-//    private OBJModel.OBJBakedModel wheelLeftCover;
-//    private OBJModel.OBJBakedModel wheelRight;
-//    private OBJModel.OBJBakedModel wheelLeft;
-//    private OBJModel.OBJBakedModel wheelRightCover;
-//    private OBJModel.OBJBakedModel cargoLeft;
-//    private OBJModel.OBJBakedModel cargoMid;
-//    private OBJModel.OBJBakedModel cargoRight;
-//
-//    private void updateModels()
-//    {
-//        if (this.mainModel == null)
-//        {
-//            try
-//            {
-//                IModel model = OBJLoaderGC.instance.loadModel(new ResourceLocation(Constants.MOD_ID_CORE, "buggy.obj"));
-//                Function<ResourceLocation, TextureAtlasSprite> spriteFunction = location -> Minecraft.getInstance().getTextureMapBlocks().getAtlasSprite(location.toString());
-//
-//                this.mainModel = (OBJModel.OBJBakedModel) model.bake(new OBJModel.OBJState(ImmutableList.of("MainBody"), false), DefaultVertexFormats.ITEM, spriteFunction);
-//                this.radarDish = (OBJModel.OBJBakedModel) model.bake(new OBJModel.OBJState(ImmutableList.of("RadarDish_Dish"), false), DefaultVertexFormats.ITEM, spriteFunction);
-//                this.wheelLeftCover = (OBJModel.OBJBakedModel) model.bake(new OBJModel.OBJState(ImmutableList.of("Wheel_Left_Cover"), false), DefaultVertexFormats.ITEM, spriteFunction);
-//                this.wheelRight = (OBJModel.OBJBakedModel) model.bake(new OBJModel.OBJState(ImmutableList.of("Wheel_Right"), false), DefaultVertexFormats.ITEM, spriteFunction);
-//                this.wheelLeft = (OBJModel.OBJBakedModel) model.bake(new OBJModel.OBJState(ImmutableList.of("Wheel_Left"), false), DefaultVertexFormats.ITEM, spriteFunction);
-//                this.wheelRightCover = (OBJModel.OBJBakedModel) model.bake(new OBJModel.OBJState(ImmutableList.of("Wheel_Right_Cover"), false), DefaultVertexFormats.ITEM, spriteFunction);
-//                this.cargoLeft = (OBJModel.OBJBakedModel) model.bake(new OBJModel.OBJState(ImmutableList.of("CargoLeft"), false), DefaultVertexFormats.ITEM, spriteFunction);
-//                this.cargoMid = (OBJModel.OBJBakedModel) model.bake(new OBJModel.OBJState(ImmutableList.of("CargoMid"), false), DefaultVertexFormats.ITEM, spriteFunction);
-//                this.cargoRight = (OBJModel.OBJBakedModel) model.bake(new OBJModel.OBJState(ImmutableList.of("CargoRight"), false), DefaultVertexFormats.ITEM, spriteFunction);
-//            }
-//            catch (Exception e)
-//            {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//    }
-//
-//    public RenderBuggy(EntityRendererManager manager)
-//    {
-//        super(manager);
-//        this.shadowSize = 1.0F;
-//    }
-//
-//    @Override
-//    protected ResourceLocation getEntityTexture(EntityBuggy entity)
-//    {
-//        return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
-//    }
-//
-//    @Override
-//    public void doRender(EntityBuggy entity, double x, double y, double z, float entityYaw, float partialTicks)
-//    {
-//        float pitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
-//        GlStateManager.disableRescaleNormal();
-//        GlStateManager.pushMatrix();
-//        GlStateManager.translatef((float) x, (float) y, (float) z);
-//        GlStateManager.scalef(1.0F, 1.0F, 1.0F);
-//        GlStateManager.rotatef(180.0F - entityYaw, 0.0F, 1.0F, 0.0F);
-//        GlStateManager.rotatef(-pitch, 0.0F, 0.0F, 1.0F);
-//        GlStateManager.scalef(0.41F, 0.41F, 0.41F);
-//
-//        this.updateModels();
-//        this.bindEntityTexture(entity);
-//
-//        if (Minecraft.isAmbientOcclusionEnabled())
-//        {
-//            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-//        }
-//        else
-//        {
-//            GlStateManager.shadeModel(GL11.GL_FLAT);
-//        }
-//
-//        // Front wheels
-//        GlStateManager.pushMatrix();
-//        float dZ = -2.727F;
-//        float dY = 0.976F;
-//        float dX = 1.25F;
-//        float rotation = entity.wheelRotationX;
-//        GlStateManager.translatef(dX, dY, dZ);
-//        GlStateManager.rotatef(entity.wheelRotationZ, 0, 1, 0);
-//        ClientUtil.drawBakedModel(this.wheelRightCover);
-//        GlStateManager.rotatef(rotation, 1, 0, 0);
-//        ClientUtil.drawBakedModel(this.wheelRight);
-//        GlStateManager.popMatrix();
-//
-//        GlStateManager.pushMatrix();
-//        GlStateManager.translatef(-dX, dY, dZ);
-//        GlStateManager.rotatef(entity.wheelRotationZ, 0, 1, 0);
-//        ClientUtil.drawBakedModel(this.wheelLeftCover);
-//        GlStateManager.rotatef(rotation, 1, 0, 0);
-//        ClientUtil.drawBakedModel(this.wheelLeft);
-//        GlStateManager.popMatrix();
-//
-//        // Back wheels
-//        GlStateManager.pushMatrix();
-//        dX = 1.9F;
-//        dZ = -dZ;
-//        GlStateManager.translatef(dX, dY, dZ);
-//        GlStateManager.rotatef(-entity.wheelRotationZ, 0, 1, 0);
-//        GlStateManager.rotatef(rotation, 1, 0, 0);
-//        ClientUtil.drawBakedModel(this.wheelRight);
-//        GlStateManager.popMatrix();
-//
-//        GlStateManager.pushMatrix();
-//        GlStateManager.translatef(-dX, dY, dZ);
-//        GlStateManager.rotatef(-entity.wheelRotationZ, 0, 1, 0);
-//        GlStateManager.rotatef(rotation, 1, 0, 0);
-//        ClientUtil.drawBakedModel(this.wheelLeft);
-//        GlStateManager.popMatrix();
-//
-//        ClientUtil.drawBakedModel(this.mainModel);
-//
-//        // Radar Dish
-//        GlStateManager.pushMatrix();
-//        GlStateManager.translatef(-1.178F, 4.1F, -2.397F);
-//        int ticks = entity.ticksExisted + entity.getEntityId() * 10000;
-//        GlStateManager.rotatef((float) Math.sin(ticks * 0.05) * 50.0F, 1, 0, 0);
-//        GlStateManager.rotatef((float) Math.cos(ticks * 0.1) * 50.0F, 0, 0, 1);
-//        ClientUtil.drawBakedModel(this.radarDish);
-//        GlStateManager.popMatrix();
-//
-//        if (entity.buggyType > 0)
-//        {
-//            ClientUtil.drawBakedModel(this.cargoLeft);
-//
-//            if (entity.buggyType > 1)
-//            {
-//                ClientUtil.drawBakedModel(this.cargoMid);
-//
-//                if (entity.buggyType > 2)
-//                {
-//                    ClientUtil.drawBakedModel(this.cargoRight);
-//                }
-//            }
-//        }
-//
-//        GlStateManager.popMatrix();
-//        RenderHelper.enableStandardItemLighting();
-//    }
-//
-//    @Override
-//    public boolean shouldRender(EntityBuggy buggy, ICamera camera, double camX, double camY, double camZ)
-//    {
-//        AxisAlignedBB axisalignedbb = buggy.getBoundingBox().grow(2D, 1D, 2D);
-//        return buggy.isInRangeToRender3d(camX, camY, camZ) && camera.isBoundingBoxInFrustum(axisalignedbb);
-//    }
-//}
+package micdoodle8.mods.galacticraft.core.client.render.entities;
+
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import micdoodle8.mods.galacticraft.core.Constants;
+import micdoodle8.mods.galacticraft.core.client.obj.GCModelCache;
+import micdoodle8.mods.galacticraft.core.entities.EntityBuggy;
+import micdoodle8.mods.galacticraft.core.util.ClientUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.culling.ClippingHelperImpl;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.opengl.GL11;
+
+@OnlyIn(Dist.CLIENT)
+public class RenderBuggy extends EntityRenderer<EntityBuggy>
+{
+    public static final ResourceLocation MODEL = new ResourceLocation(Constants.MOD_ID_CORE, "models/buggy.obj");
+    public static IBakedModel mainModel;
+    public static IBakedModel radarDish;
+    public static IBakedModel wheelLeftCover;
+    public static IBakedModel wheelRight;
+    public static IBakedModel wheelLeft;
+    public static IBakedModel wheelRightCover;
+    public static IBakedModel cargoLeft;
+    public static IBakedModel cargoMid;
+    public static IBakedModel cargoRight;
+
+    public static void updateModels()
+    {
+        RenderBuggy.mainModel = GCModelCache.INSTANCE.getModel(MODEL, ImmutableList.of("MainBody"));
+        RenderBuggy.radarDish = GCModelCache.INSTANCE.getModel(MODEL, ImmutableList.of("RadarDish_Dish"));
+        RenderBuggy.wheelLeftCover = GCModelCache.INSTANCE.getModel(MODEL, ImmutableList.of("Wheel_Left_Cover"));
+        RenderBuggy.wheelRight = GCModelCache.INSTANCE.getModel(MODEL, ImmutableList.of("Wheel_Right"));
+        RenderBuggy.wheelLeft = GCModelCache.INSTANCE.getModel(MODEL, ImmutableList.of("Wheel_Left"));
+        RenderBuggy.wheelRightCover = GCModelCache.INSTANCE.getModel(MODEL, ImmutableList.of("Wheel_Right_Cover"));
+        RenderBuggy.cargoLeft = GCModelCache.INSTANCE.getModel(MODEL, ImmutableList.of("CargoLeft"));
+        RenderBuggy.cargoMid = GCModelCache.INSTANCE.getModel(MODEL, ImmutableList.of("CargoMid"));
+        RenderBuggy.cargoRight = GCModelCache.INSTANCE.getModel(MODEL, ImmutableList.of("CargoRight"));
+    }
+
+    public RenderBuggy(EntityRendererManager manager)
+    {
+        super(manager);
+        this.shadowSize = 1.0F;
+        GCModelCache.INSTANCE.reloadCallback(RenderBuggy::updateModels);
+    }
+
+    @Override
+    public ResourceLocation getEntityTexture(EntityBuggy entity)
+    {
+        return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
+    }
+
+    @Override
+    public void render(EntityBuggy entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+        float pitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+        RenderSystem.disableRescaleNormal();
+        matrixStackIn.push();
+        matrixStackIn.scale(1.0F, 1.0F, 1.0F);
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
+        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(-pitch));
+        matrixStackIn.scale(0.41F, 0.41F, 0.41F);
+
+        this.renderManager.textureManager.bindTexture(getEntityTexture(entity));
+
+        if (Minecraft.isAmbientOcclusionEnabled())
+        {
+            RenderSystem.shadeModel(GL11.GL_SMOOTH);
+        }
+        else
+        {
+            RenderSystem.shadeModel(GL11.GL_FLAT);
+        }
+
+        // Front wheels
+        matrixStackIn.push();
+        float dZ = -2.727F;
+        float dY = 0.976F;
+        float dX = 1.25F;
+        float rotation = entity.wheelRotationX;
+        matrixStackIn.translate(dX, dY, dZ);
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(entity.wheelRotationZ));
+        ClientUtil.drawBakedModel(this.wheelRightCover, bufferIn, matrixStackIn, packedLightIn);
+        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(rotation));
+        ClientUtil.drawBakedModel(this.wheelRight, bufferIn, matrixStackIn, packedLightIn);
+        matrixStackIn.pop();
+
+        matrixStackIn.push();
+        matrixStackIn.translate(-dX, dY, dZ);
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(entity.wheelRotationZ));
+        ClientUtil.drawBakedModel(this.wheelLeftCover, bufferIn, matrixStackIn, packedLightIn);
+        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(rotation));
+        ClientUtil.drawBakedModel(this.wheelLeft, bufferIn, matrixStackIn, packedLightIn);
+        matrixStackIn.pop();
+
+        // Back wheels
+        matrixStackIn.push();
+        dX = 1.9F;
+        dZ = -dZ;
+        matrixStackIn.translate(dX, dY, dZ);
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-entity.wheelRotationZ));
+        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(rotation));
+        ClientUtil.drawBakedModel(this.wheelRight, bufferIn, matrixStackIn, packedLightIn);
+        matrixStackIn.pop();
+
+        matrixStackIn.push();
+        matrixStackIn.translate(-dX, dY, dZ);
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-entity.wheelRotationZ));
+        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(rotation));
+        ClientUtil.drawBakedModel(this.wheelLeft, bufferIn, matrixStackIn, packedLightIn);
+        matrixStackIn.pop();
+
+        ClientUtil.drawBakedModel(this.mainModel, bufferIn, matrixStackIn, packedLightIn);
+
+        // Radar Dish
+        matrixStackIn.push();
+        matrixStackIn.translate(-1.178F, 4.1F, -2.397F);
+        int ticks = entity.ticksExisted + entity.getEntityId() * 10000;
+        matrixStackIn.rotate(Vector3f.XP.rotationDegrees((float) Math.sin(ticks * 0.05) * 50.0F));
+        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees((float) Math.cos(ticks * 0.1) * 50.0F));
+        ClientUtil.drawBakedModel(this.radarDish, bufferIn, matrixStackIn, packedLightIn);
+        matrixStackIn.pop();
+
+        if (entity.getBuggyType() != null && entity.buggyType.ordinal() > 0)
+        {
+            ClientUtil.drawBakedModel(this.cargoLeft, bufferIn, matrixStackIn, packedLightIn);
+
+            if (entity.buggyType.ordinal() > 1)
+            {
+                ClientUtil.drawBakedModel(this.cargoMid, bufferIn, matrixStackIn, packedLightIn);
+
+                if (entity.buggyType.ordinal() > 2)
+                {
+                    ClientUtil.drawBakedModel(this.cargoRight, bufferIn, matrixStackIn, packedLightIn);
+                }
+            }
+        }
+
+        matrixStackIn.pop();
+        RenderHelper.enableStandardItemLighting();
+    }
+
+    @Override
+    public boolean shouldRender(EntityBuggy buggy, ClippingHelperImpl camera, double camX, double camY, double camZ)
+    {
+        AxisAlignedBB axisalignedbb = buggy.getBoundingBox().grow(2D, 1D, 2D);
+        return buggy.isInRangeToRender3d(camX, camY, camZ) && camera.isBoundingBoxInFrustum(axisalignedbb);
+    }
+}

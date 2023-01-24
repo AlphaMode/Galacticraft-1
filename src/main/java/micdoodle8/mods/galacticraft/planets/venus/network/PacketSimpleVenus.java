@@ -87,7 +87,7 @@ public class PacketSimpleVenus extends PacketBase
     public static void encode(final PacketSimpleVenus message, final PacketBuffer buf)
     {
         buf.writeInt(message.type.ordinal());
-        NetworkUtil.writeUTF8String(buf, message.getDimensionID().getRegistryName().toString());
+        buf.writeResourceLocation(message.getDimensionID().getRegistryName());
 
         try
         {
@@ -102,7 +102,7 @@ public class PacketSimpleVenus extends PacketBase
     public static PacketSimpleVenus decode(PacketBuffer buf)
     {
         PacketSimpleVenus.EnumSimplePacketVenus type = PacketSimpleVenus.EnumSimplePacketVenus.values()[buf.readInt()];
-        DimensionType dim = DimensionType.byName(new ResourceLocation(NetworkUtil.readUTF8String(buf)));
+        DimensionType dim = DimensionType.byName(buf.readResourceLocation());
         ArrayList<Object> data = null;
 
         try
@@ -142,7 +142,7 @@ public class PacketSimpleVenus extends PacketBase
     }
 
     @Override
-    public void encodeInto(ByteBuf buffer)
+    public void encodeInto(PacketBuffer buffer)
     {
         super.encodeInto(buffer);
         buffer.writeInt(this.type.ordinal());
@@ -158,7 +158,7 @@ public class PacketSimpleVenus extends PacketBase
     }
 
     @Override
-    public void decodeInto(ByteBuf buffer)
+    public void decodeInto(PacketBuffer buffer)
     {
         super.decodeInto(buffer);
         this.type = EnumSimplePacketVenus.values()[buffer.readInt()];

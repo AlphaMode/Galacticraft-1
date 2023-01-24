@@ -37,7 +37,7 @@ public class RenderEvolvedSpider extends MobRenderer<EntityEvolvedSpider, ModelE
         if (texSwitch)
         {
             matStack.translate(0.0, -0.03, 0.0);
-            OverlaySensorGlasses.preRenderMobs();
+            OverlaySensorGlasses.preRenderMobs(matStack);
         }
     }
 

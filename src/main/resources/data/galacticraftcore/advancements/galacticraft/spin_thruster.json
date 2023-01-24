@@ -7,8 +7,7 @@
             "translate": "advancement.galacticraft.spin_thruster.description"
         },
         "icon": {
-            "item": "galacticraftcore:spin_thruster",
-            "data": 0
+            "item": "galacticraftcore:spin_thruster"
         },
         "frame": "task",
         "show_toast": true,
@@ -21,8 +20,7 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "galacticraftcore:spin_thruster",
-                        "data": 0
+                        "item": "galacticraftcore:spin_thruster"
                     }
                 ]
             }

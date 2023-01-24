@@ -7,8 +7,7 @@
             "translate": "advancement.galacticraft.advanced_solar.description"
         },
         "icon": {
-            "item": "galacticraftcore:solar",
-            "data": 0
+            "item": "galacticraftcore:solar_advanced"
         },
         "frame": "task",
         "show_toast": true,
@@ -21,8 +20,7 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "galacticraftcore:solar",
-                        "data": 0
+                        "item": "galacticraftcore:solar_advanced"
                     }
                 ]
             }

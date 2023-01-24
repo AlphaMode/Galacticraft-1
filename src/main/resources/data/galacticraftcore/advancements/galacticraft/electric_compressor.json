@@ -7,8 +7,7 @@
             "translate": "advancement.galacticraft.electric_compressor.description"
         },
         "icon": {
-            "item": "galacticraftcore:machine2",
-            "data": 0
+            "item": "galacticraftcore:ingot_compressor_electric"
         },
         "frame": "task",
         "show_toast": true,
@@ -21,8 +20,7 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "galacticraftcore:machine2",
-                        "data": 0
+                        "item": "galacticraftcore:ingot_compressor_electric"
                     }
                 ]
             }

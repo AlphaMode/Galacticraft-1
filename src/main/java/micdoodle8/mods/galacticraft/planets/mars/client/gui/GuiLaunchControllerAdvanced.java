@@ -1,5 +1,6 @@
 package micdoodle8.mods.galacticraft.planets.mars.client.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket.EnumAutoLaunch;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.container.GuiContainerGC;
@@ -22,8 +23,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,11 +69,11 @@ public class GuiLaunchControllerAdvanced extends GuiContainerGC<ContainerLaunchC
         this.infoRegions.clear();
         super.render(x, y, partialTicks);
 
-        GL11.glColor3f(1, 1, 1);
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        RenderSystem.color3f(1, 1, 1);
+        RenderSystem.disableRescaleNormal();
         RenderHelper.disableStandardItemLighting();
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        RenderSystem.disableLighting();
+        RenderSystem.disableDepthTest();
 
         int k;
 //        for (k = 0; k < buttonList.size(); ++k)
@@ -96,9 +95,9 @@ public class GuiLaunchControllerAdvanced extends GuiContainerGC<ContainerLaunchC
 //        this.labelList = labelList;
         this.infoRegions = infoRegions;
 
-//		GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+//		RenderSystem.enableTexture();
+        RenderSystem.enableLighting();
+        RenderSystem.enableDepthTest();
         RenderHelper.enableStandardItemLighting();
     }
 
@@ -156,14 +155,14 @@ public class GuiLaunchControllerAdvanced extends GuiContainerGC<ContainerLaunchC
     @Override
     protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
-        GL11.glPushMatrix();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.pushMatrix();
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.textureManager.bindTexture(GuiLaunchControllerAdvanced.launchControllerGui);
         final int var5 = (this.width - this.xSize) / 2;
         final int var6 = (this.height - this.ySize) / 2;
         this.blit(var5, var6, 0, 0, this.xSize, this.ySize);
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (this.launchController.getEnergyStoredGC() > 0)
         {
@@ -171,7 +170,7 @@ public class GuiLaunchControllerAdvanced extends GuiContainerGC<ContainerLaunchC
             this.blit(var5 + 99, var6 + 114, 176, 0, Math.min(scale, 54), 7);
         }
 
-        GL11.glPopMatrix();
+        RenderSystem.popMatrix();
     }
 
     @Override

@@ -8,11 +8,13 @@ import micdoodle8.mods.galacticraft.planets.IPlanetsModuleClient;
 import micdoodle8.mods.galacticraft.planets.asteroids.blocks.AsteroidBlocks;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.FluidTexturesGC;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.fx.ParticleTelepad;
+import micdoodle8.mods.galacticraft.planets.asteroids.client.render.entity.*;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.render.item.*;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.render.tile.TileEntityBeamReceiverRenderer;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.render.tile.TileEntityBeamReflectorRenderer;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.render.tile.TileEntityMinerBaseRenderer;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.render.tile.TileEntityShortRangeTelepadRenderer;
+import micdoodle8.mods.galacticraft.planets.asteroids.entities.AsteroidEntities;
 import micdoodle8.mods.galacticraft.planets.asteroids.event.AsteroidsEventHandlerClient;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
 import micdoodle8.mods.galacticraft.planets.asteroids.tile.TileEntityBeamReceiver;
@@ -23,6 +25,7 @@ import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -32,6 +35,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
@@ -44,11 +48,11 @@ public class AsteroidsModuleClient implements IPlanetsModuleClient
     @Override
     public void init(FMLCommonSetupEvent event)
     {
-//        RenderingRegistry.registerEntityRenderingHandler(EntitySmallAsteroid.class, (EntityRendererManager manager) -> new RenderSmallAsteroid(manager));
-//        RenderingRegistry.registerEntityRenderingHandler(EntityGrapple.class, (EntityRendererManager manager) -> new RenderGrapple(manager));
-//        RenderingRegistry.registerEntityRenderingHandler(EntityEntryPod.class, (EntityRendererManager manager) -> new RenderEntryPod(manager));
-//        RenderingRegistry.registerEntityRenderingHandler(EntityTier3Rocket.class, (EntityRendererManager manager) -> new RenderTier3Rocket(manager));
-//        RenderingRegistry.registerEntityRenderingHandler(EntityAstroMiner.class, (EntityRendererManager manager) -> new RenderAstroMiner(manager));
+        RenderingRegistry.registerEntityRenderingHandler(AsteroidEntities.SMALL_ASTEROID.get(), RenderSmallAsteroid::new);
+        RenderingRegistry.registerEntityRenderingHandler(AsteroidEntities.GRAPPLE.get(), RenderGrapple::new);
+        RenderingRegistry.registerEntityRenderingHandler(AsteroidEntities.ENTRY_POD.get(), RenderEntryPod::new);
+        RenderingRegistry.registerEntityRenderingHandler(AsteroidEntities.ROCKET_T3.get(), RenderTier3Rocket::new);
+        RenderingRegistry.registerEntityRenderingHandler(AsteroidEntities.ASTRO_MINER.get(), RenderAstroMiner::new);
         MinecraftForge.EVENT_BUS.register(this);
 
         AsteroidsEventHandlerClient clientEventHandler = new AsteroidsEventHandlerClient();
@@ -132,10 +136,10 @@ public class AsteroidsModuleClient implements IPlanetsModuleClient
 //        replaceModelDefault(event, "rocket_t3", "tier3rocket.obj", ImmutableList.of("Boosters", "Cube", "NoseCone", "Rocket"), ItemModelRocketT3.class, TRSRTransformation.identity());
 //        replaceModelDefault(event, "astro_miner", "astro_miner_inv.obj", ImmutableList.of("Hull_Center"), ItemModelAstroMiner.class, TRSRTransformation.identity());
 
-//        RenderAstroMiner.updateModels(event.getModelLoader());
-//        RenderEntryPod.updateModels(event.getModelLoader());
+        RenderAstroMiner.updateModels();
+        RenderEntryPod.updateModels();
 //        RenderGrapple.updateModel();
-//        RenderTier3Rocket.updateModels(event.getModelLoader());
+        RenderTier3Rocket.updateModels();
 //        TileEntityBeamReflectorRenderer.updateModels(event.getModelLoader());
 //        TileEntityBeamReceiverRenderer.updateModels();
 //        TileEntityMinerBaseRenderer.updateModels(event.getModelLoader());

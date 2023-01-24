@@ -33,13 +33,10 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.stats.StatisticsManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 
@@ -59,14 +56,14 @@ public class ClientPlayerEntityGC extends ClientPlayerEntity
         super(mcIn, worldIn, netHandler, statFileWriter, book);
     }
 
-//    @Override
-//    public void wakeUpPlayer(boolean immediately, boolean updateWorldFlag, boolean setSpawn)
-//    {
-////        if (!ClientProxyCore.playerClientHandler.wakeUpPlayer(this, immediately, updateWorldFlag, setSpawn))
-////        {
-////            super.wakeUpPlayer(immediately, updateWorldFlag, setSpawn);
-////        } TODO Cryo chamber
-//    }
+    @Override
+    public void stopSleepInBed(boolean immediately, boolean updateWorldFlag)
+    {
+        if (!ClientProxyCore.playerClientHandler.stopSleepInBed(this, immediately, updateWorldFlag))
+        {
+            super.stopSleepInBed(immediately, updateWorldFlag);
+        }
+    }
 
     @Override
     public void wakeUp()
@@ -464,12 +461,12 @@ public class ClientPlayerEntityGC extends ClientPlayerEntity
         ClientProxyCore.playerClientHandler.move(this, type, pos);
     }
 
-//    @Override
-//    public void onUpdate()
-//    {
-//        ClientProxyCore.playerClientHandler.onUpdate(this);
-//        super.onUpdate();
-//    }
+    @Override
+    public void tick()
+    {
+        ClientProxyCore.playerClientHandler.tick(this);
+        super.tick();
+    }
 
     @Override
     public boolean isSneaking()
@@ -498,23 +495,23 @@ public class ClientPlayerEntityGC extends ClientPlayerEntity
             {
                 this.lastLandingTicks = 0;
             }
-//            if (stats.getFreefallHandler().pjumpticks > 0)
-//            {
-//                this.sneakLast = true;
-//                return true;
-//            } TODO Freefall
+            if (stats.getFreefallHandler().pjumpticks > 0)
+            {
+                this.sneakLast = true;
+                return true;
+            }
             if (EventHandlerClient.sneakRenderOverride)
             {
                 if (this.movementInput != null && this.movementInput.sneaking != this.sneakLast)
                 {
                     return false;
                 }
-                //                if (stats.freefallHandler.testFreefall(this)) return false;
-//                if (stats.isInFreefall() || stats.getFreefallHandler().onWall)
-//                {
-//                    this.sneakLast = false;
-//                    return false;
-//                } TODO Freefall
+                                if (stats.getFreefallHandler().testFreefall(this)) return false;
+                if (stats.isInFreefall() || stats.getFreefallHandler().onWall)
+                {
+                    this.sneakLast = false;
+                    return false;
+                }
             }
             this.sneakLast = this.movementInput != null && this.movementInput.sneaking;
         }
@@ -534,44 +531,44 @@ public class ClientPlayerEntityGC extends ClientPlayerEntity
         return super.isSneaking();
     }
 
-//    @Override
-//    public float getEyeHeight(Pose p_213307_1_)
-//    {
-//        float f = eyeHeight;
-//
-//        if (this.isPlayerSleeping())
-//        {
-//            return 0.2F;
-//        }
-//
-//        float ySize = 0.0F;
-//        if (this.world.getDimension() instanceof IZeroGDimension)
-//        {
-//            GCPlayerStatsClient stats = GCPlayerStatsClient.get(this);
-//            if (stats.getLandingTicks() > 0)
-//            {
-//                ySize = stats.getLandingYOffset()[stats.getLandingTicks()];
-//                if (this.movementInput.sneak && ySize < 0.08F)
-//                {
-//                    ySize = 0.08F;
-//                }
-//            }
-////            else if (stats.getFreefallHandler().pjumpticks > 0)
-////            {
-////                ySize = 0.01F * stats.getFreefallHandler().pjumpticks;
-////            }
-////            else if (this.isSneaking() && !stats.isInFreefall() && !stats.getFreefallHandler().onWall)
-////            {
-////                ySize = 0.08F;
-////            } TODO Freefall
-//        }
-//        else if (this.isSneaking() && this.movementInput != null && this.movementInput.sneak)
-//        {
-//            ySize = 0.08F;
-//        }
-//
-//        return f - ySize;
-//    }
+    @Override
+    public float getEyeHeight(Pose p_213307_1_)
+    {
+        float f = getEyeHeight();
+
+        if (this.isSleeping())
+        {
+            return 0.2F;
+        }
+
+        float ySize = 0.0F;
+        if (this.world.getDimension() instanceof IZeroGDimension)
+        {
+            GCPlayerStatsClient stats = GCPlayerStatsClient.get(this);
+            if (stats.getLandingTicks() > 0)
+            {
+                ySize = stats.getLandingYOffset()[stats.getLandingTicks()];
+                if (this.movementInput.sneaking && ySize < 0.08F)
+                {
+                    ySize = 0.08F;
+                }
+            }
+            else if (stats.getFreefallHandler().pjumpticks > 0)
+            {
+                ySize = 0.01F * stats.getFreefallHandler().pjumpticks;
+            }
+            else if (this.isSneaking() && !stats.isInFreefall() && !stats.getFreefallHandler().onWall)
+            {
+                ySize = 0.08F;
+            }
+        }
+        else if (this.isSneaking() && this.movementInput != null && this.movementInput.sneaking)
+        {
+            ySize = 0.08F;
+        }
+
+        return f - ySize;
+    }
 
     @Nullable
     @Override

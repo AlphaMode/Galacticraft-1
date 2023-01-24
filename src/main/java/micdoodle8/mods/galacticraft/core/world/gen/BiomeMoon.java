@@ -29,6 +29,7 @@ public class BiomeMoon extends BiomeGC
     {
         super(biomeBuilder, isAdaptive);
         this.addStructure(GCFeatures.MOON_DUNGEON.withConfiguration(new DungeonConfiguration(GCBlocks.moonDungeonBrick.getDefaultState(), 25, 8, 16, 5, 6, RoomBoss.class, RoomTreasure.class)));
+        this.addStructure(GCFeatures.MOON_VILLAGE.withConfiguration(new MoonVillageConfiguration()));
         this.addFeature(GenerationStage.Decoration.SURFACE_STRUCTURES, GCFeatures.MOON_DUNGEON.withConfiguration(new DungeonConfiguration(GCBlocks.moonDungeonBrick.getDefaultState(), 25, 8, 16, 5, 6, RoomBoss.class, RoomTreasure.class)).withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
     }
 
@@ -39,5 +40,10 @@ public class BiomeMoon extends BiomeGC
         this.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE.withConfiguration(new OreFeatureConfig(FILLER_TYPE_MOON, GCBlocks.oreCheeseMoon.getDefaultState(), 3)).withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(14, 0, 0, 85))));
         this.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE.withConfiguration(new OreFeatureConfig(FILLER_TYPE_MOON, GCBlocks.moonDirt.getDefaultState(), 32)).withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(20, 0, 0, 200))));
         this.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, GCFeatures.SAPPHIRE_ORE.withConfiguration(new ReplaceBlockConfig(GCBlocks.moonStone.getDefaultState(), GCBlocks.oreSapphire.getDefaultState())).withPlacement(GCFeatures.SAPPHIRE_ORE_PLACEMENT.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
+    }
+
+    @Override
+    public int getSkyColor() {
+        return super.getSkyColor();
     }
 }

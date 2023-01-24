@@ -23,7 +23,7 @@ public class SoundUpdaterRocket extends TickableSound
 
     public SoundUpdaterRocket(ClientPlayerEntity par1EntityPlayerSP, EntityAutoRocket par2Entity)
     {
-        super(GCSounds.shuttle, SoundCategory.NEUTRAL);
+        super(GCSounds.shuttle.get(), SoundCategory.NEUTRAL);
         this.theRocket = par2Entity;
         this.thePlayer = par1EntityPlayerSP;
         this.attenuationType = ISound.AttenuationType.NONE;

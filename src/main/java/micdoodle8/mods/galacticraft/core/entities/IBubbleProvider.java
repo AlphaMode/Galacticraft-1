@@ -1,5 +1,7 @@
 package micdoodle8.mods.galacticraft.core.entities;
 
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
+
 public interface IBubbleProvider
 {
     float getBubbleSize();
@@ -7,4 +9,6 @@ public interface IBubbleProvider
     void setBubbleVisible(boolean shouldRender);
 
     boolean getBubbleVisible();
+
+    Vector3 getColor();
 }

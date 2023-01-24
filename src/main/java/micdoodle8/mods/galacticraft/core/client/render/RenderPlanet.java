@@ -1,8 +1,11 @@
 package micdoodle8.mods.galacticraft.core.client.render;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.core.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -21,23 +24,23 @@ public class RenderPlanet
     private static final ResourceLocation textureJupiterInner = new ResourceLocation(Constants.MOD_ID_CORE, "textures/misc/planets/jupiter_inner.png");
     private static final ResourceLocation textureJupiterUpper = new ResourceLocation(Constants.MOD_ID_CORE, "textures/misc/planets/jupiter_upper.png");
 
-    public static void renderPlanet(int textureId, float scale, float ticks, float relSize)
+    public static void renderPlanet(MatrixStack matrixStackIn, int textureId, float scale, float ticks, float relSize)
     {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
+        RenderSystem.bindTexture(textureId);
         float size = relSize / 70 * scale;
         ticks = ((float) System.nanoTime()) / 50000000F;
-        RenderPlanet.drawTexturedRectUV(-size / 2, -size / 2, size, size, ticks);
+        RenderPlanet.drawTexturedRectUV(matrixStackIn, -size / 2, -size / 2, size, size, ticks);
     }
 
-    public static void renderPlanet(ResourceLocation texture, float scale, float ticks, float relSize)
+    public static void renderPlanet(MatrixStack matrixStackIn, ResourceLocation texture, float scale, float ticks, float relSize)
     {
         RenderPlanet.textureManager.bindTexture(texture);
         float size = relSize / 70 * scale;
         ticks = ((float) System.nanoTime()) / 50000000F;
-        RenderPlanet.drawTexturedRectUV(-size / 2, -size / 2, size, size, ticks);
+        RenderPlanet.drawTexturedRectUV(matrixStackIn, -size / 2, -size / 2, size, size, ticks);
     }
 
-    public static void renderID(int id, float scale, float ticks)
+    public static void renderID(MatrixStack matrixStackIn, int id, float scale, float ticks)
     {
         ResourceLocation texture;
         switch (id)
@@ -65,31 +68,29 @@ public class RenderPlanet
             float relSize = 48F;
             float size = relSize / 70 * scale;
             RenderPlanet.textureManager.bindTexture(texture);
-            RenderPlanet.drawTexturedRectUV(-size / 2, -size / 2, size, size, ticks);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            GL11.glTranslatef(0, 0, -0.001F);
+            RenderPlanet.drawTexturedRectUV(matrixStackIn, -size / 2, -size / 2, size, size, ticks);
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.translatef(0, 0, -0.001F);
             RenderPlanet.textureManager.bindTexture(textureJupiterUpper);
             size *= 1.001F;
-            RenderPlanet.drawTexturedRectUV(-size / 2, -size / 2, size, size, ticks * 0.85F);
+            RenderPlanet.drawTexturedRectUV(matrixStackIn, -size / 2, -size / 2, size, size, ticks * 0.85F);
         }
         else
         {
-            RenderPlanet.renderPlanet(texture, scale, ticks, 8F);
+            RenderPlanet.renderPlanet(matrixStackIn, texture, scale, ticks, 8F);
         }
     }
 
-    public static void drawTexturedRectUV(float x, float y, float width, float height, float ticks)
+    public static void drawTexturedRectUV(MatrixStack matrixStackIn, float x, float y, float width, float height, float ticks)
     {
         for (int ysect = 0; ysect < 6; ysect++)
         {
-//    		drawTexturedRectUVSixth(x, y, width, height, (ticks / 600F) % 1F, ysect / 6F);
-            // - 80F * MathHelper.sin(angle)
             float factor = 1F + MathHelper.cos((7.5F + 10F * ysect) / 62F);
-            drawTexturedRectUVSixth(x, y, width, height, (ticks / 1100F) % 1F - (1F - factor) * 0.15F, ysect / 6F, 0.16F * factor);
+            drawTexturedRectUVSixth(matrixStackIn, x, y, width, height, (ticks / 1100F) % 1F - (1F - factor) * 0.15F, ysect / 6F, 0.16F * factor);
         }
     }
 
-    public static void drawTexturedRectUVSixth(float x, float y, float width, float height, float prog, float y0, float span)
+    public static void drawTexturedRectUVSixth(MatrixStack matrixStackIn, float x, float y, float width, float height, float prog, float y0, float span)
     {
         y0 /= 2;
         if (prog < 0F)
@@ -106,47 +107,48 @@ public class RenderPlanet
         float ybb = y + height * y3;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder worldRenderer = tessellator.getBuffer();
+        Matrix4f last = matrixStackIn.getLast().getMatrix();
         if (prog <= 1F - span)
         {
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            worldRenderer.pos(x, yab, 0F).tex(prog, y1).endVertex();
-            worldRenderer.pos(x + width, yab, 0F).tex(prog + span, y1).endVertex();
-            worldRenderer.pos(x + width, yaa, 0F).tex(prog + span, y0).endVertex();
-            worldRenderer.pos(x, yaa, 0F).tex(prog, y0).endVertex();
+            worldRenderer.pos(last, x, yab, 0F).tex(prog, y1).endVertex();
+            worldRenderer.pos(last, x + width, yab, 0F).tex(prog + span, y1).endVertex();
+            worldRenderer.pos(last, x + width, yaa, 0F).tex(prog + span, y0).endVertex();
+            worldRenderer.pos(last, x, yaa, 0F).tex(prog, y0).endVertex();
             tessellator.draw();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            worldRenderer.pos(x, ybb, 0F).tex(prog, y3).endVertex();
-            worldRenderer.pos(x + width, ybb, 0F).tex(prog + span, y3).endVertex();
-            worldRenderer.pos(x + width, yba, 0F).tex(prog + span, y2).endVertex();
-            worldRenderer.pos(x, yba, 0F).tex(prog, y2).endVertex();
+            worldRenderer.pos(last, x, ybb, 0F).tex(prog, y3).endVertex();
+            worldRenderer.pos(last, x + width, ybb, 0F).tex(prog + span, y3).endVertex();
+            worldRenderer.pos(last, x + width, yba, 0F).tex(prog + span, y2).endVertex();
+            worldRenderer.pos(last, x, yba, 0F).tex(prog, y2).endVertex();
             tessellator.draw();
         }
         else
         {
-            double xp = x + width * (1F - prog) / span;
+            float xp = x + width * (1F - prog) / span;
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            worldRenderer.pos(x, yab, 0F).tex(prog, y1).endVertex();
-            worldRenderer.pos(xp, yab, 0F).tex(1.0F, y1).endVertex();
-            worldRenderer.pos(xp, yaa, 0F).tex(1.0F, y0).endVertex();
-            worldRenderer.pos(x, yaa, 0F).tex(prog, y0).endVertex();
+            worldRenderer.pos(last, x, yab, 0F).tex(prog, y1).endVertex();
+            worldRenderer.pos(last, xp, yab, 0F).tex(1.0F, y1).endVertex();
+            worldRenderer.pos(last, xp, yaa, 0F).tex(1.0F, y0).endVertex();
+            worldRenderer.pos(last, x, yaa, 0F).tex(prog, y0).endVertex();
             tessellator.draw();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            worldRenderer.pos(x, ybb, 0F).tex(prog, y3).endVertex();
-            worldRenderer.pos(xp, ybb, 0F).tex(1.0F, y3).endVertex();
-            worldRenderer.pos(xp, yba, 0F).tex(1.0F, y2).endVertex();
-            worldRenderer.pos(x, yba, 0F).tex(prog, y2).endVertex();
+            worldRenderer.pos(last, x, ybb, 0F).tex(prog, y3).endVertex();
+            worldRenderer.pos(last, xp, ybb, 0F).tex(1.0F, y3).endVertex();
+            worldRenderer.pos(last, xp, yba, 0F).tex(1.0F, y2).endVertex();
+            worldRenderer.pos(last, x, yba, 0F).tex(prog, y2).endVertex();
             tessellator.draw();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            worldRenderer.pos(xp, yab, 0F).tex(0F, y1).endVertex();
-            worldRenderer.pos(x + width, yab, 0F).tex(prog - 1F + span, y1).endVertex();
-            worldRenderer.pos(x + width, yaa, 0F).tex(prog - 1F + span, y0).endVertex();
-            worldRenderer.pos(xp, yaa, 0F).tex(0F, y0).endVertex();
+            worldRenderer.pos(last, xp, yab, 0F).tex(0F, y1).endVertex();
+            worldRenderer.pos(last, x + width, yab, 0F).tex(prog - 1F + span, y1).endVertex();
+            worldRenderer.pos(last, x + width, yaa, 0F).tex(prog - 1F + span, y0).endVertex();
+            worldRenderer.pos(last, xp, yaa, 0F).tex(0F, y0).endVertex();
             tessellator.draw();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            worldRenderer.pos(xp, ybb, 0F).tex(0F, y3).endVertex();
-            worldRenderer.pos(x + width, ybb, 0F).tex(prog - 1F + span, y3).endVertex();
-            worldRenderer.pos(x + width, yba, 0F).tex(prog - 1F + span, y2).endVertex();
-            worldRenderer.pos(xp, yba, 0F).tex(0F, y2).endVertex();
+            worldRenderer.pos(last, xp, ybb, 0F).tex(0F, y3).endVertex();
+            worldRenderer.pos(last, x + width, ybb, 0F).tex(prog - 1F + span, y3).endVertex();
+            worldRenderer.pos(last, x + width, yba, 0F).tex(prog - 1F + span, y2).endVertex();
+            worldRenderer.pos(last, xp, yba, 0F).tex(0F, y2).endVertex();
             tessellator.draw();
         }
     }

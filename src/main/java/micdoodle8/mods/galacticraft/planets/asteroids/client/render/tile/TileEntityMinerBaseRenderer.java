@@ -3,6 +3,7 @@ package micdoodle8.mods.galacticraft.planets.asteroids.client.render.tile;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.core.client.obj.GCModelCache;
 import micdoodle8.mods.galacticraft.core.util.ClientUtil;
@@ -82,7 +83,7 @@ public class TileEntityMinerBaseRenderer extends TileEntityRenderer<TileEntityMi
         int light = getMinerBaseLight(tile.getWorld(), tile.getPos());
 
 //        GL11.glPushMatrix();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         matStack.push();
 
 //        GL11.glTranslatef((float) x + 1F, (float) y + 1F, (float) z + 1F);

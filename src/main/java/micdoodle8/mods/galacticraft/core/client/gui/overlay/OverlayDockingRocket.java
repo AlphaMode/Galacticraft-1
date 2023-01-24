@@ -17,9 +17,8 @@ public class OverlayDockingRocket extends Overlay
     public static void renderDockingOverlay(long ticks)
     {
         Minecraft mc = Minecraft.getInstance();
-//        mc.entityRenderer.setupOverlayRendering(); TODO Needed?
-        int width = (int) (mc.mouseHelper.getMouseX() * (double) mc.getMainWindow().getScaledWidth() / (double) mc.getMainWindow().getWidth());
-        int height = (int) (mc.mouseHelper.getMouseY() * (double) mc.getMainWindow().getScaledHeight() / (double) mc.getMainWindow().getHeight());
+        int width = mc.getMainWindow().getScaledWidth();
+        int height = mc.getMainWindow().getScaledHeight();
 
         if (mc.player.getRidingEntity() instanceof EntityAutoRocket)
         {

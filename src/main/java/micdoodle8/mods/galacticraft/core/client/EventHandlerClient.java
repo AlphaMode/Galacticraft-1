@@ -1,6 +1,7 @@
 package micdoodle8.mods.galacticraft.core.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.entity.ICameraZoomEntity;
 import micdoodle8.mods.galacticraft.api.event.client.CelestialBodyRenderEvent;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
@@ -10,12 +11,14 @@ import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.lwjgl.opengl.GL11;
 
 public class EventHandlerClient
 {
@@ -26,7 +29,8 @@ public class EventHandlerClient
     //Lowest priority to do the PushMatrix last, just before vanilla RenderPlayer - this also means if it gets cancelled first by another mod, this will never be called
     public void onRenderPlayerPre(RenderPlayerEvent.Pre event)
     {
-        GL11.glPushMatrix();
+        MatrixStack matrixStack = event.getMatrixStack();
+        matrixStack.push();
 
         final PlayerEntity player = event.getPlayer();
 
@@ -38,12 +42,12 @@ public class EventHandlerClient
             if (rotateOffset > -10F)
             {
                 rotateOffset += ClientProxyCore.PLAYER_Y_OFFSET;
-                GL11.glTranslatef(0, -rotateOffset, 0);
+                matrixStack.translate(0, -rotateOffset, 0);
                 float anglePitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * event.getPartialRenderTick();
                 float angleYaw = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * event.getPartialRenderTick();
-                GL11.glRotatef(-angleYaw, 0.0F, 1.0F, 0.0F);
-                GL11.glRotatef(anglePitch, 0.0F, 0.0F, 1.0F);
-                GL11.glTranslatef(0, rotateOffset, 0);
+                matrixStack.rotate(Vector3f.YP.rotationDegrees(-angleYaw));
+                matrixStack.rotate(Vector3f.ZP.rotationDegrees(anglePitch));
+                matrixStack.translate(0, rotateOffset, 0);
             }
         }
 
@@ -59,7 +63,7 @@ public class EventHandlerClient
     //Highest priority to do the PushMatrix first, just after vanilla RenderPlayer
     public void onRenderPlayerPost(RenderPlayerEvent.Post event)
     {
-        GL11.glPopMatrix();
+        event.getMatrixStack().pop();
 
         if (event.getPlayer() instanceof ClientPlayerEntity)
         {
@@ -81,7 +85,7 @@ public class EventHandlerClient
             if (ClientProxyCore.overworldTexturesValid)
             {
                 event.celestialBodyTexture = null;
-                GlStateManager.bindTexture(ClientProxyCore.overworldTextureClient.getGlTextureId());
+                RenderSystem.bindTexture(ClientProxyCore.overworldTextureClient.getGlTextureId());
             }
         }
     }
@@ -104,5 +108,12 @@ public class EventHandlerClient
                 ((GuiCelestialSelection) mc.currentScreen).blit(-1.75F * size, -7.0F * size, 3.5F * size, 14.0F * size, 0, 0, 7, 28, false, false, 32, 32);
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onRenderWorld(RenderWorldLastEvent event) {
+        FootprintRenderer.renderFootprints(event.getMatrixStack(), ClientProxyCore.mc.player, event.getPartialTicks());
+        MinecraftForge.EVENT_BUS.post(new ClientProxyCore.EventSpecialRender(event.getMatrixStack(), event.getPartialTicks()));
+        BubbleRenderer.renderBubbles(event.getMatrixStack());
     }
 }

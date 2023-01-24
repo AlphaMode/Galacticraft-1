@@ -1,7 +1,5 @@
 package micdoodle8.mods.galacticraft.core;
 
-//import api.player.server.ServerPlayerAPI;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
@@ -20,6 +18,7 @@ import micdoodle8.mods.galacticraft.core.advancement.GCTriggers;
 import micdoodle8.mods.galacticraft.core.client.screen.GameScreenBasic;
 import micdoodle8.mods.galacticraft.core.client.screen.GameScreenCelestial;
 import micdoodle8.mods.galacticraft.core.client.screen.GameScreenText;
+import micdoodle8.mods.galacticraft.core.client.sounds.GCSounds;
 import micdoodle8.mods.galacticraft.core.command.CommandPlanetTeleport;
 import micdoodle8.mods.galacticraft.core.dimension.*;
 import micdoodle8.mods.galacticraft.core.energy.grid.ChunkPowerHandler;
@@ -63,8 +62,6 @@ import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
@@ -93,10 +90,6 @@ import javax.imageio.ImageWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Supplier;
-
-import static net.minecraftforge.common.BiomeDictionary.Type.RARE;
-import static net.minecraftforge.common.BiomeDictionary.Type.WET;
 
 //@Mod(modid = Constants.MOD_ID_CORE, name = GalacticraftCore.NAME, version = Constants.COMBINEDVERSION, useMetadata = true, acceptedMinecraftVersions = Constants.MCVERSION, dependencies = Constants.DEPENDENCIES_FORGE + Constants.DEPENDENCIES_MICCORE + Constants.DEPENDENCIES_MODS, guiFactory = "micdoodle8.mods.galacticraft.core.client.gui.screen.ConfigGuiFactoryCore")
 @Mod(Constants.MOD_ID_CORE)
@@ -105,17 +98,9 @@ public class GalacticraftCore
     public static final String NAME = "Galacticraft Core";
 //    private File GCCoreSource;
 
-//    @SidedProxy(clientSide = "micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore", serverSide = "micdoodle8.mods.galacticraft.core.proxy.CommonProxyCore")
-//    public static CommonProxyCore proxy;
 
-    public static CommonProxyCore proxy = DistExecutor.runForDist(() -> getClientProxy(), () -> () -> new CommonProxyCore());
+    public static CommonProxyCore proxy = DistExecutor.safeRunForDist(() -> ClientProxyCore::new, () -> CommonProxyCore::new);
 
-    @OnlyIn(Dist.CLIENT)
-    private static Supplier<CommonProxyCore> getClientProxy()
-    {
-        //NOTE: This extra method is needed to avoid classloading issues on servers
-        return CommonProxyCore::new;
-    }
 
     public static GalacticraftCore instance;
 
@@ -129,17 +114,17 @@ public class GalacticraftCore
     public static CreativeTabGC galacticraftBlocksTab;
     public static CreativeTabGC galacticraftItemsTab;
 
-    public static SolarSystem solarSystemSol;
+    public static SolarSystem solarSystemSol = new SolarSystem("sol", "milky_way").setMapPosition(new Vector3(0.0F, 0.0F, 0.0F));
     public static Planet planetMercury;
     public static Planet planetVenus;
     public static Planet planetMars;  //Used only if GCPlanets not loaded
-    public static Planet planetOverworld;
+    public static Planet planetOverworld = (Planet) new Planet("overworld").setParentSolarSystem(GalacticraftCore.solarSystemSol).setRingColorRGB(0.1F, 0.9F, 0.6F).setPhaseShift(0.0F);
     public static Planet planetJupiter;
     public static Planet planetSaturn;
     public static Planet planetUranus;
     public static Planet planetNeptune;
-    public static Moon moonMoon;
-    public static Satellite satelliteSpaceStation;
+    public static Moon moonMoon = (Moon) new Moon("moon").setParentPlanet(GalacticraftCore.planetOverworld).setRelativeSize(0.2667F).setRelativeDistanceFromCenter(new CelestialBody.ScalableDistance(13F, 13F)).setRelativeOrbitTime(1 / 0.01F);
+    public static Satellite satelliteSpaceStation = (Satellite) new Satellite("spacestation.overworld").setParentBody(GalacticraftCore.planetOverworld).setRelativeSize(0.2667F).setRelativeDistanceFromCenter(new CelestialBody.ScalableDistance(9F, 9F)).setRelativeOrbitTime(1 / 0.05F);
 
     public static LinkedList<ResourceLocation> itemList = new LinkedList<>();
 //    public static LinkedList<Item> itemListTrue = new LinkedList<>();
@@ -162,6 +147,7 @@ public class GalacticraftCore
     public GalacticraftCore()
     {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigManagerCore.COMMON_SPEC);
+//        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> );
         versionNumber = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion();
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(GCDimensions::onModDimensionRegister);
@@ -172,17 +158,14 @@ public class GalacticraftCore
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::clientSetup);
         modBus.addListener(this::onModConfigEvent);
+//        modBus.addListener(GCPlayerHandler::onAttachCapability);
         modBus.addGenericListener(ContainerType.class, GCContainers::initContainers);
         modBus.addGenericListener(IRecipeSerializer.class, GalacticraftCore::registerRecipeSerializers);
         modBus.addGenericListener(Biome.class, GalacticraftCore::biomeRegisterEvent);
         GCFluids.FLUIDS.register(modBus);
+        GCSounds.SOUNDS.register(modBus);
         ConnectionEvents.register(MinecraftForge.EVENT_BUS);
         TabRegistry.registerEventListeners(MinecraftForge.EVENT_BUS);
-
-        GalacticraftCore.solarSystemSol = new SolarSystem("sol", "milky_way").setMapPosition(new Vector3(0.0F, 0.0F, 0.0F));
-        GalacticraftCore.planetOverworld = (Planet) new Planet("overworld").setParentSolarSystem(GalacticraftCore.solarSystemSol).setRingColorRGB(0.1F, 0.9F, 0.6F).setPhaseShift(0.0F);
-        GalacticraftCore.moonMoon = (Moon) new Moon("moon").setParentPlanet(GalacticraftCore.planetOverworld).setRelativeSize(0.2667F).setRelativeDistanceFromCenter(new CelestialBody.ScalableDistance(13F, 13F)).setRelativeOrbitTime(1 / 0.01F);
-        GalacticraftCore.satelliteSpaceStation = (Satellite) new Satellite("spacestation.overworld").setParentBody(GalacticraftCore.planetOverworld).setRelativeSize(0.2667F).setRelativeDistanceFromCenter(new CelestialBody.ScalableDistance(9F, 9F)).setRelativeOrbitTime(1 / 0.05F);
     }
 
     public static void registerRecipeSerializers(RegistryEvent.Register<IRecipeSerializer<?>> evt)
@@ -296,9 +279,9 @@ public class GalacticraftCore
         GalacticraftRegistry.registerTeleportType(OverworldDimension.class, new TeleportTypeOverworld());
         GalacticraftRegistry.registerTeleportType(DimensionOverworldOrbit.class, new TeleportTypeOrbit());
         GalacticraftRegistry.registerTeleportType(DimensionMoon.class, new TeleportTypeMoon());
-//        GalacticraftRegistry.registerRocketGui(DimensionOverworldOrbit.class, new ResourceLocation(Constants.MOD_ID_CORE, "textures/gui/overworld_rocket_gui.png"));
-//        GalacticraftRegistry.registerRocketGui(WorldProviderSurface.class, new ResourceLocation(Constants.MOD_ID_CORE, "textures/gui/overworld_rocket_gui.png"));
-//        GalacticraftRegistry.registerRocketGui(DimensionMoon.class, new ResourceLocation(Constants.MOD_ID_CORE, "textures/gui/moon_rocket_gui.png"));
+        GalacticraftRegistry.registerRocketGui(DimensionOverworldOrbit.class, new ResourceLocation(Constants.MOD_ID_CORE, "textures/gui/overworld_rocket_gui.png"));
+        GalacticraftRegistry.registerRocketGui(OverworldDimension.class, new ResourceLocation(Constants.MOD_ID_CORE, "textures/gui/overworld_rocket_gui.png"));
+        GalacticraftRegistry.registerRocketGui(DimensionMoon.class, new ResourceLocation(Constants.MOD_ID_CORE, "textures/gui/moon_rocket_gui.png"));
         GalacticraftRegistry.addDungeonLoot(1, new ItemStack(GCItems.schematicBuggy, 1));
         GalacticraftRegistry.addDungeonLoot(1, new ItemStack(GCItems.schematicRocketT2, 1));
 

@@ -36,8 +36,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ChunkHolder;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
@@ -304,14 +306,7 @@ public class TickHandlerServer
             if (TickHandlerServer.spaceRaceData == null)
             {
                 ServerWorld world = server.getWorld(DimensionType.OVERWORLD);
-                WorldDataSpaceRaces.initWorldData(world);
-//                TickHandlerServer.spaceRaceData = (WorldDataSpaceRaces) world.getMapStorage().getOrLoadData(WorldDataSpaceRaces.class, WorldDataSpaceRaces.saveDataID);
-//
-//                if (TickHandlerServer.spaceRaceData == null)
-//                {
-//                    TickHandlerServer.spaceRaceData = new WorldDataSpaceRaces(WorldDataSpaceRaces.saveDataID);
-//                    world.getMapStorage().setData(WorldDataSpaceRaces.saveDataID, TickHandlerServer.spaceRaceData);
-//                }
+                TickHandlerServer.spaceRaceData = WorldDataSpaceRaces.initWorldData(world);
             }
 
             SpaceRaceManager.tick();
@@ -341,48 +336,48 @@ public class TickHandlerServer
                     {
                         boolean mapChanged = false;
 
-//                        if (chunkProviderServer != null)
-//                        {
-//                            Iterable<ChunkHolder> iterator = chunkProviderServer.chunkManager.func_223491_f();
-//
-//                            while (iterator.hasNext())
-//                            {
-//                                Chunk chunk = (Chunk) iterator.next();
-//                                long chunkKey = ChunkPos.asLong(chunk.x, chunk.z);
-//
-//                                List<Footprint> footprints = footprintMap.get(chunkKey);
-//
-//                                if (footprints != null)
-//                                {
-//                                    List<Footprint> toRemove = new ArrayList<Footprint>();
-//
-//                                    for (int j = 0; j < footprints.size(); j++)
-//                                    {
-//                                        footprints.get(j).age += 100;
-//
-//                                        if (footprints.get(j).age >= Footprint.MAX_AGE)
-//                                        {
-//                                            toRemove.add(footprints.get(j));
-//                                        }
-//                                    }
-//
-//                                    if (!toRemove.isEmpty())
-//                                    {
-//                                        footprints.removeAll(toRemove);
-//                                    }
-//
-//                                    footprintMap.put(chunkKey, footprints);
-//                                    mapChanged = true;
-//
-//                                    GalacticraftCore.packetPipeline.sendToDimension(new PacketSimple(EnumSimplePacket.C_UPDATE_FOOTPRINT_LIST, worlds[i].dimension.getDimension(), new Object[] { chunkKey, footprints.toArray(new Footprint[footprints.size()]) }), worlds[i].dimension.getDimension());
-//                                }
-//                            }
-//                        } TODO Footprints
+                        if (chunkProviderServer != null)
+                        {
+                            for (ChunkHolder holder : chunkProviderServer.chunkManager.getLoadedChunksIterable())
+                            {
+                                Chunk chunk = holder.getChunkIfComplete();
+                                if (chunk == null)
+                                    continue;
+                                long chunkKey = chunk.getPos().asLong();
 
-//                        if (mapChanged)
-//                        {
-//                            TickHandlerServer.serverFootprintMap.put(GCCoreUtil.getDimensionID(world), footprintMap);
-//                        }
+                                List<Footprint> footprints = footprintMap.get(chunkKey);
+
+                                if (footprints != null)
+                                {
+                                    List<Footprint> toRemove = new ArrayList<Footprint>();
+
+                                    for (int j = 0; j < footprints.size(); j++)
+                                    {
+                                        footprints.get(j).age += 100;
+
+                                        if (footprints.get(j).age >= Footprint.MAX_AGE)
+                                        {
+                                            toRemove.add(footprints.get(j));
+                                        }
+                                    }
+
+                                    if (!toRemove.isEmpty())
+                                    {
+                                        footprints.removeAll(toRemove);
+                                    }
+
+                                    footprintMap.put(chunkKey, footprints);
+                                    mapChanged = true;
+
+                                    GalacticraftCore.packetPipeline.sendToDimension(new PacketSimple(EnumSimplePacket.C_UPDATE_FOOTPRINT_LIST, GCCoreUtil.getDimensionType(world), new Object[] { chunkKey, footprints.toArray(new Footprint[footprints.size()]) }), GCCoreUtil.getDimensionType(world));
+                                }
+                            }
+                        }
+
+                        if (mapChanged)
+                        {
+                            TickHandlerServer.serverFootprintMap.put(GCCoreUtil.getDimensionType(world).getId(), footprintMap);
+                        }
                     }
                 }
             }

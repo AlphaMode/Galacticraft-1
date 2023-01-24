@@ -20,12 +20,14 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.WorldGenRegion;
 import net.minecraft.world.gen.feature.*;
@@ -637,32 +639,35 @@ public class AsteroidChunkGenerator extends ChunkGenerator<AsteroidGenSettings>
     }
 
     @Override
-    public void generateSurface(WorldGenRegion region, IChunk chunkIn)
-    {
-        int chunkX = chunkIn.getPos().x;
-        int chunkZ = chunkIn.getPos().z;
+    public void func_225550_a_(BiomeManager p_225550_1_, IChunk p_225550_2_, GenerationStage.Carving p_225550_3_) {
+    }
+
+    @Override
+    public void decorate(WorldGenRegion region) {
+        int chunkX = region.getMainChunkX();
+        int chunkZ = region.getMainChunkZ();
         int x = chunkX << 4;
         int z = chunkZ << 4;
-        if (!AsteroidChunkGenerator.chunksDone.add(new BlockVec3(x, 0, z)))
-        {
-            return;
-        }
+//        if (!AsteroidChunkGenerator.chunksDone.add(new BlockVec3(x, 0, z)))
+//        {
+//            return;
+//        }
 
 //        BlockFalling.fallInstantly = true;
-//        this.world.getBiome(new BlockPos(x + 16, 0, z + 16));
+//        region.getBiome(new BlockPos(x + 16, 0, z + 16));
 //        BlockFalling.fallInstantly = false;
 
-        this.world.getRandom().setSeed(this.world.getSeed());
-        long var7 = this.world.getRandom().nextLong() / 2L * 2L + 1L;
-        long var9 = this.world.getRandom().nextLong() / 2L * 2L + 1L;
-        this.world.getRandom().setSeed(chunkX * var7 + chunkZ * var9 ^ this.world.getSeed());
+        region.getRandom().setSeed(region.getSeed());
+        long var7 = region.getRandom().nextLong() / 2L * 2L + 1L;
+        long var9 = region.getRandom().nextLong() / 2L * 2L + 1L;
+        region.getRandom().setSeed(chunkX * var7 + chunkZ * var9 ^ region.getSeed());
 
         //50:50 chance to include small blocks each chunk
-        if (this.world.getRandom().nextBoolean())
+        if (region.getRandom().nextBoolean())
         {
             double density = this.asteroidDensity.getNoise(chunkX * 16, chunkZ * 16) * 0.54;
             double numOfBlocks = this.clamp(this.randFromPoint(chunkX, chunkZ), .4, 1) * AsteroidChunkGenerator.MAX_BLOCKS_PER_CHUNK * density + AsteroidChunkGenerator.MIN_BLOCKS_PER_CHUNK;
-            int y0 = this.world.getRandom().nextInt(2);
+            int y0 = region.getRandom().nextInt(2);
             BlockState state;
 //            int meta;
             int yRange = AsteroidChunkGenerator.MAX_ASTEROID_Y - AsteroidChunkGenerator.MIN_ASTEROID_Y;
@@ -671,18 +676,18 @@ public class AsteroidChunkGenerator extends ChunkGenerator<AsteroidGenSettings>
 
             for (int i = 0; i < numOfBlocks; i++)
             {
-                int y = this.world.getRandom().nextInt(yRange) + AsteroidChunkGenerator.MIN_ASTEROID_Y;
+                int y = region.getRandom().nextInt(yRange) + AsteroidChunkGenerator.MIN_ASTEROID_Y;
 
                 //50:50 chance vertically as well
                 if (y0 == (y / 16) % 2)
                 {
-                    int px = x + this.world.getRandom().nextInt(AsteroidChunkGenerator.CHUNK_SIZE_X);
-                    int pz = z + this.world.getRandom().nextInt(AsteroidChunkGenerator.CHUNK_SIZE_Z);
+                    int px = x + region.getRandom().nextInt(AsteroidChunkGenerator.CHUNK_SIZE_X);
+                    int pz = z + region.getRandom().nextInt(AsteroidChunkGenerator.CHUNK_SIZE_Z);
 
                     state = this.ASTEROID_STONE_1;
 //                    meta = this.ASTEROID_STONE_META_1;
 
-                    if (this.world.getRandom().nextInt(ILMENITE_CHANCE) == 0)
+                    if (region.getRandom().nextInt(ILMENITE_CHANCE) == 0)
                     {
                         state = AsteroidBlocks.oreIlmenite.getDefaultState();
 
@@ -691,7 +696,7 @@ public class AsteroidChunkGenerator extends ChunkGenerator<AsteroidGenSettings>
                             continue;
                         }
                     }
-                    else if (this.world.getRandom().nextInt(IRON_CHANCE) == 0)
+                    else if (region.getRandom().nextInt(IRON_CHANCE) == 0)
                     {
                         state = AsteroidBlocks.oreIron.getDefaultState();
 
@@ -700,7 +705,7 @@ public class AsteroidChunkGenerator extends ChunkGenerator<AsteroidGenSettings>
                             continue;
                         }
                     }
-                    else if (this.world.getRandom().nextInt(ALUMINUM_CHANCE) == 0)
+                    else if (region.getRandom().nextInt(ALUMINUM_CHANCE) == 0)
                     {
                         state = AsteroidBlocks.oreAluminum.getDefaultState();
 
@@ -710,7 +715,7 @@ public class AsteroidChunkGenerator extends ChunkGenerator<AsteroidGenSettings>
                         }
                     }
 
-                    world.setBlockState(new BlockPos(px, y, pz), state, 2);
+                    region.setBlockState(new BlockPos(px, y, pz), state, 2);
 //                    int count = 9;
 //                    if (!(world.getBlockState(new BlockPos(px - 1, y, pz)).getBlock() instanceof AirBlock))
 //                    {
@@ -738,7 +743,7 @@ public class AsteroidChunkGenerator extends ChunkGenerator<AsteroidGenSettings>
             this.generateTerrain(chunkX, chunkZ, null, true);
         }
 
-        this.world.getRandom().setSeed(chunkX * var7 + chunkZ * var9 ^ this.world.getSeed());
+        region.getRandom().setSeed(chunkX * var7 + chunkZ * var9 ^ region.getSeed());
 
         //Look for hollow asteroids to populate
         if (!this.largeAsteroids.isEmpty())
@@ -771,9 +776,9 @@ public class AsteroidChunkGenerator extends ChunkGenerator<AsteroidGenSettings>
                     ConfiguredFeature<TreeFeatureConfig, ?> wg = (new TreeFeature(TreeFeatureConfig::deserializeJungle)).withConfiguration(DefaultBiomeFeatures.OAK_TREE_CONFIG);
                     for (int tries = 0; tries < 5; tries++)
                     {
-                        int i = world.getRandom().nextInt(16) + x + 8;
-                        int k = world.getRandom().nextInt(16) + z + 8;
-                        if (wg.place(world, this, world.getRandom(), new BlockPos(i, this.getTerrainHeightAt(i - x, k - z, sizeYArray, xMin, zMin, zSize, asteroidY, asteroidSize), k)))
+                        int i = region.getRandom().nextInt(16) + x + 8;
+                        int k = region.getRandom().nextInt(16) + z + 8;
+                        if (wg.place(region, this, region.getRandom(), new BlockPos(i, this.getTerrainHeightAt(i - x, k - z, sizeYArray, xMin, zMin, zSize, asteroidY, asteroidSize), k)))
                         {
                             break;
                         }
@@ -825,6 +830,11 @@ public class AsteroidChunkGenerator extends ChunkGenerator<AsteroidGenSettings>
         }
 
 //        this.dungeonGenerator.generate(this.world, chunkX, chunkZ, chunkIn);
+    }
+
+    @Override
+    public void generateSurface(WorldGenRegion p_225551_1_, IChunk p_225551_2_) {
+
     }
 
 //    @Override

@@ -12,10 +12,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.function.Supplier;
 
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID_PLANETS, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class AsteroidEntities
 {
-    public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Constants.MOD_ID_PLANETS);
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, Constants.MOD_ID_PLANETS);
 
     public static final RegistryObject<EntityType<EntityAstroMiner>> ASTRO_MINER = register(AsteroidEntityNames.ASTRO_MINER, AsteroidEntities::astroMiner);
     public static final RegistryObject<EntityType<EntityEntryPod>> ENTRY_POD = register(AsteroidEntityNames.ENTRY_POD, AsteroidEntities::entryPod);

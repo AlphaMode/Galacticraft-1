@@ -125,9 +125,9 @@ public interface IStatsClientCapability
 
     void setSsOnGroundLast(boolean ssOnGroundLast);
 
-//    FreefallHandler getFreefallHandler();
-//
-//    void setFreefallHandler(FreefallHandler freefallHandler); TODO Freefall handler
+    FreefallHandler getFreefallHandler();
+
+    void setFreefallHandler(FreefallHandler freefallHandler);
 
     ArrayList<ISchematicPage> getUnlockedSchematics();
 

@@ -5,6 +5,7 @@ import java.util.*;
 import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -36,10 +37,10 @@ public class GCModelCache extends BaseModelCache {
         OBJModel model = loadedModelCache.computeIfAbsent(location, loc -> OBJLoader.INSTANCE.loadModel(new OBJModel.ModelSettings(location, false, true, true, true, null)));
         return visibleModelCache.computeIfAbsent(new VisibilityEntry(location, visibleGroups), visEntry -> {
             if (visibleGroups.isEmpty()) {
-                return model.bake(new VisibleModelConfiguration(contentsConfiguration, visibleGroups), ModelLoader.instance(), material -> material.getSprite(), ModelRotation.X0_Y0, ItemOverrideList.EMPTY, location);
+                return model.bake(new VisibleModelConfiguration(contentsConfiguration, visibleGroups), ModelLoader.instance(), Material::getSprite, ModelRotation.X0_Y0, ItemOverrideList.EMPTY, location);
             } else {
                 return model.bake(new VisibleModelConfiguration(contentsConfiguration, visibleGroups),
-                        ModelLoader.instance(), material -> material.getSprite(), ModelRotation.X0_Y0, ItemOverrideList.EMPTY, location);
+                        ModelLoader.instance(), Material::getSprite, ModelRotation.X0_Y0, ItemOverrideList.EMPTY, location);
             }
         });
     }

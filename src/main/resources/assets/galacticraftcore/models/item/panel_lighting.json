@@ -3,7 +3,7 @@
 	"textures": {
 		"texture": "galacticraftcore:blocks/panel_light_off",
 		"lights": "galacticraftcore:blocks/panel_light_square",
-		"particle": "blocks/glass"
+		"particle": "block/glass"
 	},
     "display": {
         "firstperson": {

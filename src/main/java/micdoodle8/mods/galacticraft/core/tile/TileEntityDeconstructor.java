@@ -154,7 +154,7 @@ public class TileEntityDeconstructor extends TileBaseElectricBlock implements II
 
                     if ((this.processTicks * 5) % this.processTimeRequired == 5)
                     {
-                        this.world.playSound(null, this.getPos(), GCSounds.deconstructor, SoundCategory.BLOCKS, 0.25F, this.world.rand.nextFloat() * 0.04F + 0.38F);
+                        this.world.playSound(null, this.getPos(), GCSounds.deconstructor.get(), SoundCategory.BLOCKS, 0.25F, this.world.rand.nextFloat() * 0.04F + 0.38F);
                     }
 
                     if (this.processTicks >= this.processTimeRequired)

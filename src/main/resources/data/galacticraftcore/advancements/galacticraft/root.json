@@ -9,8 +9,7 @@
             "translate": "advancement.galacticraft.root.description"
         },
         "icon": {
-            "item": "galacticraftcore:rocket_t1",
-            "data": 0
+            "item": "galacticraftcore:rocket_t1"
         },
         "frame": "task",
         "show_toast": false,

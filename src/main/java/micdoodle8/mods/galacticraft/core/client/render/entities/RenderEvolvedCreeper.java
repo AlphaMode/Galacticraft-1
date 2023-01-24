@@ -43,7 +43,7 @@ public class RenderEvolvedCreeper extends MobRenderer<EntityEvolvedCreeper, Mode
         if (this.texSwitch)
         {
             matrixStackIn.translate(0.0F, -0.03F, 0.0F);
-            OverlaySensorGlasses.preRenderMobs();
+            OverlaySensorGlasses.preRenderMobs(matrixStackIn);
         }
         matrixStackIn.translate(0.0F, 0.125F, 0.0F);
     }

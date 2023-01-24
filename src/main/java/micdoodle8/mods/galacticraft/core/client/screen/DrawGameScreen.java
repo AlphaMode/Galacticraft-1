@@ -1,6 +1,8 @@
 package micdoodle8.mods.galacticraft.core.client.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GLX;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.client.IScreenManager;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
@@ -17,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 
 import java.nio.FloatBuffer;
 
@@ -83,7 +86,7 @@ public class DrawGameScreen implements IScreenManager
         }
     }
 
-    public void drawScreen(int type, float ticks, boolean cornerBlock)
+    public void drawScreen(MatrixStack matrixStackIn, int type, float ticks, boolean cornerBlock)
     {
         if (type >= GalacticraftRegistry.getMaxScreenTypes())
         {
@@ -102,7 +105,7 @@ public class DrawGameScreen implements IScreenManager
                     this.mapFirstTick = false;
                 }
             }
-            this.doDraw(type, ticks);
+            this.doDraw(matrixStackIn, type, ticks);
             this.initialise = true;
             this.initialiseLast = false;
             return;
@@ -179,29 +182,24 @@ public class DrawGameScreen implements IScreenManager
 
         tickDrawn = ticks;
 
-        this.doDraw(type, ticks);
+        this.doDraw(matrixStackIn, type, ticks);
     }
 
-    private void doDraw(int type, float ticks)
+    private void doDraw(MatrixStack matrixStackIn, int type, float ticks)
     {
-////        float lightMapSaveX = OpenGlHelper.lastBrightnessX;
-////        float lightMapSaveY = OpenGlHelper.lastBrightnessY;
-////        GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, 240.0F, 240.0F);
-//        GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, 240.0F, 240.0F);
-//
-//        if (type > 0) TODO Drawing
-//        {
-//            GL11.glDisable(GL11.GL_LIGHTING);
-//        }
-//
-//        GalacticraftRegistry.getGameScreen(type).render(type, ticks, scaleX, scaleZ, this);
-//
-//        if (type > 0)
-//        {
-//            GL11.glEnable(GL11.GL_LIGHTING);
-//        }
-//
-////        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightMapSaveX, lightMapSaveY);
+        RenderSystem.glMultiTexCoord2f(GL15.GL_TEXTURE1, 240.0F, 240.0F);
+
+        if (type > 0)
+        {
+            RenderSystem.disableLighting();
+        }
+
+        GalacticraftRegistry.getGameScreen(type).render(matrixStackIn, type, ticks, scaleX, scaleZ, this);
+
+        if (type > 0)
+        {
+            RenderSystem.enableLighting();
+        }
     }
 
     @Override
@@ -209,7 +207,7 @@ public class DrawGameScreen implements IScreenManager
     {
         if (this.driver != null)
         {
-            return driver.getWorld().dimension;
+            return driver.getWorld().getDimension();
         }
 
         return null;

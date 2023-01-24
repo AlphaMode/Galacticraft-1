@@ -1,6 +1,8 @@
 package micdoodle8.mods.galacticraft.core.client.gui.overlay;
 
-import com.mojang.blaze3d.platform.GLX;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.item.ISensorGlassesArmor;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
 import micdoodle8.mods.galacticraft.core.Constants;
@@ -43,19 +45,15 @@ public class OverlaySensorGlasses extends Overlay
 
         final float f = MathHelper.sin(OverlaySensorGlasses.zoom / 80.0F) * 0.1F + 0.1F;
 
-//        final ScaledResolution scaledresolution = ClientUtil.getScaledRes(OverlaySensorGlasses.minecraft, OverlaySensorGlasses.minecraft.displayWidth, OverlaySensorGlasses.minecraft.displayHeight);
-//        final int i = scaledresolution.getScaledWidth();
-//        final int k = scaledresolution.getScaledHeight();
-//        OverlaySensorGlasses.minecraft.entityRenderer.setupOverlayRendering();
         Minecraft mc = Minecraft.getInstance();
-        int width = (int) (mc.mouseHelper.getMouseX() * (double) mc.getMainWindow().getScaledWidth() / (double) mc.getMainWindow().getWidth());
-        int height = (int) (mc.mouseHelper.getMouseY() * (double) mc.getMainWindow().getScaledHeight() / (double) mc.getMainWindow().getHeight());
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        int width = mc.getMainWindow().getScaledWidth();
+        int height = mc.getMainWindow().getScaledHeight();
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
+        RenderSystem.depthMask(false);
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.disableAlphaTest();
         mc.textureManager.bindTexture(OverlaySensorGlasses.hudTexture);
         final Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder worldRenderer = tessellator.getBuffer();
@@ -66,10 +64,10 @@ public class OverlaySensorGlasses extends Overlay
         worldRenderer.pos(width / 2 - height - f * 80, 0.0D - f * 40, -90D).tex(0.0F, 0.0F).endVertex();
         tessellator.draw();
 
-        GL11.glDepthMask(true);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.depthMask(true);
+        RenderSystem.enableDepthTest();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     public static void renderSensorGlassesValueableBlocks(ItemStack stack, PlayerEntity player, float partialTicks)
@@ -114,47 +112,47 @@ public class OverlaySensorGlasses extends Overlay
 
             try
             {
-                GL11.glPushMatrix();
+                RenderSystem.pushMatrix();
 
                 if (var20 < 4.0D)
                 {
-                    GL11.glColor4f(0.0F, 255F / 255F, 198F / 255F, (float) Math.min(1.0D, Math.max(0.2D, (var20 - 1.0D) * 0.1D)));
+                    RenderSystem.color4f(0.0F, 255F / 255F, 198F / 255F, (float) Math.min(1.0D, Math.max(0.2D, (var20 - 1.0D) * 0.1D)));
                     Minecraft.getInstance().textureManager.bindTexture(OverlaySensorGlasses.indicatorTexture);
-                    GL11.glRotatef(-var60 - ClientProxyCore.playerRotationYaw + 180.0F, 0.0F, 0.0F, 1.0F);
-                    GL11.glTranslated(0.0D, var2 ? -var20 * 16 : -var21 * 16, 0.0D);
-                    GL11.glRotatef(-(-var60 - ClientProxyCore.playerRotationYaw + 180.0F), 0.0F, 0.0F, 1.0F);
+                    RenderSystem.rotatef(-var60 - ClientProxyCore.playerRotationYaw + 180.0F, 0.0F, 0.0F, 1.0F);
+                    RenderSystem.translated(0.0D, var2 ? -var20 * 16 : -var21 * 16, 0.0D);
+                    RenderSystem.rotatef(-(-var60 - ClientProxyCore.playerRotationYaw + 180.0F), 0.0F, 0.0F, 1.0F);
                     Overlay.drawCenteringRectangle(width / 2, height / 2, 1.0D, 8.0D, 8.0D);
                 }
             }
             finally
             {
-                GL11.glPopMatrix();
+                RenderSystem.popMatrix();
             }
         }
     }
 
-    public static void preRenderMobs()
+    public static void preRenderMobs(MatrixStack matrixStackIn)
     {
-        GL11.glEnable(GL11.GL_BLEND);
+        RenderSystem.enableBlend();
 //TODO  Enable these to see the entity through solid blocks - but would need a postRenderCallback to switch this off again otherwise everything is changed
 //            GL11.glDisable(GL11.GL_DEPTH_TEST);
 //            GL11.glDepthMask(false);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.disableAlphaTest();
         int i = 15728880;
         int j = i % 65536;
         int k = i / 65536;
 //        GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, (float) j, (float) k);
         // TODO Full brightness
 //        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)j / 1.0F, (float)k / 1.0F);
-        GL11.glTranslatef(0.0F, 0.045F, 0.0F);
-        GL11.glScalef(1.07F, 1.035F, 1.07F);
+        matrixStackIn.translate(0.0F, 0.045F, 0.0F);
+        matrixStackIn.scale(1.07F, 1.035F, 1.07F);
     }
 
     public static void postRenderMobs()
     {
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        RenderSystem.enableAlphaTest();
 //        GL11.glEnable(GL11.GL_DEPTH_TEST);
 //        GL11.glDepthMask(true);
     }

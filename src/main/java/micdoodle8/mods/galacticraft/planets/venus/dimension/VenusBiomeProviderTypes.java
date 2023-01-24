@@ -16,38 +16,8 @@ public class VenusBiomeProviderTypes
 {
     public static final DeferredRegister<BiomeProviderType<?, ?>> BIOME_PROVIDER_TYPES = new DeferredRegister<>(ForgeRegistries.BIOME_PROVIDER_TYPES, Constants.MOD_ID_PLANETS);
 
-    public static final BiomeProviderType<VenusBiomeProviderSettings, VenusBiomeProvider> VENUS_TYPE = newType();
+    public static final BiomeProviderType<VenusBiomeProviderSettings, VenusBiomeProvider> VENUS_TYPE = new BiomeProviderType<>(VenusBiomeProvider::new, VenusBiomeProviderSettings::new);
 
-    // TODO Yikes, fix this once forge makes BiomeProviderType constructor public
-    private static BiomeProviderType<VenusBiomeProviderSettings, VenusBiomeProvider> newType()
-    {
-        Class<?> c = BiomeProviderType.class;
-        try
-        {
-            Constructor<?> cons = c.getDeclaredConstructor(Function.class, Function.class);
-            cons.setAccessible(true);
-            Function<VenusBiomeProviderSettings, VenusBiomeProvider> f1 = VenusBiomeProvider::new;
-            Function<WorldInfo, VenusBiomeProviderSettings> f2 = VenusBiomeProviderSettings::new;
-            return (BiomeProviderType<VenusBiomeProviderSettings, VenusBiomeProvider>)cons.newInstance(f1, f2);
-        }
-        catch (NoSuchMethodException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InstantiationException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InvocationTargetException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 //    @SubscribeEvent
 //    public static void registerBiomeTypes(RegistryEvent.Register<BiomeProviderType<?, ?>> evt)

@@ -50,7 +50,7 @@ public class TickHandlerClientVenus
             {
                 Map.Entry<BlockPos, Integer> entry = it.next();
                 long seed = entry.getValue() / 10 + entry.getKey().getX() + entry.getKey().getZ();
-                FakeLightningBoltRenderer.renderBolt(seed, entry.getKey().getX() - ClientProxyCore.playerPosX, entry.getKey().getY() - ClientProxyCore.playerPosY, entry.getKey().getZ() - ClientProxyCore.playerPosZ);
+                FakeLightningBoltRenderer.renderBolt(event.matrixStack, seed, (float) (entry.getKey().getX() - ClientProxyCore.playerPosX), (float) (entry.getKey().getY() - ClientProxyCore.playerPosY), (float) (entry.getKey().getZ() - ClientProxyCore.playerPosZ));
             }
         }
     }
@@ -67,20 +67,20 @@ public class TickHandlerClientVenus
         {
             if (world.getDimension() instanceof DimensionVenus)
             {
-//                if (world.getDimension().getSkyRenderer() == null)
-//                {
-//                    world.getDimension().setSkyRenderer(new SkyProviderVenus((IGalacticraftDimension) world.getDimension()));
-//                } TODO Sky renderers
+                if (world.getDimension().getSkyRenderer() == null)
+                {
+                    world.getDimension().setSkyRenderer(new SkyProviderVenus((IGalacticraftDimension) world.getDimension()));
+                }
 
                 if (world.getDimension().getCloudRenderer() == null)
                 {
                     world.getDimension().setCloudRenderer(new CloudRenderer());
                 }
 
-//                if (world.getDimension().getWeatherRenderer() == null)
-//                {
-//                    world.getDimension().setWeatherRenderer(new WeatherRendererVenus());
-//                } TODO Weather renderers
+                if (world.getDimension().getWeatherRenderer() == null)
+                {
+                    world.getDimension().setWeatherRenderer(new WeatherRendererVenus());
+                }
             }
         }
     }

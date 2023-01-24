@@ -9,20 +9,27 @@ import micdoodle8.mods.galacticraft.api.item.IItemThermal;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
 import micdoodle8.mods.galacticraft.api.recipe.ISchematicPage;
 import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
+import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
+import micdoodle8.mods.galacticraft.api.vector.Vector3D;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftDimension;
+import micdoodle8.mods.galacticraft.api.world.ITeleportType;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.GCItems;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.dimension.DimensionSpaceStation;
 import micdoodle8.mods.galacticraft.core.dimension.SpaceRace;
 import micdoodle8.mods.galacticraft.core.dimension.SpaceRaceManager;
 import micdoodle8.mods.galacticraft.core.entities.*;
 import micdoodle8.mods.galacticraft.core.items.ItemParaChute;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
+import micdoodle8.mods.galacticraft.core.tick.TickHandlerServer;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityTelemetry;
 import micdoodle8.mods.galacticraft.core.util.*;
 import micdoodle8.mods.galacticraft.core.world.gen.dungeon.StructureDungeon;
+import micdoodle8.mods.galacticraft.core.wrappers.Footprint;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -34,10 +41,12 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SRespawnPacket;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.GameRules;
@@ -135,12 +144,12 @@ public class GCPlayerHandler
         }
         else if (event.getObject() instanceof PlayerEntity && ((PlayerEntity) event.getObject()).world.isRemote)
         {
-            this.onAttachCapabilityClient(event);
+            onAttachCapabilityClient(event);
         }
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void onAttachCapabilityClient(AttachCapabilitiesEvent<Entity> event)
+    private static void onAttachCapabilityClient(AttachCapabilitiesEvent<Entity> event)
     {
         if (event.getObject() instanceof ClientPlayerEntity)
         {
@@ -1085,45 +1094,41 @@ public class GCPlayerHandler
             BlockState state = player.world.getBlockState(new BlockPos(iPosX, iPosY, iPosZ));
             if (state.getBlock() == GCBlocks.moonTurf)
             {
-                // And is the correct metadata (moon turf)
-//                if (state.get(BlockBasicMoon.BASIC_TYPE_MOON) == BlockBasicMoon.EnumBlockBasicMoon.MOON_TURF) TODO Footprints
-//                {
-//                    GCPlayerStats stats = GCPlayerStats.get(player);
-//                    // If it has been long enough since the last step
-//                    if (stats.getDistanceSinceLastStep() > 0.35D)
-//                    {
-//                        Vector3 pos = new Vector3(player);
-//                        // Set the footprint position to the block below and add random number to stop z-fighting
-//                        pos.y = MathHelper.floor(player.getPosY() - 1D) + player.world.rand.nextFloat() / 100.0F;
-//
-//                        // Adjust footprint to left or right depending on step count
-//                        switch (stats.getLastStep())
-//                        {
-//                        case 0:
-//                            float a = (-player.rotationYaw + 90F) / Constants.RADIANS_TO_DEGREES;
-//                            pos.translate(new Vector3(MathHelper.sin(a) * 0.25F, 0, MathHelper.cos(a) * 0.25F));
-//                            break;
-//                        case 1:
-//                            a = (-player.rotationYaw - 90F) / Constants.RADIANS_TO_DEGREES;
-//                            pos.translate(new Vector3(MathHelper.sin(a) * 0.25, 0, MathHelper.cos(a) * 0.25));
-//                            break;
-//                        }
-//
-//                        float rotation = player.rotationYaw - 180;
-//                        pos = WorldUtil.getFootprintPosition(player.world, rotation, pos, new BlockVec3(player));
-//
-//                        long chunkKey = ChunkPos.asLong(pos.intX() >> 4, pos.intZ() >> 4);
-//                        TickHandlerServer.addFootprint(chunkKey, new Footprint(GCCoreUtil.getDimensionID(player.world), pos, rotation, player.getName(), -1), GCCoreUtil.getDimensionID(player.world));
-//
-//                        // Increment and cap step counter at 1
-//                        stats.setLastStep((stats.getLastStep() + 1) % 2);
-//                        stats.setDistanceSinceLastStep(0);
-//                    }
-//                    else
-//                    {
-//                        stats.setDistanceSinceLastStep(stats.getDistanceSinceLastStep() + motionSqrd);
-//                    }
-//                }
+                GCPlayerStats stats = GCPlayerStats.get(player);
+                // If it has been long enough since the last step
+                if (stats.getDistanceSinceLastStep() > 0.35D)
+                {
+                    Vector3 pos = new Vector3(player);
+                    // Set the footprint position to the block below and add random number to stop z-fighting
+                    pos.y = MathHelper.floor(player.getPosY() - 1D) + player.world.rand.nextFloat() / 100.0F;
+
+                    // Adjust footprint to left or right depending on step count
+                    switch (stats.getLastStep())
+                    {
+                    case 0:
+                        float a = (-player.rotationYaw + 90F) / Constants.RADIANS_TO_DEGREES;
+                        pos.translate(new Vector3(MathHelper.sin(a) * 0.25F, 0, MathHelper.cos(a) * 0.25F));
+                        break;
+                    case 1:
+                        a = (-player.rotationYaw - 90F) / Constants.RADIANS_TO_DEGREES;
+                        pos.translate(new Vector3(MathHelper.sin(a) * 0.25f, 0, MathHelper.cos(a) * 0.25f));
+                        break;
+                    }
+
+                    float rotation = player.rotationYaw - 180;
+                    pos = WorldUtil.getFootprintPosition(player.world, rotation, pos, new BlockVec3(player));
+
+                    long chunkKey = ChunkPos.asLong(pos.intX() >> 4, pos.intZ() >> 4);
+                    TickHandlerServer.addFootprint(chunkKey, new Footprint(GCCoreUtil.getDimensionType(player.world), pos, rotation, player.getName().getString(), -1), GCCoreUtil.getDimensionType(player.world));
+
+                    // Increment and cap step counter at 1
+                    stats.setLastStep((stats.getLastStep() + 1) % 2);
+                    stats.setDistanceSinceLastStep(0);
+                }
+                else
+                {
+                    stats.setDistanceSinceLastStep(stats.getDistanceSinceLastStep() + motionSqrd);
+                }
             }
         }
     }
@@ -1237,7 +1242,7 @@ public class GCPlayerHandler
         MinecraftServer theServer = player.server;
         if (theServer != null && PlayerUtil.getPlayerForUsernameVanilla(theServer, PlayerUtil.getName(player)) != null)
         {
-            GalacticraftCore.packetPipeline.sendToAllAround(new PacketSimple(EnumSimplePacket.C_UPDATE_GEAR_SLOT, GCCoreUtil.getDimensionType(player.world), new Object[]{PlayerUtil.getName(player), packetType.ordinal(), gearType.ordinal(), gearID}), new PacketDistributor.TargetPoint(player.getPosX(), player.getPosY(), player.getPosZ(), 50.0, GCCoreUtil.getDimensionType(player.world)));
+            GalacticraftCore.packetPipeline.sendToAllAround(new PacketSimple(EnumSimplePacket.C_UPDATE_GEAR_SLOT, GCCoreUtil.getDimensionType(player.world), new Object[]{player.getUniqueID(), packetType.ordinal(), gearType.ordinal(), gearID}), new PacketDistributor.TargetPoint(player.getPosX(), player.getPosY(), player.getPosZ(), 50.0, GCCoreUtil.getDimensionType(player.world)));
         }
     }
 
@@ -1254,7 +1259,7 @@ public class GCPlayerHandler
         //This will speed things up a little
         GCPlayerStats stats = GCPlayerStats.get(player);
 
-//        if ((ConfigManagerCore.challengeSpawnHandling.get()) && stats.getUnlockedSchematics().size() == 0)
+//        if ((ConfigManagerCore.challengeSpawnHandling) && stats.getUnlockedSchematics().size() == 0)
 //        {
 //            if (stats.getStartDimension().length() > 0)
 //            {
@@ -1284,14 +1289,14 @@ public class GCPlayerHandler
 //                }
 //
 //                ServerWorld worldNew = WorldUtil.getStartWorld(worldOld);
-//                DimensionType dimID = GCCoreUtil.getDimensionID(worldNew);
+//                DimensionType dimID = GCCoreUtil.getDimensionType(worldNew);
 //                player.dimension = dimID;
 //                GCLog.debug("DEBUG: Sending respawn packet to player for dim " + dimID);
-//                player.connection.sendPacket(new SRespawnPacket(dimID, player.world.getDifficulty(), player.world.getWorldInfo().getGenerator(), player.interactionManager.getGameType()));
+//                player.connection.sendPacket(new SRespawnPacket(dimID, player.world.getSeed(), player.world.getWorldInfo().getGenerator(), player.interactionManager.getGameType()));
 //
 //                if (worldNew.dimension instanceof DimensionSpaceStation)
 //                {
-//                    GalacticraftCore.packetPipeline.sendTo(new PacketSimple(EnumSimplePacket.C_RESET_THIRD_PERSON, GCCoreUtil.getDimensionID(player.world), new Object[] {}), player);
+//                    GalacticraftCore.packetPipeline.sendTo(new PacketSimple(EnumSimplePacket.C_RESET_THIRD_PERSON, GCCoreUtil.getDimensionType(player.world), new Object[] {}), player);
 //                }
 //                worldNew.addEntity(player);
 //                player.setWorld(worldNew);
@@ -1301,14 +1306,14 @@ public class GCPlayerHandler
 //            //This is a mini version of the code at WorldUtil.teleportEntity
 //            player.interactionManager.setWorld((ServerWorld) player.world);
 //            final ITeleportType type = GalacticraftRegistry.getTeleportTypeForDimension(player.world.getDimension().getClass());
-//            Vector3 spawnPos = type.getPlayerSpawnLocation((ServerWorld) player.world, player);
+//            Vector3D spawnPos = type.getPlayerSpawnLocation((ServerWorld) player.world, player);
 //            ChunkPos pair = player.world.getChunkFromChunkCoords(spawnPos.intX() >> 4, spawnPos.intZ() >> 4).getPos();
 //            GCLog.debug("Loading first chunk in new dimension.");
 //            ((ServerWorld) player.world).getChunkProvider().loadChunk(pair.x, pair.z);
 //            player.setLocationAndAngles(spawnPos.x, spawnPos.y, spawnPos.z, player.rotationYaw, player.rotationPitch);
 //            type.setupAdventureSpawn(player);
 //            type.onSpaceDimensionChanged(player.world, player, false);
-//            player.setSpawnPoint(new BlockPos(spawnPos.intX(), spawnPos.intY(), spawnPos.intZ()), true, GCCoreUtil.getDimensionID(player.world));
+//            player.setSpawnPoint(new BlockPos(spawnPos.intX(), spawnPos.intY(), spawnPos.intZ()), true, GCCoreUtil.getDimensionType(player.world));
 //            stats.setNewAdventureSpawn(true);
 //        } TODO Challenge spawning
         final boolean isInGCDimension = player.world.getDimension() instanceof IGalacticraftDimension;

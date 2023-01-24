@@ -10,9 +10,10 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.+', changing: true
 	}
 }
+
 apply plugin: 'net.minecraftforge.gradle'
 
 sourceSets.main {
@@ -54,7 +55,7 @@ minecraft {
 			workingDirectory project.file('run')
 
 			// Recommended logging data for a userdev environment
-			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+//			property 'forge.logging.markers', 'SCAN,REGISTRIES'
 
 			// Recommended logging level for the console
 			property 'forge.logging.console.level', 'debug'
@@ -85,13 +86,10 @@ minecraft {
 		data {
 			workingDirectory project.file('run')
 
-			// Recommended logging data for a userdev environment
-			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
 			// Recommended logging level for the console
 			property 'forge.logging.console.level', 'debug'
 
-			args '--mod', 'galacticraftcore', '--all', '--output', file('src/generated/resources/')
+			args '--mod', 'galacticraftcore', '--all', '--existing', file('src/main/resources'), '--existing', file('src/generated/resources/'), '--output', file('src/generated/resources/')
 
 			mods {
 				galacticraftcore {
@@ -102,8 +100,12 @@ minecraft {
 	}
 }
 
+sourceSets.main.resources {
+	srcDir 'src/generated/resources'
+}
+
 dependencies {
-	minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
+	minecraft 'net.minecraftforge:forge:1.15.2-31.2.57'
 }
 
 repositories {
@@ -113,6 +115,11 @@ repositories {
 	}
 	maven {
 		url = "https://mod-buildcraft.com/maven/"
+	}
+	maven {
+		// location of the maven that hosts JEI files
+		name = "Progwml6 maven"
+		url = "https://dvs1.progwml6.com/files/maven/"
 	}
 }
 
@@ -126,6 +133,10 @@ dependencies {
 //	compile "actually-additions:ActuallyAdditions:1.12.2:r144"
 //	compile "industrial-craft:industrialcraft-2-2.8.109:ex112:api"
 //	compile "player-api:PlayerAPI:1.12.1:1.0"
+	// compile against the JEI API but do not include it at runtime
+	compileOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.3.16:api")
+	// at runtime, use the full JEI jar
+	runtimeOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.3.16")
 }
 					
 // Keep a list of core files/directories for easy jar packing

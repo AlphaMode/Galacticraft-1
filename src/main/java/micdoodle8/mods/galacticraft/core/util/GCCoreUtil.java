@@ -2,6 +2,8 @@ package micdoodle8.mods.galacticraft.core.util;
 
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.entities.EntityLanderBase;
+import micdoodle8.mods.galacticraft.core.inventory.ContainerParaChest;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import net.minecraft.block.Block;
@@ -70,17 +72,18 @@ public class GCCoreUtil
 //        player.openContainer.windowId = id;
 //        player.openContainer.addListener(player);
 //    }
-//
-//    public static void openParachestInv(ServerPlayerEntity player, EntityLanderBase landerInv)
-//    {
+
+    public static void openParachestInv(ServerPlayerEntity player, EntityLanderBase landerInv)
+    {
 //        player.getNextWindowId();
 //        player.closeContainer();
-//        int windowId = player.currentWindowId;
-//        GalacticraftCore.packetPipeline.sendTo(new PacketSimple(EnumSimplePacket.C_OPEN_PARACHEST_GUI, GCCoreUtil.getDimensionID(player.world), new Object[] { windowId, 1, landerInv.getEntityId() }), player);
+        player.openContainer(landerInv);
+        int windowId = player.currentWindowId;
+        GalacticraftCore.packetPipeline.sendTo(new PacketSimple(EnumSimplePacket.C_OPEN_PARACHEST_GUI, GCCoreUtil.getDimensionType(player.world), new Object[] { windowId, 1, landerInv.getEntityId() }), player);
 //        player.openContainer = new ContainerParaChest(player.inventory, landerInv, player);
 //        player.openContainer.windowId = windowId;
 //        player.openContainer.addListener(player);
-//    }
+    }
 
 //    public static int nextInternalID()
 //    {

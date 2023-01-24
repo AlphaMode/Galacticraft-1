@@ -1,18 +1,13 @@
 package micdoodle8.mods.galacticraft.planets;
 
-import micdoodle8.mods.galacticraft.planets.venus.tile.SolarModuleNetwork;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.planets.venus.tick.VenusTickHandlerServer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.LogicalSide;
+import micdoodle8.mods.galacticraft.planets.venus.tile.SolarModuleNetwork;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlanetsProxy
 {
@@ -37,6 +32,14 @@ public class PlanetsProxy
         for (IPlanetsModule module : GalacticraftPlanets.commonModules)
         {
             module.serverInit(event);
+        }
+    }
+
+    public void biomeRegisterEvent(RegistryEvent.Register<Biome> event)
+    {
+        for (IPlanetsModule module : GalacticraftPlanets.commonModules)
+        {
+            module.biomeRegisterEvent(event);
         }
     }
 

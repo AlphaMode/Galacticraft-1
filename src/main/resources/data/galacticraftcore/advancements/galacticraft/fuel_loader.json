@@ -7,8 +7,7 @@
             "translate": "advancement.galacticraft.fuel_loader.description"
         },
         "icon": {
-            "item": "galacticraftcore:fuel_loader",
-            "data": 0
+            "item": "galacticraftcore:fuel_loader"
         },
         "frame": "task",
         "show_toast": true,
@@ -21,8 +20,7 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "galacticraftcore:fuel_loader",
-                        "data": 0
+                        "item": "galacticraftcore:fuel_loader"
                     }
                 ]
             }

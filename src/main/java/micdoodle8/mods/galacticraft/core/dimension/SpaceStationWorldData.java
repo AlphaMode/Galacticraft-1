@@ -3,12 +3,16 @@ package micdoodle8.mods.galacticraft.core.dimension;
 import micdoodle8.mods.galacticraft.api.galaxies.GalaxyRegistry;
 import micdoodle8.mods.galacticraft.api.galaxies.Satellite;
 import micdoodle8.mods.galacticraft.core.Constants;
+import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 import micdoodle8.mods.galacticraft.core.util.GCLog;
 import micdoodle8.mods.galacticraft.core.util.PlayerUtil;
+import micdoodle8.mods.galacticraft.core.util.WorldUtil;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
@@ -175,7 +179,8 @@ public class SpaceStationWorldData extends WorldSavedData
     {
         nbt.putString("owner", this.owner);
         nbt.putString("spaceStationName", this.spaceStationName);
-        nbt.putString("homePlanetRes", this.homePlanet.getRegistryName().toString());
+        if (this.homePlanet != null)
+            nbt.putString("homePlanetRes", this.homePlanet.getRegistryName().toString());
 //        nbt.putInt("dimensionIdDynamic", this.dimensionIdDynamic);
 //        nbt.putInt("dimensionIdStatic", this.dimensionIdStatic); TODO
         nbt.put("dataCompound", this.dataCompound);
@@ -202,10 +207,10 @@ public class SpaceStationWorldData extends WorldSavedData
     /**
      * Retrieve an already created space station date entry
      */
-//    public static SpaceStationWorldData getStationData(ServerWorld world, ResourceLocation stationID, PlayerEntity player)
-//    {
-//        return getStationData(world, stationID, -1, -1, -1, player);
-//    }
+    public static SpaceStationWorldData getStationData(ServerWorld world, ResourceLocation stationID, PlayerEntity player)
+    {
+        return getStationData(world, stationID, DimensionType.OVERWORLD, player);
+    }
 
     /**
      * Retrieve a space station data entry, creating if necessary (with provided data)
@@ -235,37 +240,37 @@ public class SpaceStationWorldData extends WorldSavedData
         {
 //            final String stationIdentifier = SpaceStationWorldData.getSpaceStationID(stationID);
             String id = stationID.toString();
-            SpaceStationWorldData stationData = world.getSavedData().get(() -> new SpaceStationWorldData(id), id);
-            if (stationData != null)
-            {
+            return world.getSavedData().getOrCreate(() -> {
+                SpaceStationWorldData stationData = new SpaceStationWorldData(id);
+                stationData.dataCompound = new CompoundNBT();
+
+                if (owner != null)
+                {
+                    stationData.owner = PlayerUtil.getName(owner).replace(".", "");
+                }
+
+                stationData.spaceStationName = "Station: " + stationData.owner;
+
+                if (owner != null)
+                {
+                    stationData.allowedPlayers.add(owner.getUniqueID());
+                }
+
+                if (homeType == null)
+                {
+                    throw new RuntimeException("Space station being created on bad home planet ID!");
+                }
+                else
+                {
+                    stationData.homePlanet = homeType;
+                }
+
+                stationData.markDirty();
+                world.getServer().save(true, false, false);
                 return stationData;
-            }
+            }, id);
 
-            stationData = world.getSavedData().getOrCreate(() -> new SpaceStationWorldData(id), id);
 
-//            world.putData(Constants.GCDATAFOLDER + stationIdentifier, stationData);
-            stationData.dataCompound = new CompoundNBT();
-
-            if (owner != null)
-            {
-                stationData.owner = PlayerUtil.getName(owner).replace(".", "");
-            }
-
-            stationData.spaceStationName = "Station: " + stationData.owner;
-
-            if (owner != null)
-            {
-                stationData.allowedPlayers.add(owner.getUniqueID());
-            }
-
-            if (homeType == null)
-            {
-                throw new RuntimeException("Space station being created on bad home planet ID!");
-            }
-            else
-            {
-                stationData.homePlanet = homeType;
-            }
 
 //            if (providerIdDynamic == -1 || providerIdStatic == -1)
 //            {
@@ -276,10 +281,6 @@ public class SpaceStationWorldData extends WorldSavedData
 //                stationData.dimensionIdDynamic = providerIdDynamic;
 //                stationData.dimensionIdStatic = providerIdStatic;
 //            }
-
-            stationData.markDirty();
-            world.getServer().save(true, false, false);
-            return stationData;
         }
 
 //        if (stationData.getSpaceStationName().replace(" ", "").isEmpty())
@@ -291,93 +292,90 @@ public class SpaceStationWorldData extends WorldSavedData
 //        return stationData;
     }
 
-//    public static SpaceStationWorldData getMPSpaceStationData(World var0, ResourceLocation var1, PlayerEntity player)
-//    {
-//        final String var2 = SpaceStationWorldData.getSpaceStationID(var1);
-//        if (var0 == null)
-//        {
-//            var0 = WorldUtil.getWorldForDimensionServer(0);
-//        }
-//        SpaceStationWorldData var3 = null;
-//
-//        if (var0 != null)
-//        {
-//            var3 = (SpaceStationWorldData) var0.loadData(SpaceStationWorldData.class, Constants.GCDATAFOLDER + var2);
-//        }
-//        else
-//        {
-//            GCLog.severe("No world for dimension 0?  That should be unpossible!  Please report at https://github.com/micdoodle8/Galacticraft/issues/2617");
-//        }
-//
-//        if (var3 == null)
-//        {
-//            var3 = new SpaceStationWorldData(var2);
-//            var0.putData(Constants.GCDATAFOLDER + var2, var3);
-//            var3.dataCompound = new CompoundNBT();
-//
-//            if (player != null)
-//            {
-//                var3.owner = PlayerUtil.getName(player).replace(".", "");
-//            }
-//
-//            var3.spaceStationName = "Station: " + var3.owner;
-//
-//            if (player != null)
-//            {
-//                var3.allowedPlayers.add(PlayerUtil.getName(player));
-//            }
-//
-//            var3.markDirty();
-//        }
-//
-//        if (var3.getSpaceStationName().replace(" ", "").isEmpty())
-//        {
-//            var3.putSpaceStationName("Station: " + var3.owner);
-//            var3.markDirty();
-//        }
-//
-//        return var3;
-//    } TODO ?
+    public static SpaceStationWorldData getMPSpaceStationData(ServerWorld world, DimensionType stationId, PlayerEntity player)
+    {
+        final String id = stationId.getRegistryName().toString();
+        if (world == null)
+        {
+            world = WorldUtil.getWorldForDimensionServer(stationId);
+        }
+        SpaceStationWorldData var3 = null;
 
-//    public static String getSpaceStationID(DimensionType dimID)
-//    {
-//        return "spacestation_" + dimID;
-//    }
+        if (world != null)
+        {
+            var3 = world.getSavedData().getOrCreate(() -> {
+                SpaceStationWorldData data = new SpaceStationWorldData(id);
+                data.dataCompound = new CompoundNBT();
 
-//    public static void updateSSOwnership(ServerPlayerEntity player, String playerName, GCPlayerStats stats, int stationID, SpaceStationWorldData stationData)
-//    {
-//        if (stationData == null)
-//        {
-//            stationData = SpaceStationWorldData.getMPSpaceStationData(null, stationID, null);
-//        }
-//
-//        if (stationData.owner.equals(playerName))
-//        {
-//            //This player is the owner of the station - ensure stats data matches
-//            if (!(stats.getSpaceStationDimensionData().values().contains(stationID)))
-//            {
-//                GCLog.debug("Player owns station: " + stationData.getSpaceStationName() + " with home planet " + stationData.getHomePlanet());
-//                stats.getSpaceStationDimensionData().put(stationData.getHomePlanet(), stationID);
-//            }
-//        }
-//        else
-//        {
-//            //This player is the owner of the station - remove from stats data
-//            Integer savedOwned = stats.getSpaceStationDimensionData().get(stationData.getHomePlanet());
-//            if (savedOwned != null && savedOwned == stationID)
-//            {
-//                GCLog.debug("Player does not own station: " + stationData.getSpaceStationName() + " with home planet " + stationData.getHomePlanet());
-//                stats.getSpaceStationDimensionData().remove(savedOwned);
-//            }
-//        }
-//    } TODO ?
+                if (player != null)
+                {
+                    data.owner = PlayerUtil.getName(player).replace(".", "");
+                }
 
-//    public static void checkAllStations(ServerPlayerEntity thePlayer, GCPlayerStats stats)
-//    {
-//        String name = PlayerUtil.getName(thePlayer).replace(".", "");
-//        for (int id : WorldUtil.registeredSpaceStations.keyput())
-//        {
-//            SpaceStationWorldData.updateSSOwnership(thePlayer, name, stats, id, null);
-//        }
-//    } TODO ?
+                data.spaceStationName = "Station: " + data.owner;
+
+                if (player != null)
+                {
+                    data.allowedPlayers.add(player.getUniqueID());
+                }
+
+                data.markDirty();
+                return data;
+            }, id);
+        }
+        else
+        {
+            GCLog.severe("No world for dimension 0?  That should be unpossible!  Please report at https://github.com/micdoodle8/Galacticraft/issues/2617");
+        }
+
+        if (var3.getSpaceStationName().replace(" ", "").isEmpty())
+        {
+            var3.putSpaceStationName("Station: " + var3.owner);
+            var3.markDirty();
+        }
+
+        return var3;
+    }
+
+    public static String getSpaceStationID(DimensionType dimID)
+    {
+        return "spacestation_" + dimID.getRegistryName();
+    }
+
+    public static void updateSSOwnership(ServerPlayerEntity player, String playerName, GCPlayerStats stats, DimensionType stationID, SpaceStationWorldData stationData)
+    {
+        if (stationData == null)
+        {
+            stationData = SpaceStationWorldData.getMPSpaceStationData(null, stationID, null);
+        }
+
+        if (stationData.owner.equals(playerName))
+        {
+            //This player is the owner of the station - ensure stats data matches
+            if (!(stats.getSpaceStationDimensionData().values().contains(stationID)))
+            {
+                GCLog.debug("Player owns station: " + stationData.getSpaceStationName() + " with home planet " + stationData.getHomePlanet());
+                stats.getSpaceStationDimensionData().put(stationData.getHomePlanet(), stationID);
+            }
+        }
+        else
+        {
+            //This player is the owner of the station - remove from stats data
+            DimensionType savedOwned = stats.getSpaceStationDimensionData().get(stationData.getHomePlanet());
+            if (savedOwned != null && savedOwned == stationID)
+            {
+                GCLog.debug("Player does not own station: " + stationData.getSpaceStationName() + " with home planet " + stationData.getHomePlanet());
+                stats.getSpaceStationDimensionData().remove(savedOwned);
+            }
+        }
+    }
+
+    public static void checkAllStations(ServerPlayerEntity thePlayer, GCPlayerStats stats)
+    {
+        String name = PlayerUtil.getName(thePlayer).replace(".", "");
+        for (DimensionType stationType : WorldUtil.registeredSpaceStations)
+        {
+            SpaceStationWorldData.updateSSOwnership(thePlayer, name, stats, stationType, null);
+        }
+    }
 }

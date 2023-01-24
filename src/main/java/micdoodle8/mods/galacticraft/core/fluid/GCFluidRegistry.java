@@ -4,6 +4,7 @@ import micdoodle8.mods.galacticraft.core.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
@@ -11,8 +12,11 @@ import net.minecraft.item.Items;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.function.Function;
 
 /**
  * Credit to pupnewfster from the Mekanism project
@@ -25,24 +29,29 @@ public class GCFluidRegistry
 
     public GCFluidRegistry()
     {
-        blockRegister = new DeferredRegister<>(ForgeRegistries.BLOCKS, Constants.MOD_ID_CORE);
-        fluidRegister = new DeferredRegister<>(ForgeRegistries.FLUIDS, Constants.MOD_ID_CORE);
-        itemRegister = new DeferredRegister<>(ForgeRegistries.ITEMS, Constants.MOD_ID_CORE);
+        blockRegister = DeferredRegister.create(ForgeRegistries.BLOCKS, ModLoadingContext.get().getActiveNamespace());
+        fluidRegister = DeferredRegister.create(ForgeRegistries.FLUIDS, ModLoadingContext.get().getActiveNamespace());
+        itemRegister = DeferredRegister.create(ForgeRegistries.ITEMS, ModLoadingContext.get().getActiveNamespace());
     }
 
-    public FluidRegistrationEntry<ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, FlowingFluidBlock, BucketItem> register(String name, FluidAttributes.Builder builder, Material blockMaterial)
+    public FluidRegistrationEntry<FlowingFluid, FlowingFluid, FlowingFluidBlock, BucketItem> register(String name, FluidAttributes.Builder builder, Material blockMaterial)
+    {
+        return register(name, builder, blockMaterial, ForgeFlowingFluid.Source::new, ForgeFlowingFluid.Flowing::new);
+    }
+
+    public FluidRegistrationEntry<FlowingFluid, FlowingFluid, FlowingFluidBlock, BucketItem> register(String name, FluidAttributes.Builder builder, Material blockMaterial, Function<ForgeFlowingFluid.Properties, FlowingFluid> stillFactory, Function<ForgeFlowingFluid.Properties, FlowingFluid> flowing)
     {
         String flowingName = "flowing_" + name;
         String bucketName = "bucket_" + name;
         //Create the registry object with dummy entries that we can use as part of the supplier but that works as use in suppliers
-        FluidRegistrationEntry<ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, FlowingFluidBlock, BucketItem> fluidRegistryObject = new FluidRegistrationEntry<>(name);
+        FluidRegistrationEntry<FlowingFluid, FlowingFluid, FlowingFluidBlock, BucketItem> fluidRegistryObject = new FluidRegistrationEntry<>(name);
         //Pass in suppliers that are wrapped instead of direct references to the registry objects, so that when we update the registry object to
         // point to a new object it gets updated properly.
         ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(fluidRegistryObject::getStillFluid,
                 fluidRegistryObject::getFlowingFluid, builder).bucket(fluidRegistryObject::getBucket).block(fluidRegistryObject::getBlock);
         //Update the references to objects that are retrieved from the deferred registers
-        fluidRegistryObject.updateStill(fluidRegister.register(name, () -> new ForgeFlowingFluid.Source(properties)));
-        fluidRegistryObject.updateFlowing(fluidRegister.register(flowingName, () -> new ForgeFlowingFluid.Flowing(properties)));
+        fluidRegistryObject.updateStill(fluidRegister.register(name, () -> stillFactory.apply(properties)));
+        fluidRegistryObject.updateFlowing(fluidRegister.register(flowingName, () -> flowing.apply(properties)));
         fluidRegistryObject.updateBucket(itemRegister.register(bucketName, () -> new BucketItem(fluidRegistryObject::getStillFluid,
                 new Item.Properties().maxStackSize(1).containerItem(Items.BUCKET))));
         //Note: The block properties used here is a copy of the ones for water

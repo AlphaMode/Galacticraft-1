@@ -18,12 +18,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class EntityLander extends EntityLanderBase implements IIgnoreShift, ICam
     @Override
     public IPacket<?> createSpawnPacket()
     {
-        return new SSpawnObjectPacket(this);
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class EntityLander extends EntityLanderBase implements IIgnoreShift, ICam
 
         if (this.getPassengers().isEmpty() && player instanceof ServerPlayerEntity)
         {
-//            GCCoreUtil.openParachestInv((ServerPlayerEntity) player, this);
+            GCCoreUtil.openParachestInv((ServerPlayerEntity) player, this);
             return true;
         }
         else if (player instanceof ServerPlayerEntity)

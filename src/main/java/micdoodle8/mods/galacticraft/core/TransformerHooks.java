@@ -1,14 +1,19 @@
 package micdoodle8.mods.galacticraft.core;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.entity.IAntiGrav;
 import micdoodle8.mods.galacticraft.api.entity.ICameraZoomEntity;
 import micdoodle8.mods.galacticraft.api.item.IArmorGravity;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftDimension;
 import micdoodle8.mods.galacticraft.api.world.IOrbitDimension;
 import micdoodle8.mods.galacticraft.api.world.IWeatherProvider;
 import micdoodle8.mods.galacticraft.api.world.IZeroGDimension;
+import micdoodle8.mods.galacticraft.core.client.BubbleRenderer;
 import micdoodle8.mods.galacticraft.core.client.FootprintRenderer;
+import micdoodle8.mods.galacticraft.core.client.SkyProviderOverworld;
 import micdoodle8.mods.galacticraft.core.dimension.DimensionMoon;
 import micdoodle8.mods.galacticraft.core.entities.player.EnumGravity;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
@@ -22,6 +27,7 @@ import net.minecraft.block.CampfireBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.ParticleStatus;
@@ -78,6 +84,10 @@ public class TransformerHooks
     private static int rainSoundCounter = 0;
     private static final Random random = new Random();
 
+    public static void updateEntityGravity(LivingEntity entity) {
+        entity.getAttribute(LivingEntity.ENTITY_GRAVITY).setBaseValue(getGravityForEntity(entity));
+    }
+
     public static double getGravityForEntity(Entity entity)
     {
         if (entity.world.getDimension() instanceof IGalacticraftDimension)
@@ -132,6 +142,10 @@ public class TransformerHooks
         {
             return 0;
         }
+        else if (entity instanceof LivingEntity)
+        {
+            return 0.08D;
+        }
         else
         {
             return 0.08D;
@@ -167,10 +181,10 @@ public class TransformerHooks
     {
         if (world.isRemote)
         {
-//            if (world.getDimension().getSkyRenderer() instanceof SkyProviderOverworld)
-//            {
-//                return 0.0F;
-//            }  TODO Sky rendering
+            if (world.getDimension().getSkyRenderer() instanceof SkyProviderOverworld)
+            {
+                return 0.0F;
+            }
         }
 
         return world.prevRainingStrength + (world.rainingStrength - world.prevRainingStrength) * partialTicks;
@@ -349,71 +363,71 @@ public class TransformerHooks
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Vec3d getFogColorHook(ClientWorld world)
+    public static Vec3d getFogColorHook(ClientWorld world, float partialTicks)
     {
         ClientPlayerEntity player = Minecraft.getInstance().player;
-//        if (world.getDimension().getSkyRenderer() instanceof SkyProviderOverworld)
-//        {
-//            float var20 = ((float) (player.getPosY()) - Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT) / 1000.0F;
-//            var20 = MathHelper.sqrt(var20);
-//            final float var21 = Math.max(1.0F - var20 * 40.0F, 0.0F);
-//
-//            Vec3d vec = world.getFogColor(1.0F);
-//
-//            return new Vec3d(vec.x * Math.max(1.0F - var20 * 1.29F, 0.0F), vec.y * Math.max(1.0F - var20 * 1.29F, 0.0F), vec.z * Math.max(1.0F - var20 * 1.29F, 0.0F));
-//        } TODO Sky rendering
+        if (world.getDimension().getSkyRenderer() instanceof SkyProviderOverworld)
+        {
+            float var20 = ((float) (player.getPosY()) - Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT) / 1000.0F;
+            var20 = MathHelper.sqrt(var20);
+            final float var21 = Math.max(1.0F - var20 * 40.0F, 0.0F);
 
-        return world.getFogColor(1.0F);
+            Vec3d vec = world.getFogColor(1.0F);
+
+            return new Vec3d(vec.x * Math.max(1.0F - var20 * 1.29F, 0.0F), vec.y * Math.max(1.0F - var20 * 1.29F, 0.0F), vec.z * Math.max(1.0F - var20 * 1.29F, 0.0F));
+        }
+
+        return world.getFogColor(partialTicks);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Vec3d getSkyColorHook(ClientWorld world)
+    public static Vec3d getSkyColorHook(ClientWorld world, float partialTicks)
     {
         ClientPlayerEntity player = Minecraft.getInstance().player;
-//        if (world.getDimension().getSkyRenderer() instanceof SkyProviderOverworld || (player != null && player.getPosY() > Constants.OVERWORLD_CLOUD_HEIGHT && player.getRidingEntity() instanceof EntitySpaceshipBase))
-//        {
-//            float f1 = world.getCelestialAngle(1.0F);
-//            float f2 = MathHelper.cos(f1 * Constants.twoPI) * 2.0F + 0.5F;
-//
-//            if (f2 < 0.0F)
-//            {
-//                f2 = 0.0F;
-//            }
-//
-//            if (f2 > 1.0F)
-//            {
-//                f2 = 1.0F;
-//            }
-//
-//            int i = MathHelper.floor(player.getPosX());
-//            int j = MathHelper.floor(player.getPosY());
-//            int k = MathHelper.floor(player.getPosZ());
-//            BlockPos pos = new BlockPos(i, j, k);
-//            int l = ForgeHooksClient.getSkyBlendColour(world, pos);
-//            float f4 = (float) (l >> 16 & 255) / 255.0F;
-//            float f5 = (float) (l >> 8 & 255) / 255.0F;
-//            float f6 = (float) (l & 255) / 255.0F;
-//            f4 *= f2;
-//            f5 *= f2;
-//            f6 *= f2;
-//
-//            if (player.getPosY() <= Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT)
-//            {
-//                Vec3d vec = world.getSkyColor(Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getBlockPos(), 1.0F);
-//                double blend = (player.getPosY() - Constants.OVERWORLD_CLOUD_HEIGHT) / (Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT - Constants.OVERWORLD_CLOUD_HEIGHT);
-//                double ablend = 1 - blend;
-//                return new Vec3d(f4 * blend + vec.x * ablend, f5 * blend + vec.y * ablend, f6 * blend + vec.z * ablend);
-//            }
-//            else
-//            {
-//                double blend = Math.min(1.0D, (player.getPosY() - Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT) / 300.0D);
-//                double ablend = 1.0D - blend;
-//                blend /= 255.0D;
-//                return new Vec3d(f4 * ablend + blend * 31.0D, f5 * ablend + blend * 8.0D, f6 * ablend + blend * 99.0D);
-//            }
-//        } TODO Sky rendering
+        if (world.getDimension().getSkyRenderer() instanceof SkyProviderOverworld || (player != null && player.getPosY() > Constants.OVERWORLD_CLOUD_HEIGHT && player.getRidingEntity() instanceof EntitySpaceshipBase))
+        {
+            float f1 = world.getCelestialAngle(1.0F);
+            float f2 = MathHelper.cos(f1 * Constants.twoPI) * 2.0F + 0.5F;
 
-        return world.getSkyColor(Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getBlockPos(), 1.0F);
+            if (f2 < 0.0F)
+            {
+                f2 = 0.0F;
+            }
+
+            if (f2 > 1.0F)
+            {
+                f2 = 1.0F;
+            }
+
+            int i = MathHelper.floor(player.getPosX());
+            int j = MathHelper.floor(player.getPosY());
+            int k = MathHelper.floor(player.getPosZ());
+            BlockPos pos = new BlockPos(i, j, k);
+            int l = ForgeHooksClient.getSkyBlendColour(world, pos);
+            float f4 = (float) (l >> 16 & 255) / 255.0F;
+            float f5 = (float) (l >> 8 & 255) / 255.0F;
+            float f6 = (float) (l & 255) / 255.0F;
+            f4 *= f2;
+            f5 *= f2;
+            f6 *= f2;
+
+            if (player.getPosY() <= Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT)
+            {
+                Vec3d vec = world.getSkyColor(Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getBlockPos(), 1.0F);
+                double blend = (player.getPosY() - Constants.OVERWORLD_CLOUD_HEIGHT) / (Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT - Constants.OVERWORLD_CLOUD_HEIGHT);
+                double ablend = 1 - blend;
+                return new Vec3d(f4 * blend + vec.x * ablend, f5 * blend + vec.y * ablend, f6 * blend + vec.z * ablend);
+            }
+            else
+            {
+                double blend = Math.min(1.0D, (player.getPosY() - Constants.OVERWORLD_SKYPROVIDER_STARTHEIGHT) / 300.0D);
+                double ablend = 1.0D - blend;
+                blend /= 255.0D;
+                return new Vec3d(f4 * ablend + blend * 31.0D, f5 * ablend + blend * 8.0D, f6 * ablend + blend * 99.0D);
+            }
+        }
+
+        return world.getSkyColor(Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getBlockPos(), partialTicks);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -566,14 +580,6 @@ public class TransformerHooks
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void renderFootprints(float partialTicks)
-    {
-        FootprintRenderer.renderFootprints(ClientProxyCore.mc.player, partialTicks);
-        MinecraftForge.EVENT_BUS.post(new ClientProxyCore.EventSpecialRender(partialTicks));
-//        BubbleRenderer.renderBubbles(ClientProxyCore.mc.player, partialTicks); TODO Bubble rendering
-    }
-
-    @OnlyIn(Dist.CLIENT)
     public static double getCameraZoom(double previous)
     {
         if (ConfigManagerCore.disableVehicleCameraChanges.get())
@@ -584,7 +590,7 @@ public class TransformerHooks
         PlayerEntity player = Minecraft.getInstance().player;
         if (player.getRidingEntity() != null && player.getRidingEntity() instanceof ICameraZoomEntity)
         {
-            return ((ICameraZoomEntity) player.getRidingEntity()).getCameraZoom();
+            return -((ICameraZoomEntity) player.getRidingEntity()).getCameraZoom();
         }
 
         return previous;
@@ -725,5 +731,15 @@ public class TransformerHooks
 
         // Bypass vanilla code after returning from this
         return 0;
+    }
+
+    /**
+     * Get the sky color per Galacticraft Dimension
+     */
+    public static Vec3d getSkyColorDimension(ClientWorld world, BlockPos cameraPos, float partialTicks) {
+        if (world.getDimension() instanceof IGalacticraftDimension) {
+            return ((IGalacticraftDimension)world.getDimension()).getSkyColor(cameraPos, partialTicks);
+        }
+        return null;
     }
 }

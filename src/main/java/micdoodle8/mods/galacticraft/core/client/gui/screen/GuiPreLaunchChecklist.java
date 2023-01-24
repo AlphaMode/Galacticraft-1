@@ -1,7 +1,7 @@
 package micdoodle8.mods.galacticraft.core.client.gui.screen;
 
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.client.gui.element.GuiElementCheckboxPreLaunch;
@@ -179,7 +179,7 @@ public class GuiPreLaunchChecklist extends Screen implements GuiElementCheckboxP
     @Override
     public void render(int par1, int par2, float par3)
     {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bindTexture(bookGuiTexture);
         int i = (this.width - this.bookImageWidth) / 2;
         int j = 2;
@@ -250,7 +250,7 @@ public class GuiPreLaunchChecklist extends Screen implements GuiElementCheckboxP
             if (this.visible)
             {
                 boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                 Minecraft.getInstance().getTextureManager().bindTexture(bookGuiTexture);
                 int i = 0;
                 int j = 192;

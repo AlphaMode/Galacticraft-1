@@ -24,6 +24,7 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -254,7 +255,7 @@ public abstract class EntityTieredRocket extends EntityAutoRocket implements IRo
     }
 
     @Override
-    public void decodePacketdata(ByteBuf buffer)
+    public void decodePacketdata(PacketBuffer buffer)
     {
         this.rocketType = EnumRocketType.values()[buffer.readInt()];
         super.decodePacketdata(buffer);
@@ -548,7 +549,6 @@ public abstract class EntityTieredRocket extends EntityAutoRocket implements IRo
             this.setLaunchPhase(EnumLaunchPhase.LANDING);
             this.setWaitForPlayer(true);
             this.setMotion(Vec3d.ZERO);
-//            this.motionX = this.motionY = this.motionZ = 0.0D;
         }
         else
         {

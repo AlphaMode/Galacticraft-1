@@ -98,7 +98,7 @@ public class PacketDynamicInventory extends PacketBase
     }
 
     @Override
-    public void encodeInto(ByteBuf buffer)
+    public void encodeInto(PacketBuffer buffer)
     {
         super.encodeInto(buffer);
         buffer.writeInt(this.type);
@@ -120,19 +120,12 @@ public class PacketDynamicInventory extends PacketBase
 
         for (int i = 0; i < this.stacks.length; i++)
         {
-            try
-            {
-                NetworkUtil.writeItemStack(this.stacks[i], buffer);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            buffer.writeItemStack(this.stacks[i]);
         }
     }
 
     @Override
-    public void decodeInto(ByteBuf buffer)
+    public void decodeInto(PacketBuffer buffer)
     {
         super.decodeInto(buffer);
         this.type = buffer.readInt();
@@ -140,7 +133,7 @@ public class PacketDynamicInventory extends PacketBase
         switch (this.type)
         {
         case 0:
-            this.identifier = new Integer(buffer.readInt());
+            this.identifier = buffer.readInt();
             break;
         case 1:
             this.identifier = new BlockPos(buffer.readInt(), buffer.readInt(), buffer.readInt());
@@ -151,14 +144,7 @@ public class PacketDynamicInventory extends PacketBase
 
         for (int i = 0; i < this.stacks.length; i++)
         {
-            try
-            {
-                this.stacks[i] = NetworkUtil.readItemStack(buffer);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            this.stacks[i] = buffer.readItemStack();
         }
     }
 

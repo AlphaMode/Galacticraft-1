@@ -99,7 +99,7 @@ public class PacketSimpleMars extends PacketBase
     public static void encode(final PacketSimpleMars message, final PacketBuffer buf)
     {
         buf.writeInt(message.type.ordinal());
-        NetworkUtil.writeUTF8String(buf, message.getDimensionID().getRegistryName().toString());
+        buf.writeResourceLocation(message.getDimensionID().getRegistryName());
 
         try
         {
@@ -114,7 +114,7 @@ public class PacketSimpleMars extends PacketBase
     public static PacketSimpleMars decode(PacketBuffer buf)
     {
         PacketSimpleMars.EnumSimplePacketMars type = PacketSimpleMars.EnumSimplePacketMars.values()[buf.readInt()];
-        DimensionType dim = DimensionType.byName(new ResourceLocation(NetworkUtil.readUTF8String(buf)));
+        DimensionType dim = DimensionType.byName(buf.readResourceLocation());
         ArrayList<Object> data = null;
 
         try
@@ -154,7 +154,7 @@ public class PacketSimpleMars extends PacketBase
     }
 
     @Override
-    public void encodeInto(ByteBuf buffer)
+    public void encodeInto(PacketBuffer buffer)
     {
         super.encodeInto(buffer);
         buffer.writeInt(this.type.ordinal());
@@ -170,7 +170,7 @@ public class PacketSimpleMars extends PacketBase
     }
 
     @Override
-    public void decodeInto(ByteBuf buffer)
+    public void decodeInto(PacketBuffer buffer)
     {
         super.decodeInto(buffer);
         this.type = EnumSimplePacketMars.values()[buffer.readInt()];
@@ -331,10 +331,9 @@ public class PacketSimpleMars extends PacketBase
 
             if (c != null)
             {
-                EventWakePlayer event = new EventWakePlayer(playerBase, c, true, true, false, true);
+                EventWakePlayer event = new EventWakePlayer(playerBase, c, true, true, true);
                 MinecraftForge.EVENT_BUS.post(event);
-//                playerBase.wakeUpPlayer(true, true, false);
-                playerBase.wakeUp();
+                playerBase.stopSleepInBed(true, true);
             }
             break;
         case S_UPDATE_ADVANCED_GUI:

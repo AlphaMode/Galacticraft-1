@@ -5,6 +5,7 @@ import micdoodle8.mods.galacticraft.api.tile.IFuelDock;
 import micdoodle8.mods.galacticraft.api.tile.ILandingPadAttachable;
 import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.blocks.BlockMulti;
+import micdoodle8.mods.galacticraft.core.client.render.entities.RenderPlayerGC;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 import micdoodle8.mods.galacticraft.core.event.EventHandlerGC.OrientCameraEvent;
 import micdoodle8.mods.galacticraft.core.event.EventLandingPadRemoval;
@@ -86,11 +87,11 @@ public class EventHandlerMars
 
         if (blockID == MarsBlocks.cryoChamber)
         {
-            if (!event.immediately && event.updateWorld && event.setSpawn)
+            if (!event.immediately && event.updateWorld)
             {
                 event.result = PlayerEntity.SleepResult.NOT_POSSIBLE_HERE;
             }
-            else if (!event.immediately && !event.updateWorld && event.setSpawn)
+            else if (!event.immediately && !event.updateWorld)
             {
                 if (!player.world.isRemote)
                 {
@@ -108,30 +109,30 @@ public class EventHandlerMars
         }
     }
 
-//    @OnlyIn(Dist.CLIENT)
-//    @SubscribeEvent
-//    public void onPlayerRotate(RenderPlayerGC.RotatePlayerEvent event)
-//    {
-//        BlockPos blockPos = event.getEntityPlayer().getBedLocation(event.getPlayer().dimension);
-//        if (blockPos != null)
-//        {
-//            BlockState state = event.getEntityPlayer().world.getBlockState(blockPos);
-//            if (state.getBlock() == GCBlocks.fakeBlock && state.get(BlockMulti.MULTI_TYPE) == BlockMulti.EnumBlockMultiType.CRYO_CHAMBER)
-//            {
-//                TileEntity tile = event.getEntityPlayer().world.getTileEntity(blockPos);
-//                if (tile instanceof TileEntityFake)
-//                {
-//                    state = event.getEntityPlayer().world.getBlockState(((TileEntityFake) tile).mainBlockPosition);
-//                }
-//            }
-//
-//            if (state.getBlock() == MarsBlocks.cryoChamber)
-//            {
-//                event.shouldRotate = true;
-//                event.vanillaOverride = true;
-//            }
-//        }
-//    } TODO Player rotation
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public void onPlayerRotate(RenderPlayerGC.RotatePlayerEvent event)
+    {
+        BlockPos blockPos = event.getPlayer().getBedLocation(event.getPlayer().dimension);
+        if (blockPos != null)
+        {
+            BlockState state = event.getPlayer().world.getBlockState(blockPos);
+            if (state.getBlock() == GCBlocks.fakeBlock && state.get(BlockMulti.MULTI_TYPE) == BlockMulti.EnumBlockMultiType.CRYO_CHAMBER)
+            {
+                TileEntity tile = event.getPlayer().world.getTileEntity(blockPos);
+                if (tile instanceof TileEntityFake)
+                {
+                    state = event.getPlayer().world.getBlockState(((TileEntityFake) tile).mainBlockPosition);
+                }
+            }
+
+            if (state.getBlock() == MarsBlocks.cryoChamber)
+            {
+                event.shouldRotate = true;
+                event.vanillaOverride = true;
+            }
+        }
+    }
 
     @SubscribeEvent
     public void onPlanetDecorated(GCCoreEventPopulate.Post event)

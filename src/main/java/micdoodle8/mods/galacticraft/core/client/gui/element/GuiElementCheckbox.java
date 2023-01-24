@@ -1,12 +1,11 @@
 package micdoodle8.mods.galacticraft.core.client.gui.element;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.core.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -63,7 +62,7 @@ public class GuiElementCheckbox extends Widget
         {
             Minecraft minecraft = Minecraft.getInstance();
             minecraft.getTextureManager().bindTexture(GuiElementCheckbox.texture);
-            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.isHovered = par2 >= this.x && par3 >= this.y && par2 < this.x + this.width && par3 < this.y + this.height;
             this.blit(this.x, this.y, this.isSelected ? this.texX + this.texWidth : this.texX, this.isHovered() ? this.shiftOnHover ? this.texY + this.texHeight : this.texY : this.texY, this.width, this.height);
             minecraft.fontRenderer.drawString(this.getMessage(), this.x + this.width + 3, this.y + (this.height - 6) / 2, this.textColor);

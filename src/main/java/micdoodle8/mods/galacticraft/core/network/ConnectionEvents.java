@@ -4,6 +4,7 @@ import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.dimension.DimensionSpaceStation;
 import micdoodle8.mods.galacticraft.core.dimension.SpaceRace;
 import micdoodle8.mods.galacticraft.core.dimension.SpaceRaceManager;
+import micdoodle8.mods.galacticraft.core.dimension.SpaceStationWorldData;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import micdoodle8.mods.galacticraft.core.util.*;
@@ -95,7 +96,7 @@ public class ConnectionEvents
         {
             ServerPlayerEntity thePlayer = (ServerPlayerEntity) event.getPlayer();
             GCPlayerStats stats = GCPlayerStats.get(thePlayer);
-//            SpaceStationWorldData.checkAllStations(thePlayer, stats); TODO
+            SpaceStationWorldData.checkAllStations(thePlayer, stats);
             GalacticraftCore.packetPipeline.sendTo(new PacketSimple(EnumSimplePacket.C_UPDATE_SPACESTATION_CLIENT_ID, GCCoreUtil.getDimensionType(thePlayer.world), new Object[] { WorldUtil.spaceStationDataToString(stats.getSpaceStationDimensionData()) }), thePlayer);
             SpaceRace raceForPlayer = SpaceRaceManager.getSpaceRaceFromPlayer(PlayerUtil.getName(thePlayer));
             if (raceForPlayer != null)
@@ -106,7 +107,7 @@ public class ConnectionEvents
 
         if (event.getPlayer().world.getDimension() instanceof DimensionSpaceStation && event.getPlayer() instanceof ServerPlayerEntity)
         {
-//            ((DimensionSpaceStation) event.getPlayer().world.getDimension()).getSpinManager().sendPackets((ServerPlayerEntity) event.getPlayer()); TODO Spin Manager
+            ((DimensionSpaceStation) event.getPlayer().world.getDimension()).getSpinManager().sendPackets((ServerPlayerEntity) event.getPlayer());
         }
     }
 

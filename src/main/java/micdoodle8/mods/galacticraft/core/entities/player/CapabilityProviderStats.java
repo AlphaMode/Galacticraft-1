@@ -13,12 +13,11 @@ import java.lang.ref.WeakReference;
 
 public class CapabilityProviderStats implements ICapabilitySerializable<CompoundNBT>
 {
-    private ServerPlayerEntity owner;
-    private final LazyOptional<GCPlayerStats> holder = LazyOptional.of(() -> new StatsCapability(new WeakReference<>(this.owner)));
+    private final GCPlayerStats holder = GCCapabilities.GC_STATS_CAPABILITY.getDefaultInstance();
 
     public CapabilityProviderStats(ServerPlayerEntity owner)
     {
-        this.owner = owner;
+        holder.setPlayer(new WeakReference<>(owner));
     }
 
 //    @Override
@@ -33,7 +32,7 @@ public class CapabilityProviderStats implements ICapabilitySerializable<Compound
     {
         if (cap == GCCapabilities.GC_STATS_CAPABILITY)
         {
-            return GCCapabilities.GC_STATS_CAPABILITY.orEmpty(cap, holder);
+            return GCCapabilities.GC_STATS_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> holder));
         }
 
         return LazyOptional.empty();
@@ -43,13 +42,13 @@ public class CapabilityProviderStats implements ICapabilitySerializable<Compound
     public CompoundNBT serializeNBT()
     {
         CompoundNBT nbt = new CompoundNBT();
-        this.holder.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).saveNBTData(nbt);
+        this.holder.saveNBTData(nbt);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt)
     {
-        this.holder.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).loadNBTData(nbt);
+        this.holder.loadNBTData(nbt);
     }
 }

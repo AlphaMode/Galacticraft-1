@@ -2,9 +2,7 @@ package micdoodle8.mods.galacticraft.planets.mars.blocks;
 
 import micdoodle8.mods.galacticraft.core.*;
 import micdoodle8.mods.galacticraft.core.items.ItemBlockDesc;
-import micdoodle8.mods.galacticraft.core.tile.*;
 import micdoodle8.mods.galacticraft.planets.mars.tile.*;
-import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlockNames;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -74,7 +72,7 @@ public class MarsBlocks
     @ObjectHolder(MarsBlockNames.deshBlock)
     public static Block deshBlock;
     @ObjectHolder(MarsBlockNames.stone)
-    public static Block stone;
+    public static Block MARS_STONE;
 
     public static void registerBlocks(RegistryEvent.Register<Block> evt)
     {
@@ -162,7 +160,7 @@ public class MarsBlocks
         register(r, Registry.BLOCK.getKey(cobblestone), new BlockItem(cobblestone, props));
         register(r, Registry.BLOCK.getKey(rockSurface), new BlockItem(rockSurface, props));
         register(r, Registry.BLOCK.getKey(rockMiddle), new BlockItem(rockMiddle, props));
-        register(r, Registry.BLOCK.getKey(stone), new BlockItem(stone, props));
+        register(r, Registry.BLOCK.getKey(MARS_STONE), new BlockItem(MARS_STONE, props));
         register(r, Registry.BLOCK.getKey(deshBlock), new BlockItem(deshBlock, props));
         register(r, Registry.BLOCK.getKey(dungeonBrick), new BlockItem(dungeonBrick, props));
         register(r, Registry.BLOCK.getKey(vine), new ItemBlockDesc(vine, props));

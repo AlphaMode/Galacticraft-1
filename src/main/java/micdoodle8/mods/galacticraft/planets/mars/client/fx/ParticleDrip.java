@@ -31,6 +31,7 @@ public class ParticleDrip extends SpriteTexturedParticle
         this.maxAge = (int) (64.0D / (Math.random() * 0.8D + 0.2D));
         this.motionX = this.motionY = this.motionZ = 0.0D;
         this.animatedSprite = animatedSprite;
+        this.selectSpriteWithAge(animatedSprite);
     }
 
     @Override

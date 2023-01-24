@@ -1,6 +1,6 @@
 package micdoodle8.mods.galacticraft.core.util;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
@@ -330,6 +330,6 @@ public class ColorUtil
         int rr = gg >> 8;
         gg &= 255;
         int bb = col & 255;
-        GlStateManager.color4f(rr / 255F, gg / 255F, bb / 255F, 1.0F);
+        RenderSystem.color4f(rr / 255F, gg / 255F, bb / 255F, 1.0F);
     }
 }

@@ -2,8 +2,10 @@ package micdoodle8.mods.galacticraft.core.dimension;
 
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
 import micdoodle8.mods.galacticraft.api.prefab.world.gen.DimensionSpace;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftDimension;
 import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
+import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.dimension.chunk.MoonChunkGenerator;
 import micdoodle8.mods.galacticraft.core.dimension.chunk.MoonGenSettings;
@@ -19,6 +21,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -28,6 +31,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -56,12 +61,12 @@ public class DimensionMoon extends DimensionSpace implements IGalacticraftDimens
 //    {
 //        return new Vector3(0, 0, 0);
 //    }
-//
-//    @Override
-//    public Vector3 getSkyColor()
-//    {
-//        return new Vector3(0, 0, 0);
-//    }
+
+    @Override
+    public Vector3 getSkyColor()
+    {
+        return new Vector3(0, 0, 0);
+    }
 
     @Override
     public boolean hasSunset()
@@ -84,25 +89,24 @@ public class DimensionMoon extends DimensionSpace implements IGalacticraftDimens
         return new MoonChunkGenerator(this.world, type.create(providerSettings), settings);
     }
 
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public float getStarBrightness(float par1)
-//    {
-//        final float var2 = this.world.getCelestialAngle(par1);
-//        float var3 = 1.0F - (MathHelper.cos(var2 * Constants.twoPI) * 2.0F + 0.25F);
-//
-//        if (var3 < 0.0F)
-//        {
-//            var3 = 0.0F;
-//        }
-//
-//        if (var3 > 1.0F)
-//        {
-//            var3 = 1.0F;
-//        }
-//
-//        return var3 * var3 * 0.5F + 0.3F;
-//    }
+    @OnlyIn(Dist.CLIENT)
+    public float getStarBrightness(float partialTicks)
+    {
+        final float var2 = this.world.getCelestialAngle(partialTicks);
+        float var3 = 1.0F - (MathHelper.cos(var2 * Constants.twoPI) * 2.0F + 0.25F);
+
+        if (var3 < 0.0F)
+        {
+            var3 = 0.0F;
+        }
+
+        if (var3 > 1.0F)
+        {
+            var3 = 1.0F;
+        }
+
+        return var3 * var3 * 0.5F + 0.3F;
+    }
 
     @Override
     public boolean isSkyColored()

@@ -10,12 +10,19 @@ import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlocks;
 import micdoodle8.mods.galacticraft.planets.venus.client.TickHandlerClientVenus;
 import micdoodle8.mods.galacticraft.planets.venus.client.fx.ParticleAcidExhaust;
 import micdoodle8.mods.galacticraft.planets.venus.client.fx.ParticleAcidVapor;
+import micdoodle8.mods.galacticraft.planets.venus.client.render.entity.RenderEntryPodVenus;
+import micdoodle8.mods.galacticraft.planets.venus.client.render.entity.RenderJuicer;
+import micdoodle8.mods.galacticraft.planets.venus.client.render.entity.RenderSpiderQueen;
+import micdoodle8.mods.galacticraft.planets.venus.client.render.entity.RenderWebShot;
 import micdoodle8.mods.galacticraft.planets.venus.client.render.tile.TileEntityLaserTurretRenderer;
+import micdoodle8.mods.galacticraft.planets.venus.entities.EntityEntryPodVenus;
+import micdoodle8.mods.galacticraft.planets.venus.entities.VenusEntities;
 import micdoodle8.mods.galacticraft.planets.venus.tile.TileEntityLaserTurret;
 import micdoodle8.mods.galacticraft.planets.venus.tile.TileEntityTreasureChestVenus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,6 +33,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
@@ -41,10 +49,10 @@ public class VenusModuleClient implements IPlanetsModuleClient
     public void init(FMLCommonSetupEvent event)
     {
         MinecraftForge.EVENT_BUS.register(this);
-//        RenderingRegistry.registerEntityRenderingHandler(EntityJuicer.class, (EntityRendererManager manager) -> new RenderJuicer(manager));
-//        RenderingRegistry.registerEntityRenderingHandler(EntityEntryPodVenus.class, (EntityRendererManager manager) -> new RenderEntryPodVenus(manager));
-//        RenderingRegistry.registerEntityRenderingHandler(EntitySpiderQueen.class, (EntityRendererManager manager) -> new RenderSpiderQueen(manager));
-//        RenderingRegistry.registerEntityRenderingHandler(EntityWebShot.class, (EntityRendererManager manager) -> new RenderWebShot(manager));
+        RenderingRegistry.registerEntityRenderingHandler(VenusEntities.JUICER, RenderJuicer::new);
+        RenderingRegistry.registerEntityRenderingHandler(VenusEntities.ENTRY_POD, RenderEntryPodVenus::new);
+        RenderingRegistry.registerEntityRenderingHandler(VenusEntities.SPIDER_QUEEN, RenderSpiderQueen::new);
+        RenderingRegistry.registerEntityRenderingHandler(VenusEntities.WEB_SHOT, RenderWebShot::new);
 
         MinecraftForge.EVENT_BUS.register(new TickHandlerClientVenus());
 //        VenusModuleClient.registerBlockRenderers();
@@ -112,6 +120,7 @@ public class VenusModuleClient implements IPlanetsModuleClient
     {
 //        RenderEntryPodVenus.updateModels(event.getModelLoader());
 //        TileEntityLaserTurretRenderer.updateModels(event.getModelLoader());
+        RenderSpiderQueen.updateModels();
     }
 
 //    private void replaceModelDefault(ModelBakeEvent event, String resLoc, String objLoc, List<String> visibleGroups, Class<? extends ModelTransformWrapper> clazz, IModelState parentState, String... variants)

@@ -3,6 +3,10 @@ package micdoodle8.mods.galacticraft.core.world.gen.dungeon;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.world.gen.feature.structure.IStructurePieceType;
+import net.minecraft.world.gen.feature.structure.StructurePiece;
+
+import java.util.List;
+import java.util.Random;
 
 public abstract class SizedPiece extends DirectionalPiece
 {
@@ -41,6 +45,11 @@ public abstract class SizedPiece extends DirectionalPiece
         this.sizeX = nbt.getInt("sizeX");
         this.sizeY = nbt.getInt("sizeY");
         this.sizeZ = nbt.getInt("sizeZ");
+    }
+
+    @Override
+    public void buildComponent(StructurePiece p_74861_1_, List<StructurePiece> p_74861_2_, Random p_74861_3_) {
+        super.buildComponent(p_74861_1_, p_74861_2_, p_74861_3_);
     }
 
     public int getSizeX()

@@ -17,19 +17,26 @@ import net.minecraft.world.biome.Biome;
  */
 public abstract class BiomeGC extends Biome implements IMobSpawnBiome
 {
-//    public final boolean isAdaptiveBiome;
+    public final boolean isAdaptiveBiome;
+
+    public static Biome.Builder defaultBuilder() {
+        return new Builder()
+                .depth(0.1F).scale(0.2F)
+                .temperature(0.5F).downfall(0.0F)
+                .waterColor(16777215).precipitation(RainType.NONE);
+    }
 
     protected BiomeGC(Biome.Builder biomeBuilder)
     {
         super(biomeBuilder);
         GalacticraftCore.biomesList.add(this);
-//        this.isAdaptiveBiome = false;
+        this.isAdaptiveBiome = false;
     }
 
     protected BiomeGC(Biome.Builder biomeBuilder, boolean adaptive)
     {
         super(biomeBuilder);
-//        this.isAdaptiveBiome = adaptive;
+        this.isAdaptiveBiome = adaptive;
     }
 
     /**

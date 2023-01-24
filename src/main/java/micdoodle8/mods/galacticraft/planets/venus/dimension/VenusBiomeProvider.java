@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import micdoodle8.mods.galacticraft.core.dimension.GCVoronoiZoomLayer;
-import micdoodle8.mods.galacticraft.planets.venus.dimension.biome.BiomeVenus;
 import micdoodle8.mods.galacticraft.planets.venus.dimension.biome.GenLayerVenusBiomes;
+import micdoodle8.mods.galacticraft.planets.venus.dimension.biome.VenusBiomes;
 import net.minecraft.block.BlockState;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
@@ -33,9 +33,9 @@ public class VenusBiomeProvider extends BiomeProvider
     public VenusBiomeProvider(final VenusBiomeProviderSettings settings)
     {
         super(ImmutableSet.of(
-                BiomeVenus.venusFlat,
-                BiomeVenus.venusMountain,
-                BiomeVenus.venusValley
+                VenusBiomes.VENUS_FLAT,
+                VenusBiomes.VENUS_MOUNTAIN,
+                VenusBiomes.VENUS_VALLEY
         ));
         final WorldInfo info = settings.getWorldInfo();
         final VenusGenSettings generatorSettings = settings.getGeneratorSettings();

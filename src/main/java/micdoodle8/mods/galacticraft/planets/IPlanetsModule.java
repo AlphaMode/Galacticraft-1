@@ -1,13 +1,10 @@
 package micdoodle8.mods.galacticraft.planets;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-
-import java.util.List;
 
 public interface IPlanetsModule
 {
@@ -16,6 +13,8 @@ public interface IPlanetsModule
     void serverInit(FMLServerStartedEvent event);
 
     void serverStarting(FMLServerStartingEvent event);
+
+    void biomeRegisterEvent(RegistryEvent.Register<Biome> event);
 
 //    public void getGuiIDs(List<Integer> idList);
 

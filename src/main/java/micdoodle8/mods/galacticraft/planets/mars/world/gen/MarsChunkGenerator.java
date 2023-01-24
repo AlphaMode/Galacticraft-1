@@ -1,13 +1,20 @@
 package micdoodle8.mods.galacticraft.planets.mars.world.gen;
 
+import micdoodle8.mods.galacticraft.core.world.gen.dungeon.DungeonConfiguration;
+import micdoodle8.mods.galacticraft.planets.mars.blocks.MarsBlocks;
 import micdoodle8.mods.galacticraft.planets.mars.dimension.MarsGenSettings;
 import micdoodle8.mods.galacticraft.planets.venus.dimension.VenusGenSettings;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.gen.NoiseChunkGenerator;
 import net.minecraft.world.gen.OctavesNoiseGenerator;
+import net.minecraft.world.gen.WorldGenRegion;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
 
 public class MarsChunkGenerator extends NoiseChunkGenerator<MarsGenSettings>
 {
@@ -27,13 +34,13 @@ public class MarsChunkGenerator extends NoiseChunkGenerator<MarsGenSettings>
 //    private final MapGenCavernMars caveGenerator = new MapGenCavernMars();
 //    private final MapGenCaveMars cavernGenerator = new MapGenCaveMars();
 //
-//    private final MapGenDungeon dungeonGenerator = new MapGenDungeonMars(new DungeonConfiguration(MarsBlocks.marsBlock.getDefaultState().with(BlockBasicMars.BASIC_TYPE, BlockBasicMars.EnumBlockBasic.DUNGEON_BRICK), 30, 8, 16, 7, 7, RoomBossMars.class, RoomTreasureMars.class));
 
     private final OctavesNoiseGenerator depthNoise;
 
     public MarsChunkGenerator(IWorld worldIn, BiomeProvider biomeProvider, MarsGenSettings settingsIn)
     {
         super(worldIn, biomeProvider, 4, 8, 128, settingsIn, true);
+        this.randomSeed.skip(2620);
         this.depthNoise = new OctavesNoiseGenerator(this.randomSeed, 15, 0);
     }
 
@@ -143,14 +150,14 @@ public class MarsChunkGenerator extends NoiseChunkGenerator<MarsGenSettings>
         float scaleF1 = 0.0F;
         float depthF1 = 0.0F;
         float divisor = 0.0F;
-        int j = this.getSeaLevel();
-        float baseDepth = this.biomeProvider.getNoiseBiome(x, j, z).getDepth();
+        int seaLevel = this.getSeaLevel();
+        float baseDepth = this.biomeProvider.getNoiseBiome(x, seaLevel, z).getDepth();
 
         for (int xMod = -2; xMod <= 2; ++xMod)
         {
             for (int zMod = -2; zMod <= 2; ++zMod)
             {
-                Biome biomeAt = this.biomeProvider.getNoiseBiome(x + xMod, j,z + zMod);
+                Biome biomeAt = this.biomeProvider.getNoiseBiome(x + xMod, seaLevel,z + zMod);
                 float biomeDepth = biomeAt.getDepth();
                 float biomeScale = biomeAt.getScale();
 
@@ -206,7 +213,7 @@ public class MarsChunkGenerator extends NoiseChunkGenerator<MarsGenSettings>
     protected double func_222545_a(double depth, double scale, int yy)
     {
         // The higher this value is, the higher the terrain is!
-        final double baseSize = 17D;
+        final double baseSize = 8.5D;
         double yOffsets = ((double) yy - (baseSize + depth * baseSize / 8.0D * 4.0D)) * 12.0D * 128.0D / 256.0D / scale;
         if (yOffsets < 0.0D)
         {
@@ -225,7 +232,7 @@ public class MarsChunkGenerator extends NoiseChunkGenerator<MarsGenSettings>
         double xzOtherScale = 8.555149841308594D;
         double yOtherScale = 4.277574920654297D;
 
-        final int topSlideMax = 0;
+        final int topSlideMax = -10;
         final int topSlideScale = 3;
 
         calcNoiseColumn(noiseColumn, x, z, xzScale, yScale, xzOtherScale, yOtherScale, topSlideScale, topSlideMax);

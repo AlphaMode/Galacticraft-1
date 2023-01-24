@@ -49,7 +49,7 @@
            "joinx_s2": { "custom": { "base": "galacticraftcore:space_glass_vanilla#base", "Solid": "galacticraftcore:space_glass_vanilla#nsew_s2_s", "Translucent": "galacticraftcore:space_glass_vanilla#nsew_s2_g" }}
         },
 
-        "base": [{  "model": "minecraft:cube_all", "textures": { "all": "blocks/glass" }  }],
+        "base": [{  "model": "minecraft:cube_all", "textures": { "all": "block/glass" }  }],
 
         "none": [{  "model": "galacticraftcore:block/dummy"  }],
 

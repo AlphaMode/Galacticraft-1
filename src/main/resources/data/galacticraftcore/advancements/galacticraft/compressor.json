@@ -7,8 +7,7 @@
             "translate": "advancement.galacticraft.compressor.description"
         },
         "icon": {
-            "item": "galacticraftcore:machine",
-            "data": 12
+            "item": "galacticraftcore:ingot_compressor"
         },
         "frame": "task",
         "show_toast": true,
@@ -21,8 +20,7 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "galacticraftcore:machine",
-                        "data": 12
+                        "item": "galacticraftcore:ingot_compressor"
                     }
                 ]
             }

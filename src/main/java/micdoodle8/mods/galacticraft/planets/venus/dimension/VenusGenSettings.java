@@ -1,9 +1,15 @@
 package micdoodle8.mods.galacticraft.planets.venus.dimension;
 
+import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.world.gen.GenerationSettings;
 
 public class VenusGenSettings extends GenerationSettings
 {
+    public VenusGenSettings() {
+        setDefaultBlock(VenusBlocks.rockHard.getDefaultState());
+        setDefaultFluid(Blocks.AIR.getDefaultState());
+    }
     public int getBiomeSize()
     {
         return 4;

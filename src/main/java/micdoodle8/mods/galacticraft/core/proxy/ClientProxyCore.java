@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import micdoodle8.mods.galacticraft.api.client.tabs.InventoryTabVanilla;
 import micdoodle8.mods.galacticraft.api.client.tabs.TabRegistry;
 import micdoodle8.mods.galacticraft.api.vector.BlockVec3;
@@ -11,6 +12,7 @@ import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.GCItems;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
+import micdoodle8.mods.galacticraft.core.client.BubbleRenderer;
 import micdoodle8.mods.galacticraft.core.client.DynamicTextureProper;
 import micdoodle8.mods.galacticraft.core.client.EventHandlerClient;
 import micdoodle8.mods.galacticraft.core.client.fx.*;
@@ -21,6 +23,7 @@ import micdoodle8.mods.galacticraft.core.client.render.entities.*;
 import micdoodle8.mods.galacticraft.core.client.render.item.*;
 import micdoodle8.mods.galacticraft.core.client.render.tile.*;
 import micdoodle8.mods.galacticraft.core.client.sounds.MusicTickerGC;
+import micdoodle8.mods.galacticraft.core.entities.EntityLander;
 import micdoodle8.mods.galacticraft.core.entities.EntityTier1Rocket;
 import micdoodle8.mods.galacticraft.core.entities.GCEntities;
 import micdoodle8.mods.galacticraft.core.entities.player.IPlayerClient;
@@ -36,6 +39,7 @@ import micdoodle8.mods.galacticraft.core.util.*;
 import micdoodle8.mods.galacticraft.core.wrappers.PartialCanister;
 import micdoodle8.mods.galacticraft.core.wrappers.PlayerGearData;
 import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
+import micdoodle8.mods.galacticraft.planets.venus.client.render.entity.RenderEntryPodVenus;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker;
@@ -69,11 +73,13 @@ import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -102,7 +108,7 @@ public class ClientProxyCore extends CommonProxyCore implements IResourceManager
     public static boolean lastSpacebarDown;
 
     public static HashMap<DimensionType, DimensionType> clientSpaceStationID = Maps.newHashMap();
-    public static MusicTicker.MusicType MUSIC_TYPE_MARS;
+    public static MusicTickerGC.GCMusicType MUSIC_TYPE_MARS = MusicTickerGC.GCMusicType.MARS_JC;
     public static Rarity galacticraftItem = Rarity.create("GCRarity", TextFormatting.BLUE);
     public static Map<String, ResourceLocation> capeMap = new HashMap<>();
     public static InventoryExtended dummyInventory = new InventoryExtended();
@@ -145,7 +151,6 @@ public class ClientProxyCore extends CommonProxyCore implements IResourceManager
 
         // ===============
 
-//        MUSIC_TYPE_MARS = EnumHelper.addEnum(MusicTicker.MusicType.class, "MARS_JC", new Class[] { SoundEvent.class, Integer.TYPE, Integer.TYPE }, GCSounds.music, 12000, 24000); TODO Music
         ClientProxyCore.registerTileEntityRenderers();
         ClientProxyCore.updateCapeList();
         ClientProxyCore.registerInventoryJsons();
@@ -201,16 +206,15 @@ public class ClientProxyCore extends CommonProxyCore implements IResourceManager
         {
             try
             {
-//                Field field = EntityRendererManager.class.getDeclaredField(GCCoreUtil.isDeobfuscated() ? "playerRenderer" : "field_178637_m");
-//                field.setAccessible(true);
-//                field.set(Minecraft.getInstance().getRenderManager(), new RenderPlayerGC());
-//
-//                field = EntityRendererManager.class.getDeclaredField(GCCoreUtil.isDeobfuscated() ? "skinMap" : "field_178636_l");
-//                field.setAccessible(true);
-//                Map<String, PlayerRenderer> skinMap = (Map<String, PlayerRenderer>) field.get(Minecraft.getInstance().getRenderManager());
-//                skinMap.put("default", new RenderPlayerGC(skinMap.get("default"), false));
-//                skinMap.put("slim", new RenderPlayerGC(skinMap.get("slim"), true));
-                // TODO Player rendering
+                Field field = EntityRendererManager.class.getDeclaredField(GCCoreUtil.isDeobfuscated() ? "playerRenderer" : "field_178637_m");
+                field.setAccessible(true);
+                field.set(Minecraft.getInstance().getRenderManager(), new RenderPlayerGC());
+
+                field = EntityRendererManager.class.getDeclaredField(GCCoreUtil.isDeobfuscated() ? "skinMap" : "field_178636_l");
+                field.setAccessible(true);
+                Map<String, PlayerRenderer> skinMap = (Map<String, PlayerRenderer>) field.get(Minecraft.getInstance().getRenderManager());
+                skinMap.put("default", new RenderPlayerGC(skinMap.get("default"), false));
+                skinMap.put("slim", new RenderPlayerGC(skinMap.get("slim"), true));
             }
             catch (Exception e)
             {
@@ -220,7 +224,7 @@ public class ClientProxyCore extends CommonProxyCore implements IResourceManager
 
         try
         {
-            Field ftc = Minecraft.getInstance().getClass().getDeclaredField(GCCoreUtil.isDeobfuscated() ? "mcMusicTicker" : "field_147126_aw");
+            Field ftc = ObfuscationReflectionHelper.findField(Minecraft.class, "field_147126_aw");
             ftc.setAccessible(true);
             ftc.set(Minecraft.getInstance(), new MusicTickerGC(Minecraft.getInstance()));
         }
@@ -447,7 +451,7 @@ public class ClientProxyCore extends CommonProxyCore implements IResourceManager
         event.addSprite(new ResourceLocation(Constants.MOD_ID_CORE, texture));
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onModelBakeEvent(ModelBakeEvent event)
     {
         GCModelCache.INSTANCE.onBake(event);
@@ -547,12 +551,15 @@ public class ClientProxyCore extends CommonProxyCore implements IResourceManager
 //                }
 //            }
 //
-//            BubbleRenderer.sphere = ClientUtil.modelFromOBJ(event.getModelLoader(), new ResourceLocation(Constants.MOD_ID_CORE, "sphere.obj"), ImmutableList.of("Sphere"));
-//            TileEntityArclampRenderer.lampMetal = ClientUtil.modelFromOBJ(event.getModelLoader(), new ResourceLocation(Constants.MOD_ID_CORE, "arclamp_metal.obj"));
+            BubbleRenderer.sphere = GCModelCache.INSTANCE.getModel(new ResourceLocation(Constants.MOD_ID_CORE, "models/sphere.obj"), ImmutableList.of("Sphere"));
+            TileEntityArclampRenderer.lampMetal = GCModelCache.INSTANCE.getModel(new ResourceLocation(Constants.MOD_ID_CORE, "models/arclamp_metal.obj"), ImmutableList.of());
+            RenderEntryPodVenus.modelEntryPod = GCModelCache.INSTANCE.getModel(new ResourceLocation(GalacticraftPlanets.ASSET_PREFIX, "models/pod_flame.obj"), ImmutableList.of("PodBody"));
+            RenderEntryPodVenus.modelFlame = GCModelCache.INSTANCE.getModel(new ResourceLocation(GalacticraftPlanets.ASSET_PREFIX, "models/pod_flame.obj"), ImmutableList.of("Flame_Sphere"));
 //            TileEntityBubbleProviderRenderer.sphere = ClientUtil.modelFromOBJ(event.getModelLoader(), new ResourceLocation(Constants.MOD_ID_CORE, "sphere.obj"), ImmutableList.of("Sphere"));
 ////                TileEntityDishRenderer.modelDish = ClientUtil.modelFromOBJ(new ResourceLocation(Constants.MOD_ID_CORE, "teledish.obj"));
 ////                TileEntityDishRenderer.modelFork = ClientUtil.modelFromOBJ(new ResourceLocation(Constants.MOD_ID_CORE, "telefork.obj"));
 ////                TileEntityDishRenderer.modelSupport = ClientUtil.modelFromOBJ(new ResourceLocation(Constants.MOD_ID_CORE, "telesupport.obj"));
+            RenderBuggy.updateModels();
 //        }
 //        catch (Exception e)
 //        {
@@ -578,16 +585,17 @@ public class ClientProxyCore extends CommonProxyCore implements IResourceManager
         RenderingRegistry.registerEntityRenderingHandler(GCEntities.EVOLVED_CREEPER, RenderEvolvedCreeper::new);
         RenderingRegistry.registerEntityRenderingHandler(GCEntities.EVOLVED_SKELETON, RenderEvolvedSkeleton::new);
         RenderingRegistry.registerEntityRenderingHandler(GCEntities.SKELETON_BOSS, RenderEvolvedSkeletonBoss::new);
-//        RenderingRegistry.registerEntityRenderingHandler(EntityMeteor.class, RenderMeteor::new);
-//        RenderingRegistry.registerEntityRenderingHandler(EntityFlag.class, RenderFlag::new);
-//        RenderingRegistry.registerEntityRenderingHandler(EntityParachest.class, RenderParaChest::new);
-////        RenderingRegistry.registerEntityRenderingHandler(EntityAlienVillager.class, (EntityRendererManager manager) -> new RenderAlienVillager(manager)); TODO Villagers
-//        RenderingRegistry.registerEntityRenderingHandler(EntityLander.class, RenderLander::new);
-//        RenderingRegistry.registerEntityRenderingHandler(EntityCelestialFake.class, RenderEntityFake::new);
-////        RenderingRegistry.registerEntityRenderingHandler(EntityBuggy.class, RenderBuggy::new); TODO Buggy renderer
-//        RenderingRegistry.registerEntityRenderingHandler(EntityMeteorChunk.class, RenderMeteorChunk::new);
-//        RenderingRegistry.registerEntityRenderingHandler(EntityHangingSchematic.class, RenderSchematic::new);
-//        RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedEnderman.class, RenderEvolvedEnderman::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.METEOR, RenderMeteor::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.METEOR_HUGE, RenderMeteor::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.FLAG, RenderFlag::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.PARA_CHEST, RenderParaChest::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.ALIEN_VILLAGER, RenderAlienVillager::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.LANDER, RenderLander::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.CELESTIAL_FAKE, RenderEntityFake::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.BUGGY, RenderBuggy::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.METEOR_CHUNK, RenderMeteorChunk::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.HANGING_SCHEMATIC, RenderSchematic::new);
+        RenderingRegistry.registerEntityRenderingHandler(GCEntities.EVOLVED_ENDERMAN, RenderEvolvedEnderman::new);
 //        RenderingRegistry.registerEntityRenderingHandler(EntityEvolvedWitch.class, RenderEvolvedWitch::new);
     }
 
@@ -608,7 +616,7 @@ public class ClientProxyCore extends CommonProxyCore implements IResourceManager
         ClientRegistry.bindTileEntityRenderer(TileEntitySolar.TileEntitySolarT1.TYPE, TileEntitySolarPanelRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileEntitySolar.TileEntitySolarT2.TYPE, TileEntitySolarPanelRenderer::new);
 ////        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityOxygenDistributor.class, new TileEntityBubbleProviderRenderer<>(0.25F, 0.25F, 1.0F));
-//        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityScreen.class, new TileEntityScreenRenderer());
+        ClientRegistry.bindTileEntityRenderer(TileEntityScreen.TYPE, TileEntityScreenRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileEntityFluidTank.TYPE, TileEntityFluidTankRenderer::new);
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFluidPipe.class, new TileEntityFluidPipeRenderer());
 ////            ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDish.class, new TileEntityDishRenderer());
@@ -1005,10 +1013,12 @@ public class ClientProxyCore extends CommonProxyCore implements IResourceManager
     public static class EventSpecialRender extends Event
     {
         public final float partialTicks;
+        public final MatrixStack matrixStack;
 
-        public EventSpecialRender(float partialTicks)
+        public EventSpecialRender(MatrixStack matrixStackIn, float partialTicks)
         {
             this.partialTicks = partialTicks;
+            this.matrixStack = matrixStackIn;
         }
     }
 

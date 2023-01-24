@@ -7,8 +7,7 @@
             "translate": "advancement.galacticraft.oxygen_collector.description"
         },
         "icon": {
-            "item": "galacticraftcore:collector",
-            "data": 0
+            "item": "galacticraftcore:collector"
         },
         "frame": "task",
         "show_toast": true,
@@ -21,8 +20,7 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "galacticraftcore:collector",
-                        "data": 0
+                        "item": "galacticraftcore:collector"
                     }
                 ]
             }

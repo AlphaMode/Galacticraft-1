@@ -106,7 +106,7 @@ public class ItemSchematic extends Item implements ISchematicItem, ISortable
         {
             EntityHangingSchematic entityhanging = this.createEntity(context.getWorld(), blockpos, facing, this.getIndex(stack.getDamage()));
 
-            if (entityhanging != null && entityhanging.onValidSurface())
+            if (entityhanging != null /*&& entityhanging.onValidSurface()*/)
             {
                 if (!context.getWorld().isRemote)
                 {

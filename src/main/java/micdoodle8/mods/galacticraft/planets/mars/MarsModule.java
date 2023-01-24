@@ -9,6 +9,7 @@ import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.world.AtmosphereInfo;
 import micdoodle8.mods.galacticraft.api.world.EnumAtmosphericGas;
 import micdoodle8.mods.galacticraft.core.Constants;
+import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.entities.GCEntities;
 import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
@@ -31,6 +32,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
@@ -49,13 +51,12 @@ public class MarsModule implements IPlanetsModule
     {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addGenericListener(ContainerType.class, MarsContainers::initContainers);
+        MarsModule.planetMars = (Planet) new Planet("mars").setParentSolarSystem(GalacticraftCore.solarSystemSol).setRingColorRGB(0.67F, 0.1F, 0.1F).setPhaseShift(0.1667F).setRelativeSize(0.5319F).setRelativeDistanceFromCenter(new CelestialBody.ScalableDistance(1.25F, 1.25F)).setRelativeOrbitTime(1.8811610076670317634173055859803F);
     }
 
     @Override
     public void init(FMLCommonSetupEvent event)
     {
-        MarsModule.planetMars = (Planet) new Planet("mars").setParentSolarSystem(GalacticraftCore.solarSystemSol).setRingColorRGB(0.67F, 0.1F, 0.1F).setPhaseShift(0.1667F).setRelativeSize(0.5319F).setRelativeDistanceFromCenter(new CelestialBody.ScalableDistance(1.25F, 1.25F)).setRelativeOrbitTime(1.8811610076670317634173055859803F);
-
         MinecraftForge.EVENT_BUS.register(new EventHandlerMars());
 
 //        if (!FluidRegistry.isFluidRegistered("bacterialsludge"))
@@ -127,10 +128,11 @@ public class MarsModule implements IPlanetsModule
         ItemSchematicTier2.registerSchematicItems();
     }
 
-    @SubscribeEvent
+    @Override
     public void biomeRegisterEvent(RegistryEvent.Register<Biome> evt)
     {
         IForgeRegistry<Biome> r = evt.getRegistry();
+        GCBlocks.register(r, BiomeMars.marsFlat, "mars_flat");
         MarsModule.planetMars.setBiomeInfo(r, BiomeMars.marsFlat);
     }
 

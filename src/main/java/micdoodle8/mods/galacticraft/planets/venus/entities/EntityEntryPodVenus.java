@@ -7,21 +7,21 @@ import micdoodle8.mods.galacticraft.core.entities.EntityLanderBase;
 import micdoodle8.mods.galacticraft.core.entities.IScaleableFuelLevel;
 import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
 import micdoodle8.mods.galacticraft.core.fluid.GCFluids;
-import micdoodle8.mods.galacticraft.planets.mars.entities.EntityProjectileTNT;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityEntryPodVenus extends EntityLanderBase implements IScaleableFuelLevel, ICameraZoomEntity, IIgnoreShift
 {
@@ -30,12 +30,11 @@ public class EntityEntryPodVenus extends EntityLanderBase implements IScaleableF
     public EntityEntryPodVenus(EntityType<? extends EntityEntryPodVenus> type, World worldIn)
     {
         super(type, worldIn);
-//        this.setSize(1.5F, 3.0F);
     }
 
-    public static EntityEntryPodVenus createEntityEntryPodVenus(ServerPlayerEntity player)
+    public static EntityEntryPodVenus createEntityEntryPodVenus(ServerPlayerEntity player, ServerWorld w)
     {
-        EntityEntryPodVenus pod = new EntityEntryPodVenus(VenusEntities.ENTRY_POD, player.world);
+        EntityEntryPodVenus pod = VenusEntities.ENTRY_POD.create(w);
 
         GCPlayerStats stats = GCPlayerStats.get(player);
         pod.stacks = NonNullList.withSize(stats.getRocketStacks().size() + 1, ItemStack.EMPTY);
@@ -105,7 +104,7 @@ public class EntityEntryPodVenus extends EntityLanderBase implements IScaleableF
     @Override
     public IPacket<?> createSpawnPacket()
     {
-        return new SSpawnObjectPacket(this);
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
@@ -168,7 +167,7 @@ public class EntityEntryPodVenus extends EntityLanderBase implements IScaleableF
 
         if (this.ticks >= 40 && this.ticks < 45)
         {
-            this.setMotion(this.getMotion().x, this.getInitialMotionY(), this.getMotionVec().z);
+            this.setMotion(this.getMotion().x, this.getInitialMotionY(), this.getMotion().z);
         }
 
         if (!this.shouldMove())

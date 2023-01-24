@@ -16,10 +16,10 @@ public class ContainerParaChest extends Container
     @ObjectHolder(Constants.MOD_ID_CORE + ":" + GCContainerNames.PARACHEST)
     public static ContainerType<ContainerParaChest> TYPE;
 
-    private final TileEntityParaChest paraChest;
+    private final IInventory paraChest;
     public int numRows;
 
-    public ContainerParaChest(int containerId, PlayerInventory playerInv, TileEntityParaChest paraChest)
+    public ContainerParaChest(int containerId, PlayerInventory playerInv, IInventory paraChest)
     {
         super(TYPE, containerId);
         this.paraChest = paraChest;
@@ -55,7 +55,7 @@ public class ContainerParaChest extends Container
         }
     }
 
-    public TileEntityParaChest getParaChest()
+    public IInventory getParaChest()
     {
         return paraChest;
     }

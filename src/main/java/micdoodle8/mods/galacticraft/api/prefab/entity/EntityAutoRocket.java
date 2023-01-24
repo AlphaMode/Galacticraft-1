@@ -29,6 +29,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -702,7 +703,7 @@ public abstract class EntityAutoRocket extends EntitySpaceshipBase implements IL
     }
 
     @Override
-    public void decodePacketdata(ByteBuf buffer)
+    public void decodePacketdata(PacketBuffer buffer)
     {
         if (!this.world.isRemote)
         {
@@ -765,7 +766,7 @@ public abstract class EntityAutoRocket extends EntitySpaceshipBase implements IL
 
         this.setWaitForPlayer(buffer.readBoolean());
 
-        this.statusMessage = NetworkUtil.readUTF8String(buffer);
+        this.statusMessage = buffer.readString();
         this.statusMessage = this.statusMessage.equals("") ? null : this.statusMessage;
         this.statusMessageCooldown = buffer.readInt();
         this.lastStatusMessageCooldown = buffer.readInt();
@@ -824,7 +825,7 @@ public abstract class EntityAutoRocket extends EntitySpaceshipBase implements IL
                 }
             }
         }
-        this.statusColour = NetworkUtil.readUTF8String(buffer);
+        this.statusColour = buffer.readString();
         if (this.statusColour.equals(""))
         {
             this.statusColour = null;

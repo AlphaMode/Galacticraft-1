@@ -53,13 +53,13 @@ public class DimensionMars extends DimensionSpace implements IGalacticraftDimens
     }
 
 
-//
-//    @Override
-//    public Vector3 getSkyColor()
-//    {
-//        float f = 1.0F - this.getStarBrightness(1.0F);
-//        return new Vector3(154 / 255.0F * f, 114 / 255.0F * f, 66 / 255.0F * f);
-//    }
+
+    @Override
+    public Vector3 getSkyColor()
+    {
+        float f = 1.0F - this.getStarBrightness(1.0F);
+        return new Vector3(154 / 255.0F * f, 114 / 255.0F * f, 66 / 255.0F * f);
+    }
 
     @Override
     public boolean hasSunset()
@@ -79,10 +79,11 @@ public class DimensionMars extends DimensionSpace implements IGalacticraftDimens
 //        return ChunkProviderMars.class;
 //    }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
-    public float getStarBrightness(float par1)
+    public float getStarBrightness(float partialTicks)
     {
-        float f1 = this.world.getCelestialAngle(par1);
+        float f1 = this.world.getCelestialAngle(partialTicks);
         float f2 = 1.0F - (MathHelper.cos(f1 * Constants.twoPI) * 2.0F + 0.25F);
 
         if (f2 < 0.0F)
@@ -186,6 +187,7 @@ public class DimensionMars extends DimensionSpace implements IGalacticraftDimens
     public ChunkGenerator<?> createChunkGenerator()
     {
         MarsGenSettings settings = new MarsGenSettings();
+        settings.setDefaultBlock(MarsBlocks.MARS_STONE.getDefaultState());
         return new MarsChunkGenerator(this.world, BiomeProviderType.FIXED.create(BiomeProviderType.FIXED.createSettings(this.world.getWorldInfo()).setBiome(BiomeMars.marsFlat)), settings);
     }
 

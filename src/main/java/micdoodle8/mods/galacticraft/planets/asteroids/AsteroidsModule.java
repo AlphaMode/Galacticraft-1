@@ -8,6 +8,7 @@ import micdoodle8.mods.galacticraft.api.item.EnumExtendedInventorySlot;
 import micdoodle8.mods.galacticraft.api.recipe.SchematicRegistry;
 import micdoodle8.mods.galacticraft.api.world.AtmosphereInfo;
 import micdoodle8.mods.galacticraft.core.Constants;
+import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import micdoodle8.mods.galacticraft.planets.IPlanetsModule;
@@ -34,6 +35,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
@@ -60,13 +62,12 @@ public class AsteroidsModule implements IPlanetsModule
     {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addGenericListener(ContainerType.class, AsteroidsContainers::initContainers);
+        AsteroidsModule.planetAsteroids = new Planet("asteroids").setParentSolarSystem(GalacticraftCore.solarSystemSol);
     }
 
     @Override
     public void init(FMLCommonSetupEvent event)
     {
-        AsteroidsModule.planetAsteroids = new Planet("asteroids").setParentSolarSystem(GalacticraftCore.solarSystemSol);
-
         playerHandler = new AsteroidsPlayerHandler();
         MinecraftForge.EVENT_BUS.register(playerHandler);
         AsteroidsEventHandler eventHandler = new AsteroidsEventHandler();
@@ -141,6 +142,7 @@ public class AsteroidsModule implements IPlanetsModule
     public void biomeRegisterEvent(RegistryEvent.Register<Biome> evt)
     {
         IForgeRegistry<Biome> r = evt.getRegistry();
+        GCBlocks.register(r, BiomeAsteroids.asteroid, "asteroids");
         AsteroidsModule.planetAsteroids.setBiomeInfo(r, BiomeAsteroids.asteroid);
 //        BiomeAsteroids.asteroid.resetMonsterListByMode(ConfigManagerCore.challengeMobDropsAndSpawning); TODO Needed?
     }

@@ -1,29 +1,27 @@
-//package micdoodle8.mods.galacticraft.core.command;
-//
-//import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
-//import micdoodle8.mods.galacticraft.core.inventory.InventoryExtended;
-//import micdoodle8.mods.galacticraft.core.util.PlayerUtil;
-//import micdoodle8.mods.galacticraft.core.util.WorldUtil;
-//import net.minecraft.command.CommandBase;
-//import net.minecraft.command.CommandException;
-//import net.minecraft.command.ICommandSender;
-//import net.minecraft.command.WrongUsageException;
-//import net.minecraft.entity.player.ServerPlayerEntity;
-//import net.minecraft.item.ItemStack;
-//import net.minecraft.nbt.CompoundNBT;
-//import net.minecraft.server.MinecraftServer;
-//import net.minecraft.util.math.BlockPos;
-//import net.minecraft.world.World;
-//
-//import java.util.*;
-//
-//public class CommandGCInv extends CommandBase
-//{
-//    protected static final Map<String, ItemStack[]> savedata = new HashMap<String, ItemStack[]>();
-//    private static final Set<String> dontload = new HashSet<String>();
-//    private static boolean firstuse = true;
-//    private static GCInvSaveData savefile;
-//
+package micdoodle8.mods.galacticraft.core.command;
+
+import micdoodle8.mods.galacticraft.core.entities.player.GCPlayerStats;
+import micdoodle8.mods.galacticraft.core.inventory.InventoryExtended;
+import micdoodle8.mods.galacticraft.core.util.PlayerUtil;
+import micdoodle8.mods.galacticraft.core.util.WorldUtil;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public class CommandGCInv
+{
+    protected static final Map<String, ItemStack[]> savedata = new HashMap<String, ItemStack[]>();
+    private static final Set<String> dontload = new HashSet<String>();
+    private static boolean firstuse = true;
+    private static GCInvSaveData savefile;
+
 //    @Override
 //    public String getUsage(ICommandSender var1)
 //    {
@@ -164,62 +162,57 @@
 //            throw new WrongUsageException("Not enough command arguments! Usage: " + this.getUsage(sender), new Object[0]);
 //        }
 //    }
-//
-//    public static void doLoad(ServerPlayerEntity thePlayer)
-//    {
-//        String theName = PlayerUtil.getName(thePlayer).toLowerCase();
-//        if (!CommandGCInv.dontload.contains(theName))
-//        // This is a simple flag: if the playername is in dontload then no
-//        // restore command has yet been run.
-//        // Dontload resets to nothing on server restart so that all will
-//        // auto-restore on a server restart.
-//        {
-//            ItemStack[] saveinv = CommandGCInv.savedata.get(theName);
-//            InventoryExtended gcInventory = GCPlayerStats.get(thePlayer).getExtendedInventory();
-//            for (int i = 0; i < gcInventory.getSizeInventory(); i++)
-//            {
-//                gcInventory.setInventorySlotContents(i, saveinv[i]);
-//            }
-//            CommandGCInv.savedata.remove(theName);
-//            CommandGCInv.writefile();
-//            System.out.println("[GCInv] Restored GC inventory slots of " + PlayerUtil.getName(thePlayer));
-//
-//        }
-//        else
-//        {
-//            System.out.println("[GCInv] Player " + PlayerUtil.getName(thePlayer) + " was spawned without restoring the GCInv save.  Run /gcinv restore playername to restore it.");
-//        }
-//    }
-//
-//    private static void writefile()
-//    {
-//        CommandGCInv.savefile.writeToNBT(new CompoundNBT());
-//        CommandGCInv.savefile.markDirty();
-//    }
-//
-//    private static void initialise()
-//    {
-//        World world0 = WorldUtil.getWorldForDimensionServer(0);
-//        if (world0 == null)
-//        {
-//            return;
-//        }
-//        CommandGCInv.savefile = (GCInvSaveData) world0.loadData(GCInvSaveData.class, GCInvSaveData.SAVE_ID);
-//        if (CommandGCInv.savefile == null)
-//        {
-//            CommandGCInv.savefile = new GCInvSaveData();
-//            world0.setData(GCInvSaveData.SAVE_ID, CommandGCInv.savefile);
-//        }
-//    }
-//
-//    public static ItemStack[] getSaveData(String p)
-//    {
-//        if (CommandGCInv.firstuse)
-//        {
-//            CommandGCInv.firstuse = false;
-//            CommandGCInv.initialise();
-//        }
-//
-//        return CommandGCInv.savedata.get(p);
-//    }
-//}
+
+    public static void doLoad(ServerPlayerEntity thePlayer)
+    {
+        String theName = PlayerUtil.getName(thePlayer).toLowerCase();
+        if (!CommandGCInv.dontload.contains(theName))
+        // This is a simple flag: if the playername is in dontload then no
+        // restore command has yet been run.
+        // Dontload resets to nothing on server restart so that all will
+        // auto-restore on a server restart.
+        {
+            ItemStack[] saveinv = CommandGCInv.savedata.get(theName);
+            InventoryExtended gcInventory = GCPlayerStats.get(thePlayer).getExtendedInventory();
+            for (int i = 0; i < gcInventory.getSizeInventory(); i++)
+            {
+                gcInventory.setInventorySlotContents(i, saveinv[i]);
+            }
+            CommandGCInv.savedata.remove(theName);
+            CommandGCInv.writefile();
+            System.out.println("[GCInv] Restored GC inventory slots of " + PlayerUtil.getName(thePlayer));
+
+        }
+        else
+        {
+            System.out.println("[GCInv] Player " + PlayerUtil.getName(thePlayer) + " was spawned without restoring the GCInv save.  Run /gcinv restore playername to restore it.");
+        }
+    }
+
+    private static void writefile()
+    {
+        CommandGCInv.savefile.write(new CompoundNBT());
+        CommandGCInv.savefile.markDirty();
+    }
+
+    private static void initialise()
+    {
+        ServerWorld world0 = WorldUtil.getWorldForDimensionServer(DimensionType.OVERWORLD);
+        if (world0 == null)
+        {
+            return;
+        }
+        CommandGCInv.savefile = world0.getSavedData().getOrCreate(GCInvSaveData::new, GCInvSaveData.SAVE_ID);
+    }
+
+    public static ItemStack[] getSaveData(String p)
+    {
+        if (CommandGCInv.firstuse)
+        {
+            CommandGCInv.firstuse = false;
+            CommandGCInv.initialise();
+        }
+
+        return CommandGCInv.savedata.get(p);
+    }
+}

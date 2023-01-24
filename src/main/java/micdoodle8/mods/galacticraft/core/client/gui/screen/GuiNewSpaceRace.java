@@ -1,6 +1,7 @@
 package micdoodle8.mods.galacticraft.core.client.gui.screen;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.vector.Vector2;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import micdoodle8.mods.galacticraft.core.Constants;
@@ -91,7 +92,7 @@ public class GuiNewSpaceRace extends Screen implements ICheckBoxCallback, ITextB
     private int selectionMinY;
     private int selectionMaxY;
 
-    private final EntityFlag dummyFlag = new EntityFlag(GCEntities.FLAG, Minecraft.getInstance().world);
+    private final EntityFlag dummyFlag = GCEntities.FLAG.create(Minecraft.getInstance().world);
 //    private final ModelFlag dummyModel = new ModelFlag();
 
     private SpaceRace spaceRaceData;
@@ -711,13 +712,13 @@ public class GuiNewSpaceRace extends Screen implements ICheckBoxCallback, ITextB
                 this.drawCenteredString(this.font, GCCoreUtil.translate("gui.space_race.create.remove_player"), this.width / 2, this.height / 2 - this.height / 3 - 15, 16777215);
                 break;
             case DESIGN_FLAG:
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                GL11.glDisable(GL11.GL_TEXTURE_2D);
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glDisable(GL11.GL_ALPHA_TEST);
-                GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param,
+                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.disableTexture();
+                RenderSystem.enableBlend();
+                RenderSystem.disableAlphaTest();
+                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param,
                         GlStateManager.SourceFactor.ONE.param, GlStateManager.DestFactor.ZERO.param);
-                GL11.glShadeModel(GL11.GL_SMOOTH);
+                RenderSystem.shadeModel(GL11.GL_SMOOTH);
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder worldRenderer = tessellator.getBuffer();
 
@@ -726,7 +727,7 @@ public class GuiNewSpaceRace extends Screen implements ICheckBoxCallback, ITextB
                     for (int y = 0; y < this.spaceRaceData.getFlagData().getHeight(); y++)
                     {
                         Vector3 color = this.spaceRaceData.getFlagData().getColorAt(x, y);
-                        GL11.glColor4f(color.floatX(), color.floatY(), color.floatZ(), 1.0F);
+                        RenderSystem.color4f(color.floatX(), color.floatY(), color.floatZ(), 1.0F);
                         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
                         worldRenderer.pos(this.flagDesignerMinX + x * this.flagDesignerScale.x, this.flagDesignerMinY + y * this.flagDesignerScale.y + 1 * this.flagDesignerScale.y, 0.0D).endVertex();
                         worldRenderer.pos(this.flagDesignerMinX + x * this.flagDesignerScale.x + 1 * this.flagDesignerScale.x, this.flagDesignerMinY + y * this.flagDesignerScale.y + 1 * this.flagDesignerScale.y, 0.0D).endVertex();
@@ -788,20 +789,20 @@ public class GuiNewSpaceRace extends Screen implements ICheckBoxCallback, ITextB
                 worldRenderer.pos((double) x2 - 1, (double) y2 - 1, this.getBlitOffset()).color(this.sliderColorR.getNormalizedValue(), this.sliderColorG.getNormalizedValue(), this.sliderColorB.getNormalizedValue(), 1.0F).endVertex();
                 tessellator.draw();
 
-                GL11.glShadeModel(GL11.GL_FLAT);
-                GL11.glDisable(GL11.GL_BLEND);
-                GL11.glEnable(GL11.GL_ALPHA_TEST);
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
+                RenderSystem.shadeModel(GL11.GL_FLAT);
+                RenderSystem.disableBlend();
+                RenderSystem.enableAlphaTest();
+                RenderSystem.enableTexture();
 
                 break;
             case CHANGE_TEAM_COLOR:
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                GL11.glDisable(GL11.GL_TEXTURE_2D);
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glDisable(GL11.GL_ALPHA_TEST);
-                GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param,
+                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.disableTexture();
+                RenderSystem.enableBlend();
+                RenderSystem.disableAlphaTest();
+                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param,
                         GlStateManager.SourceFactor.ONE.param, GlStateManager.DestFactor.ZERO.param);
-                GL11.glShadeModel(GL11.GL_SMOOTH);
+                RenderSystem.shadeModel(GL11.GL_SMOOTH);
                 x1 = this.sliderColorG.x;
                 x2 = this.sliderColorG.x + this.sliderColorG.getWidth();
                 y1 = this.height / 2 - this.height / 3 + 5;
@@ -830,10 +831,10 @@ public class GuiNewSpaceRace extends Screen implements ICheckBoxCallback, ITextB
 
                 this.spaceRaceData.setTeamColor(new Vector3(this.sliderColorR.getNormalizedValue(), this.sliderColorG.getNormalizedValue(), this.sliderColorB.getNormalizedValue()));
 
-                GL11.glShadeModel(GL11.GL_FLAT);
-                GL11.glDisable(GL11.GL_BLEND);
-                GL11.glEnable(GL11.GL_ALPHA_TEST);
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
+                RenderSystem.shadeModel(GL11.GL_FLAT);
+                RenderSystem.disableBlend();
+                RenderSystem.enableAlphaTest();
+                RenderSystem.enableTexture();
                 break;
             }
         }
@@ -866,25 +867,25 @@ public class GuiNewSpaceRace extends Screen implements ICheckBoxCallback, ITextB
 
     private void drawFlagButton()
     {
-        GL11.glPushMatrix();
-        GL11.glTranslatef(this.buttonFlag_xPosition + 2.9F, this.buttonFlag_yPosition + this.buttonFlag_height + 1 - 4, 0);
-        GL11.glScalef(74.0F, 74.0F, 1F);
-        GL11.glTranslatef(0.0F, 0.36F, 1.0F);
-        GL11.glScalef(1.0F, 1.0F, -1F);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(this.buttonFlag_xPosition + 2.9F, this.buttonFlag_yPosition + this.buttonFlag_height + 1 - 4, 0);
+        RenderSystem.scalef(74.0F, 74.0F, 1F);
+        RenderSystem.translatef(0.0F, 0.36F, 1.0F);
+        RenderSystem.scalef(1.0F, 1.0F, -1F);
         this.dummyFlag.flagData = this.spaceRaceData.getFlagData();
 //        this.dummyModel.renderFlag(this.dummyFlag, this.ticksPassed); TODO Render flag
-        GL11.glColor3f(1, 1, 1);
-        GL11.glPopMatrix();
+        RenderSystem.color3f(1, 1, 1);
+        RenderSystem.popMatrix();
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(0.0F, 0.0F, 500.0F);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0.0F, 0.0F, 500.0F);
         int color = this.buttonFlag_hover ? 170 : 100;
         if (this.canEdit)
         {
             String message = GCCoreUtil.translate("gui.space_race.create.customize");
             this.font.drawString(message, this.buttonFlag_xPosition + this.buttonFlag_width / 2 - this.font.getStringWidth(message) / 2, this.buttonFlag_yPosition + this.buttonFlag_height / 2 - 5, ColorUtil.to32BitColor(255, color, color, color)/*, this.buttonFlag_hover*/);
         }
-        GL11.glPopMatrix();
+        RenderSystem.popMatrix();
 
         if (this.buttonFlag_hover)
         {
@@ -901,8 +902,8 @@ public class GuiNewSpaceRace extends Screen implements ICheckBoxCallback, ITextB
     {
         AbstractGui.fill(this.buttonTeamColor_xPosition + 2, this.buttonTeamColor_yPosition + 2, this.buttonTeamColor_xPosition + this.buttonTeamColor_width - 2, this.buttonTeamColor_yPosition + this.buttonTeamColor_height - 2, ColorUtil.to32BitColor(255, (int) (this.spaceRaceData.getTeamColor().x * 255.0F), (int) (this.spaceRaceData.getTeamColor().y * 255.0F), (int) (this.spaceRaceData.getTeamColor().z * 255.0F)));
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(0.0F, 0.0F, 500.0F);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0.0F, 0.0F, 500.0F);
         int color = this.buttonTeamColor_hover ? 170 : 100;
         if (canEdit)
         {
@@ -910,7 +911,7 @@ public class GuiNewSpaceRace extends Screen implements ICheckBoxCallback, ITextB
         }
         this.font.drawString(GCCoreUtil.translate("gui.space_race.create.change_color.name.1"), this.buttonTeamColor_xPosition + this.buttonTeamColor_width / 2 - this.font.getStringWidth(GCCoreUtil.translate("gui.space_race.create.change_color.name.1")) / 2, this.buttonTeamColor_yPosition + this.buttonTeamColor_height / 2 - (canEdit ? 3 : 9), ColorUtil.to32BitColor(255, color, color, color)/*, this.buttonTeamColor_hover*/);
         this.font.drawString(GCCoreUtil.translate("gui.space_race.create.change_color.name.2"), this.buttonTeamColor_xPosition + this.buttonTeamColor_width / 2 - this.font.getStringWidth(GCCoreUtil.translate("gui.space_race.create.change_color.name.2")) / 2, this.buttonTeamColor_yPosition + this.buttonTeamColor_height / 2 + (canEdit ? 7 : 1), ColorUtil.to32BitColor(255, color, color, color)/*, this.buttonTeamColor_hover*/);
-        GL11.glPopMatrix();
+        RenderSystem.popMatrix();
 
         if (this.buttonTeamColor_hover)
         {

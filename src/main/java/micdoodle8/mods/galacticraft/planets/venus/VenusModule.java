@@ -9,27 +9,22 @@ import micdoodle8.mods.galacticraft.api.item.EnumExtendedInventorySlot;
 import micdoodle8.mods.galacticraft.api.world.AtmosphereInfo;
 import micdoodle8.mods.galacticraft.api.world.EnumAtmosphericGas;
 import micdoodle8.mods.galacticraft.core.Constants;
+import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
-import micdoodle8.mods.galacticraft.core.dimension.GCDimensions;
 import micdoodle8.mods.galacticraft.core.entities.GCEntities;
 import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
 import micdoodle8.mods.galacticraft.planets.IPlanetsModule;
-import micdoodle8.mods.galacticraft.planets.PlanetDimensions;
-import micdoodle8.mods.galacticraft.planets.PlanetFluids;
-import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModule;
-import micdoodle8.mods.galacticraft.planets.asteroids.world.gen.BiomeAsteroids;
-import micdoodle8.mods.galacticraft.planets.mars.MarsModule;
-import micdoodle8.mods.galacticraft.planets.mars.blocks.MarsBlocks;
-import micdoodle8.mods.galacticraft.planets.mars.inventory.MarsContainers;
 import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlocks;
 import micdoodle8.mods.galacticraft.planets.venus.dimension.TeleportTypeVenus;
 import micdoodle8.mods.galacticraft.planets.venus.dimension.DimensionVenus;
+import micdoodle8.mods.galacticraft.planets.venus.dimension.biome.VenusBiomes;
 import micdoodle8.mods.galacticraft.planets.venus.event.EventHandlerVenus;
 import micdoodle8.mods.galacticraft.planets.venus.inventory.VenusContainers;
 import micdoodle8.mods.galacticraft.planets.venus.items.VenusItems;
 import micdoodle8.mods.galacticraft.planets.venus.tick.VenusTickHandlerServer;
 import micdoodle8.mods.galacticraft.planets.venus.dimension.biome.BiomeVenus;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -38,7 +33,6 @@ import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
@@ -48,8 +42,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class VenusModule implements IPlanetsModule
 {
     public static Planet planetVenus;
-//    public static Fluid sulphuricAcid;
-//    public static Fluid sulphuricAcidGC;
+    public static Fluid sulphuricAcid;
+    public static Fluid sulphuricAcidGC;
 
     public VenusModule()
     {
@@ -149,11 +143,14 @@ public class VenusModule implements IPlanetsModule
 //        GCPlanetDimensions.VENUS = WorldUtil.getDimensionTypeById(ConfigManagerPlanets.dimensionIDVenus.get());
     }
 
-    @SubscribeEvent
+    @Override
     public void biomeRegisterEvent(RegistryEvent.Register<Biome> evt)
     {
         IForgeRegistry<Biome> r = evt.getRegistry();
-        VenusModule.planetVenus.setBiomeInfo(r, BiomeVenus.venusFlat, BiomeVenus.venusMountain, BiomeVenus.venusValley);
+        GCBlocks.register(r, VenusBiomes.VENUS_FLAT, "venus_flat");
+        GCBlocks.register(r, VenusBiomes.VENUS_MOUNTAIN, "venus_mountain");
+        GCBlocks.register(r, VenusBiomes.VENUS_VALLEY, "venus_valley");
+        VenusModule.planetVenus.setBiomeInfo(r, VenusBiomes.VENUS_FLAT, VenusBiomes.VENUS_MOUNTAIN, VenusBiomes.VENUS_VALLEY);
     }
 
     @Override

@@ -2,8 +2,11 @@ package micdoodle8.mods.galacticraft.api.world;
 
 import micdoodle8.mods.galacticraft.api.entity.IRocketType;
 import micdoodle8.mods.galacticraft.api.galaxies.CelestialBody;
+import micdoodle8.mods.galacticraft.api.vector.Vector3;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
@@ -161,4 +164,11 @@ public interface IGalacticraftDimension
      * The ChestGenHooks identifier of the dungeon chests to generate in this world
      */
     ResourceLocation getDungeonChestType();
+
+    /**
+     * Gets the Star Brightness for rendering sky.
+     */
+    float getStarBrightness(float partialTicks);
+
+    Vec3d getSkyColor(BlockPos cameraPos, float partialTicks);
 }

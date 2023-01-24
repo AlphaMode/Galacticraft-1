@@ -1,5 +1,7 @@
 package micdoodle8.mods.galacticraft.core.util;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
@@ -11,20 +13,24 @@ import micdoodle8.mods.galacticraft.core.network.PacketSimple.EnumSimplePacket;
 import micdoodle8.mods.galacticraft.core.proxy.ClientProxyCore;
 import micdoodle8.mods.galacticraft.core.wrappers.FlagData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.IModelTransform;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.client.model.obj.OBJModel;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
 import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
@@ -166,27 +172,6 @@ public class ClientUtil
 //        } TODO models
 //    }
 
-//    public static OBJModel.OBJBakedModel modelFromOBJ(ModelLoader loader, ResourceLocation loc) throws IOException
-//    {
-//        return modelFromOBJ(loader, loc, ImmutableList.of("main"));
-//    }
-//
-//    public static OBJModel.OBJBakedModel modelFromOBJ(ModelLoader loader, ResourceLocation loc, List<String> visibleGroups) throws IOException
-//    {
-//        return modelFromOBJ(loader, loc, visibleGroups, TRSRTransformation.identity(), ImmutableMap.of());
-//    }
-//
-//    public static OBJModel.OBJBakedModel modelFromOBJ(ModelLoader loader, ResourceLocation loc, List<String> visibleGroups, IModelState parentState, ImmutableMap<String, String> customData) throws IOException
-//    {
-//        OBJModel.ModelSettings settings = new OBJModel.ModelSettings(loc, true, false, false, true, null);
-//        OBJModel model = OBJLoader.INSTANCE.loadModel(settings);
-//        java.util.function.Function<ResourceLocation, TextureAtlasSprite> textureGetter;
-//        textureGetter = location -> Minecraft.getInstance().getAtlasSpriteGetter(location).apply(location);
-//
-//        IBakedModel bakedModel = model.bake(model.owner, bakery, ModelLoader.defaultTextureGetter(), model.originalTransform, model.getOverrides(), new ResourceLocation("forge:bucket_override"));
-//        return (OBJModel) model.bake(loader, textureGetter, new BasicState(new OBJModel.OBJState(visibleGroups, false, parentState), false), DefaultVertexFormats.ITEM);
-//    }
-
     public static void drawBakedModel(IBakedModel model, IRenderTypeBuffer buffer, MatrixStack mat, int light)
     {
         RenderType renderType = RenderType.getEntityTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
@@ -212,7 +197,7 @@ public class ClientUtil
         MatrixStack.Entry last = mat.getLast();
         for (BakedQuad bakedquad : model.getQuads(null, null, random))
         {
-            builder.addVertexData(last, bakedquad, 1.0F, 1.0F, 1.0F, 1.0F, light, OverlayTexture.NO_OVERLAY);
+            builder.addVertexData(last, bakedquad, r, g, b, a, light, OverlayTexture.NO_OVERLAY);
         }
         ((IRenderTypeBuffer.Impl) buffer).finish(renderType);
     }
