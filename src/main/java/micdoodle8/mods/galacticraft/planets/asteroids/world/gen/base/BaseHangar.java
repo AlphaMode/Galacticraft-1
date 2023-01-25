@@ -18,7 +18,6 @@ import net.minecraft.world.gen.feature.template.TemplateManager;
 import java.util.Random;
 
 import static micdoodle8.mods.galacticraft.planets.asteroids.world.gen.AsteroidFeatures.CBASE_HANGAR;
-import static micdoodle8.mods.galacticraft.planets.asteroids.world.gen.AsteroidFeatures.CBASE_PLATE;
 
 public class BaseHangar extends SizedPiece
 {

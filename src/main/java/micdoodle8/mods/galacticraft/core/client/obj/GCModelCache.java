@@ -1,20 +1,17 @@
 package micdoodle8.mods.galacticraft.core.client.obj;
 
-import java.util.*;
-
-import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
+
+import java.util.*;
 
 public class GCModelCache extends BaseModelCache {
 

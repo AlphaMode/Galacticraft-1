@@ -5,10 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FourWayBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.chunk.IChunk;
-
-import java.util.Random;
 
 public class WorldGenSpaceStation
 {

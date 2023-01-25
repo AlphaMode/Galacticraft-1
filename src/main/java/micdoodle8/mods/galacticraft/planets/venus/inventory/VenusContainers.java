@@ -1,7 +1,5 @@
 package micdoodle8.mods.galacticraft.planets.venus.inventory;
 
-import micdoodle8.mods.galacticraft.core.entities.EntityBuggy;
-import micdoodle8.mods.galacticraft.planets.mars.client.gui.*;
 import micdoodle8.mods.galacticraft.planets.venus.client.gui.GuiCrashedProbe;
 import micdoodle8.mods.galacticraft.planets.venus.client.gui.GuiGeothermal;
 import micdoodle8.mods.galacticraft.planets.venus.client.gui.GuiLaserTurret;
@@ -20,7 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import static micdoodle8.mods.galacticraft.planets.asteroids.blocks.AsteroidBlocks.*;
+import static micdoodle8.mods.galacticraft.planets.asteroids.blocks.AsteroidBlocks.register;
 
 public class VenusContainers
 {

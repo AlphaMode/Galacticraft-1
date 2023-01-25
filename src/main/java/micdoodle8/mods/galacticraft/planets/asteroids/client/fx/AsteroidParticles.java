@@ -1,8 +1,7 @@
 package micdoodle8.mods.galacticraft.planets.asteroids.client.fx;
 
 import micdoodle8.mods.galacticraft.core.Constants;
-import micdoodle8.mods.galacticraft.core.client.fx.*;
-import net.minecraft.client.Minecraft;
+import micdoodle8.mods.galacticraft.core.client.fx.BlockPosParticleData;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;

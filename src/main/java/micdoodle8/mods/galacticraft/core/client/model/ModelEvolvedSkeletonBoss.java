@@ -6,7 +6,6 @@ import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.entities.EntitySkeletonBoss;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.util.math.MathHelper;
 
 public class ModelEvolvedSkeletonBoss extends EntityModel<EntitySkeletonBoss>

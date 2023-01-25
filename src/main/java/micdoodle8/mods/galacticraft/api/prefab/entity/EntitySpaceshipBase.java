@@ -1,6 +1,6 @@
 package micdoodle8.mods.galacticraft.api.prefab.entity;
 
-import io.netty.buffer.ByteBuf;
+import com.google.common.base.Predicate;
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.entity.IIgnoreShift;
 import micdoodle8.mods.galacticraft.api.entity.ITelemetry;
@@ -42,11 +42,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
-
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.lwjgl.opengl.GL11;
-
-import com.google.common.base.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;

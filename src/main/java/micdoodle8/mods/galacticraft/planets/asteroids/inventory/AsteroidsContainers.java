@@ -1,25 +1,13 @@
 package micdoodle8.mods.galacticraft.planets.asteroids.inventory;
 
-import micdoodle8.mods.galacticraft.planets.asteroids.blocks.AsteroidBlocks;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.gui.GuiAstroMinerDock;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.gui.GuiSchematicAstroMinerDock;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.gui.GuiSchematicTier3Rocket;
 import micdoodle8.mods.galacticraft.planets.asteroids.client.gui.GuiShortRangeTelepad;
 import micdoodle8.mods.galacticraft.planets.asteroids.tile.TileEntityMinerBase;
 import micdoodle8.mods.galacticraft.planets.asteroids.tile.TileEntityShortRangeTelepad;
-import micdoodle8.mods.galacticraft.planets.mars.inventory.ContainerSchematicCargoRocket;
-import micdoodle8.mods.galacticraft.planets.venus.client.gui.GuiCrashedProbe;
-import micdoodle8.mods.galacticraft.planets.venus.client.gui.GuiGeothermal;
-import micdoodle8.mods.galacticraft.planets.venus.client.gui.GuiLaserTurret;
-import micdoodle8.mods.galacticraft.planets.venus.client.gui.GuiSolarArrayController;
-import micdoodle8.mods.galacticraft.planets.venus.inventory.*;
-import micdoodle8.mods.galacticraft.planets.venus.tile.TileEntityCrashedProbe;
-import micdoodle8.mods.galacticraft.planets.venus.tile.TileEntityGeothermalGenerator;
-import micdoodle8.mods.galacticraft.planets.venus.tile.TileEntityLaserTurret;
-import micdoodle8.mods.galacticraft.planets.venus.tile.TileEntitySolarArrayController;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
@@ -27,7 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import static micdoodle8.mods.galacticraft.planets.asteroids.blocks.AsteroidBlocks.*;
+import static micdoodle8.mods.galacticraft.planets.asteroids.blocks.AsteroidBlocks.register;
 
 public class AsteroidsContainers
 {

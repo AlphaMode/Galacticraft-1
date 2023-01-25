@@ -16,8 +16,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import org.lwjgl.opengl.GL11;
-
 @OnlyIn(Dist.CLIENT)
 public class RenderLander extends EntityRenderer<EntityLander>
 {

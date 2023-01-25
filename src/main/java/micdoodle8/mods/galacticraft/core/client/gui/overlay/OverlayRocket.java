@@ -1,8 +1,6 @@
 package micdoodle8.mods.galacticraft.core.client.gui.overlay;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GLX;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntitySpaceshipBase;
 import micdoodle8.mods.galacticraft.core.entities.EntityTier1Rocket;
@@ -18,7 +16,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
 
 @OnlyIn(Dist.CLIENT)
 public class OverlayRocket extends Overlay

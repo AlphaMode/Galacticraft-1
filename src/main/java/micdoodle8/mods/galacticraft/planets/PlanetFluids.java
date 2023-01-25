@@ -9,7 +9,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.fluid.FlowingFluid;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BucketItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -17,9 +16,6 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-
-import static net.minecraftforge.fluids.ForgeFlowingFluid.Flowing;
-import static net.minecraftforge.fluids.ForgeFlowingFluid.Source;
 
 public class PlanetFluids
 {

@@ -10,9 +10,6 @@ import net.minecraftforge.fluids.FluidAttributes;
 
 import java.util.function.UnaryOperator;
 
-import static net.minecraftforge.fluids.ForgeFlowingFluid.Source;
-import static net.minecraftforge.fluids.ForgeFlowingFluid.Flowing;
-
 public class GCFluids
 {
     public static final GCFluidRegistry FLUIDS = new GCFluidRegistry();

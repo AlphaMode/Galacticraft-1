@@ -1,11 +1,11 @@
 package micdoodle8.mods.galacticraft.core.client.obj;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.client.renderer.model.*;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ContentsModelConfiguration implements IModelConfiguration {
 

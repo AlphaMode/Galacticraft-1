@@ -1,8 +1,6 @@
 package micdoodle8.mods.galacticraft.planets.asteroids.client.render.item;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import micdoodle8.mods.galacticraft.core.Constants;
-import micdoodle8.mods.galacticraft.core.util.ClientUtil;
 import micdoodle8.mods.galacticraft.core.wrappers.ModelTransformWrapper;
 import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.model.IBakedModel;

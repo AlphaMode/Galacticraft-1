@@ -11,7 +11,6 @@ import micdoodle8.mods.galacticraft.planets.asteroids.blocks.AsteroidBlocks;
 import micdoodle8.mods.galacticraft.planets.asteroids.blocks.BlockAsteroidRock;
 import micdoodle8.mods.galacticraft.planets.asteroids.dimension.AsteroidGenSettings;
 import micdoodle8.mods.galacticraft.planets.asteroids.dimension.DimensionAsteroids;
-import micdoodle8.mods.galacticraft.planets.asteroids.world.gen.base.MapGenAbandonedBase;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -30,11 +29,11 @@ import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.WorldGenRegion;
-import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.TreeFeature;
+import net.minecraft.world.gen.feature.TreeFeatureConfig;
 
 import java.util.*;
-
-import static net.minecraft.block.LeavesBlock.PERSISTENT;
 
 public class AsteroidChunkGenerator extends ChunkGenerator<AsteroidGenSettings>
 {

@@ -1,6 +1,5 @@
 package micdoodle8.mods.galacticraft.planets.asteroids.entities;
 
-import io.netty.buffer.ByteBuf;
 import micdoodle8.mods.galacticraft.api.entity.IAntiGrav;
 import micdoodle8.mods.galacticraft.api.entity.IEntityNoisy;
 import micdoodle8.mods.galacticraft.api.entity.ITelemetry;

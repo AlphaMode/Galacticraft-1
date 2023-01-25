@@ -3,9 +3,8 @@ package micdoodle8.mods.galacticraft.core.client.model;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import micdoodle8.mods.galacticraft.core.entities.EntityAlienVillager;
-import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.model.VillagerModel;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class ModelAlienVillager extends VillagerModel<EntityAlienVillager>
 {

@@ -1,7 +1,7 @@
 package micdoodle8.mods.galacticraft.planets.mars.client.jei.methanesynth;
 
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.*;
+import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -14,13 +14,11 @@ import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
 import micdoodle8.mods.galacticraft.planets.GalacticraftPlanets;
 import micdoodle8.mods.galacticraft.planets.asteroids.items.AsteroidsItems;
 import micdoodle8.mods.galacticraft.planets.mars.blocks.MarsBlocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
-
 import java.util.List;
 
 public class MethaneSynthRecipeCategory implements IRecipeCategory<MethaneSynthRecipeWrapper>

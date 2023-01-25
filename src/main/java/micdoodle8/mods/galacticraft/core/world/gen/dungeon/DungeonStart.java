@@ -5,7 +5,6 @@ import micdoodle8.mods.galacticraft.core.util.GCLog;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.structure.IStructurePieceType;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 

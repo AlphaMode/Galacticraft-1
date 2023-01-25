@@ -5,8 +5,6 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import micdoodle8.mods.galacticraft.core.entities.EntityTier1Rocket;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.model.Model;
-import net.minecraft.entity.Entity;
 
 public class ModelRocketTier1 extends EntityModel<EntityTier1Rocket>
 {

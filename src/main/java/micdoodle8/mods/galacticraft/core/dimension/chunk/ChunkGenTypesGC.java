@@ -1,13 +1,13 @@
 package micdoodle8.mods.galacticraft.core.dimension.chunk;
 
-import java.util.function.Supplier;
-
 import micdoodle8.mods.galacticraft.core.Constants;
 import net.minecraft.world.gen.ChunkGeneratorType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID_CORE, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ChunkGenTypesGC

@@ -3,13 +3,9 @@ package micdoodle8.mods.galacticraft.core.client.model;
 import com.google.common.collect.ImmutableList;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedZombie;
 import micdoodle8.mods.galacticraft.core.util.ClientUtil;
-import micdoodle8.mods.galacticraft.core.util.WorldUtil;
-import net.minecraft.client.renderer.entity.model.AbstractZombieModel;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.model.ZombieModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.opengl.GL11;
 
 public class ModelEvolvedZombie extends ZombieModel<EntityEvolvedZombie>
 {

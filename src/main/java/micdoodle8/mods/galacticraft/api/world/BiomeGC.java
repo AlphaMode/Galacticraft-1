@@ -1,15 +1,10 @@
 package micdoodle8.mods.galacticraft.api.world;
 
-import java.util.LinkedList;
-import java.util.Map;
-
 import micdoodle8.mods.galacticraft.core.GalacticraftCore;
 import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.passive.AmbientEntity;
-import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.world.biome.Biome;
+
+import java.util.Map;
 
 /**
  * This extension of BiomeGenBase contains the default initialiseMobLists()

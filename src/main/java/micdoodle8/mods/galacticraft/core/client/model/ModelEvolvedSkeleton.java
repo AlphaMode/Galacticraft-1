@@ -5,8 +5,8 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import micdoodle8.mods.galacticraft.core.entities.EntityEvolvedSkeleton;
 import micdoodle8.mods.galacticraft.core.util.ClientUtil;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.model.SkeletonModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class ModelEvolvedSkeleton extends SkeletonModel<EntityEvolvedSkeleton>
 {

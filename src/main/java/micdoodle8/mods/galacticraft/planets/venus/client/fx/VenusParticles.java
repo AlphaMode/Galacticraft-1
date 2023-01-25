@@ -1,7 +1,6 @@
 package micdoodle8.mods.galacticraft.planets.venus.client.fx;
 
 import micdoodle8.mods.galacticraft.core.Constants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.util.ResourceLocation;

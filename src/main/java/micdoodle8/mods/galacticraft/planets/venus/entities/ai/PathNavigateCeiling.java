@@ -1,7 +1,6 @@
 package micdoodle8.mods.galacticraft.planets.venus.entities.ai;
 
 import micdoodle8.mods.galacticraft.planets.venus.entities.EntityJuicer;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.monster.ZombieEntity;

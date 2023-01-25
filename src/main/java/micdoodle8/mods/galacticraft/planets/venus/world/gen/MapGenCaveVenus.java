@@ -1,23 +1,9 @@
 package micdoodle8.mods.galacticraft.planets.venus.world.gen;
 
 import com.mojang.datafixers.Dynamic;
-import micdoodle8.mods.galacticraft.core.Constants;
-import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.carver.CaveWorldCarver;
-import net.minecraft.world.gen.carver.WorldCarver;
 import net.minecraft.world.gen.feature.ProbabilityConfig;
 
-import java.util.BitSet;
-import java.util.Random;
 import java.util.function.Function;
 
 public class MapGenCaveVenus extends CaveWorldCarver

@@ -5,8 +5,6 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureUtil;
 
-import java.awt.image.BufferedImage;
-
 public class DynamicTextureProper extends DynamicTexture
 {
     private boolean updateFlag = false;

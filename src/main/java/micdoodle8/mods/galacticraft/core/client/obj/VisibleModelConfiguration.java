@@ -1,9 +1,10 @@
 package micdoodle8.mods.galacticraft.core.client.obj;
 
-import java.util.List;
-import javax.annotation.Nonnull;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class VisibleModelConfiguration extends WrapperModelConfiguration {
 

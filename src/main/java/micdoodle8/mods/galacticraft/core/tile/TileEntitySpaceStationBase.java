@@ -1,10 +1,7 @@
 package micdoodle8.mods.galacticraft.core.tile;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import micdoodle8.mods.galacticraft.core.GCBlockNames;
 import micdoodle8.mods.galacticraft.core.Constants;
+import micdoodle8.mods.galacticraft.core.GCBlockNames;
 import micdoodle8.mods.galacticraft.core.GCBlocks;
 import micdoodle8.mods.galacticraft.core.blocks.BlockMulti;
 import micdoodle8.mods.galacticraft.core.blocks.BlockMulti.EnumBlockMultiType;
@@ -16,6 +13,9 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class TileEntitySpaceStationBase extends TileEntityFake implements IMultiBlock
 {

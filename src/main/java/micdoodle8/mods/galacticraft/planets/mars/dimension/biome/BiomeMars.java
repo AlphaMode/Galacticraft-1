@@ -2,9 +2,7 @@ package micdoodle8.mods.galacticraft.planets.mars.dimension.biome;
 
 import micdoodle8.mods.galacticraft.api.world.BiomeGC;
 import micdoodle8.mods.galacticraft.core.world.gen.dungeon.DungeonConfiguration;
-import micdoodle8.mods.galacticraft.planets.mars.blocks.BlockBasicMars;
 import micdoodle8.mods.galacticraft.planets.mars.blocks.MarsBlocks;
-import micdoodle8.mods.galacticraft.planets.mars.world.gen.MapGenDungeonMars;
 import micdoodle8.mods.galacticraft.planets.mars.world.gen.MarsFeatures;
 import micdoodle8.mods.galacticraft.planets.mars.world.gen.RoomBossMars;
 import micdoodle8.mods.galacticraft.planets.mars.world.gen.RoomTreasureMars;
@@ -12,8 +10,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.placement.IPlacementConfig;
-import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilderConfig;
 

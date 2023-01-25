@@ -1,7 +1,6 @@
 package micdoodle8.mods.galacticraft.api.recipe;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 
 import java.util.List;
 

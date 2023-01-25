@@ -1,7 +1,6 @@
 package micdoodle8.mods.galacticraft.planets;
 
 import com.google.common.collect.Lists;
-
 import micdoodle8.mods.galacticraft.planets.asteroids.AsteroidsModuleClient;
 import micdoodle8.mods.galacticraft.planets.mars.MarsModuleClient;
 import micdoodle8.mods.galacticraft.planets.venus.VenusModuleClient;

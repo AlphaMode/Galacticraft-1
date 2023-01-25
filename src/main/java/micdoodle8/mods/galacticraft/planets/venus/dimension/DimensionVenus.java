@@ -9,11 +9,8 @@ import micdoodle8.mods.galacticraft.api.world.IWeatherProvider;
 import micdoodle8.mods.galacticraft.core.Constants;
 import micdoodle8.mods.galacticraft.core.event.EventHandlerGC;
 import micdoodle8.mods.galacticraft.planets.venus.VenusModule;
-import micdoodle8.mods.galacticraft.planets.venus.blocks.VenusBlocks;
-import micdoodle8.mods.galacticraft.planets.venus.client.fx.ParticleAcidVapor;
 import micdoodle8.mods.galacticraft.planets.venus.world.gen.VenusChunkGenerator;
 import micdoodle8.mods.galacticraft.planets.venus.world.gen.dungeon.RoomTreasureVenus;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
@@ -37,8 +34,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
 public class DimensionVenus extends DimensionSpace implements IGalacticraftDimension, ISolarLevel, IWeatherProvider

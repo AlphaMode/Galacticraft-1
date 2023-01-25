@@ -3,7 +3,6 @@ package micdoodle8.mods.galacticraft.core.dimension;
 import micdoodle8.mods.galacticraft.core.world.gen.BiomeMoonFlat;
 import micdoodle8.mods.galacticraft.core.world.gen.BiomeMoonHills;
 import micdoodle8.mods.galacticraft.core.world.gen.BiomeMoonSuperFlat;
-import micdoodle8.mods.galacticraft.planets.venus.VenusModule;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.INoiseRandom;

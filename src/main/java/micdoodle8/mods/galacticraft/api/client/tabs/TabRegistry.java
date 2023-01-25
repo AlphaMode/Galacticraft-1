@@ -3,9 +3,6 @@ package micdoodle8.mods.galacticraft.api.client.tabs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.network.play.client.CCloseWindowPacket;
 import net.minecraft.potion.EffectInstance;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,7 +12,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class TabRegistry

@@ -1,8 +1,5 @@
 package micdoodle8.mods.galacticraft.core;
 
-import net.minecraft.item.Item;
-import net.minecraftforge.registries.ObjectHolder;
-
 public class GCItemNames
 {
     public static final String ambientThermalController = "ambient_thermal_controller";

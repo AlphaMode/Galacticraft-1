@@ -1,13 +1,14 @@
 package micdoodle8.mods.galacticraft.core.world.gen.placement;
 
 import com.mojang.datafixers.Dynamic;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.gen.placement.NoPlacementConfig;
+import net.minecraft.world.gen.placement.SimplePlacement;
+
 import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.placement.NoPlacementConfig;
-import net.minecraft.world.gen.placement.SimplePlacement;
 
 public class SapphirePlacement extends SimplePlacement<NoPlacementConfig>
 {

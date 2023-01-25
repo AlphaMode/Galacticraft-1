@@ -12,7 +12,6 @@ import micdoodle8.mods.galacticraft.planets.mars.blocks.MarsBlocks;
 import micdoodle8.mods.galacticraft.planets.mars.dimension.biome.BiomeMars;
 import micdoodle8.mods.galacticraft.planets.mars.world.gen.MarsChunkGenerator;
 import micdoodle8.mods.galacticraft.planets.mars.world.gen.RoomTreasureMars;
-import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -26,8 +25,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
-import java.util.List;
 
 public class DimensionMars extends DimensionSpace implements IGalacticraftDimension, ISolarLevel
 {

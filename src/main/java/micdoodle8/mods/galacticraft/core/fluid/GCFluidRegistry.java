@@ -1,6 +1,5 @@
 package micdoodle8.mods.galacticraft.core.fluid;
 
-import micdoodle8.mods.galacticraft.core.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;

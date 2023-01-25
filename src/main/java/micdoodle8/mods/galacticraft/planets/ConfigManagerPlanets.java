@@ -1,6 +1,5 @@
 package micdoodle8.mods.galacticraft.planets;
 
-import micdoodle8.mods.galacticraft.core.util.ConfigManagerCore;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;

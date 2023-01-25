@@ -1,7 +1,5 @@
 package micdoodle8.mods.galacticraft.planets.asteroids.inventory;
 
-import java.util.List;
-
 import micdoodle8.mods.galacticraft.api.GalacticraftRegistry;
 import micdoodle8.mods.galacticraft.api.recipe.INasaWorkbenchRecipe;
 import micdoodle8.mods.galacticraft.core.util.GCCoreUtil;
@@ -11,6 +9,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.dimension.DimensionType;
+
+import java.util.List;
 
 public class SlotSchematicTier3Rocket extends Slot
 {

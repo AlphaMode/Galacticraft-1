@@ -2,7 +2,6 @@ package micdoodle8.mods.galacticraft.planets.mars.client.render.entity;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import micdoodle8.mods.galacticraft.core.client.obj.GCModelCache;
 import micdoodle8.mods.galacticraft.core.util.ClientUtil;
@@ -23,10 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.ModelLoader;
 import org.lwjgl.opengl.GL11;
-
-import java.io.IOException;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderLandingBalloons extends EntityRenderer<EntityLandingBalloons>

@@ -1,7 +1,8 @@
 package micdoodle8.mods.galacticraft.core.client;
 
 import micdoodle8.mods.galacticraft.core.Constants;
-import micdoodle8.mods.galacticraft.core.client.fx.*;
+import micdoodle8.mods.galacticraft.core.client.fx.EntityParticleData;
+import micdoodle8.mods.galacticraft.core.client.fx.ParticleTypeNames;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.util.ResourceLocation;

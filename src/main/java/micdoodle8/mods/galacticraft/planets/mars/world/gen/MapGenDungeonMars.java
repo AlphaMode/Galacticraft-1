@@ -1,7 +1,6 @@
 package micdoodle8.mods.galacticraft.planets.mars.world.gen;
 
 import com.mojang.datafixers.Dynamic;
-import micdoodle8.mods.galacticraft.core.world.gen.GCFeatures;
 import micdoodle8.mods.galacticraft.core.world.gen.dungeon.DungeonConfiguration;
 import micdoodle8.mods.galacticraft.core.world.gen.dungeon.DungeonStart;
 import micdoodle8.mods.galacticraft.core.world.gen.dungeon.StructureDungeon;
